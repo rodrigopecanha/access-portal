@@ -1,8 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Challenge } from '@/types/learning';
 import { Card, CardContent } from '@/components/ui/card';
-import { Play, HelpCircle, FileText, Wrench, Zap, Clock, Check } from 'lucide-react';
-
+import { Play, HelpCircle, FileText, Wrench, Zap, Clock, Check, Box } from 'lucide-react';
 interface ChallengeCardProps {
   challenge: Challenge;
   isCompleted?: boolean;
@@ -10,53 +9,30 @@ interface ChallengeCardProps {
   onClick?: () => void;
   className?: string;
 }
-
 const challengeIcons = {
   video: Play,
   quiz: HelpCircle,
   'case-study': FileText,
-  practical: Wrench,
+  practical: Wrench
 };
-
 const challengeLabels = {
   video: 'Vídeo',
   quiz: 'Quiz',
   'case-study': 'Estudo de Caso',
-  practical: 'Desafio Prático',
+  practical: 'Desafio Prático'
 };
-
-export function ChallengeCard({ 
-  challenge, 
-  isCompleted = false, 
+export function ChallengeCard({
+  challenge,
+  isCompleted = false,
   isLocked = false,
   onClick,
-  className 
+  className
 }: ChallengeCardProps) {
   const IconComponent = challengeIcons[challenge.type];
-  
-  return (
-    <Card 
-      className={cn(
-        'group cursor-pointer transition-all duration-300',
-        isLocked && 'opacity-50 cursor-not-allowed',
-        isCompleted && 'border-success/30 bg-success/5',
-        !isLocked && !isCompleted && 'hover:shadow-md hover:border-primary/30',
-        className
-      )}
-      onClick={!isLocked ? onClick : undefined}
-    >
+  return <Card className={cn('group cursor-pointer transition-all duration-300', isLocked && 'opacity-50 cursor-not-allowed', isCompleted && 'border-success/30 bg-success/5', !isLocked && !isCompleted && 'hover:shadow-md hover:border-primary/30', className)} onClick={!isLocked ? onClick : undefined}>
       <CardContent className="p-4 flex items-center gap-4">
-        <div className={cn(
-          'w-12 h-12 rounded-xl flex items-center justify-center shrink-0',
-          isCompleted 
-            ? 'bg-success text-success-foreground' 
-            : 'bg-primary/10 text-primary'
-        )}>
-          {isCompleted ? (
-            <Check className="w-6 h-6" />
-          ) : (
-            <IconComponent className="w-6 h-6" />
-          )}
+        <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center shrink-0', isCompleted ? 'bg-success text-success-foreground' : 'bg-primary/10 text-primary')}>
+          {isCompleted ? <Check className="w-6 h-6" /> : <Box className="w-6 h-6" />}
         </div>
         
         <div className="flex-1 min-w-0">
@@ -80,6 +56,5 @@ export function ChallengeCard({
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 }
