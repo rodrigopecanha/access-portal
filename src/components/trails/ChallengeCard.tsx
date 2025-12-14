@@ -16,7 +16,7 @@ const challengeIcons = {
   practical: Wrench
 };
 const challengeLabels = {
-  video: 'Vídeo',
+  video: 'Challenge',
   quiz: 'Quiz',
   'case-study': 'Estudo de Caso',
   practical: 'Desafio Prático'
