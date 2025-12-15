@@ -40,7 +40,7 @@ export function SubTrackCard({
   const isCompleted = progress === 100;
   
   const totalModules = subTrack.modules.length;
-  const totalLessons = subTrack.modules.reduce((sum, m) => sum + m.lessons.length, 0);
+  const totalLearningItems = subTrack.modules.reduce((sum, m) => sum + (m.learningContent?.length || 0), 0);
 
   return (
     <Card 
@@ -80,7 +80,7 @@ export function SubTrackCard({
       <CardContent className="pt-0">
         <div className="flex items-center justify-between text-sm mb-2">
           <span className="text-muted-foreground">
-            {totalModules} módulos · {totalLessons} lições
+            {totalModules} módulos · {totalLearningItems} conteúdos
           </span>
           <span className="font-medium text-xp-gold">+{subTrack.xpReward} XP</span>
         </div>

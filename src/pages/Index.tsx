@@ -5,9 +5,8 @@ import { LevelBadge } from '@/components/gamification/LevelBadge';
 import { ProgressRing } from '@/components/gamification/ProgressRing';
 import { BadgeCard } from '@/components/gamification/BadgeCard';
 import { TrailCard } from '@/components/trails/TrailCard';
-import { ChallengeCard } from '@/components/trails/ChallengeCard';
 import { currentUser, trails, badges, calculateTrailProgress, getRecommendedChallenge, getOverallProgress } from '@/data/mockData';
-import { Flame, Trophy, Target } from 'lucide-react';
+import { Flame, Trophy, Target, Play, FileText, Presentation } from 'lucide-react';
 
 export default function Index() {
   const overallProgress = getOverallProgress(currentUser);
@@ -89,17 +88,26 @@ export default function Index() {
           </Card>
         </div>
 
-        {/* Next Challenge */}
+        {/* Next Learning Content */}
         {recommendedChallenge && (
           <Card className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Target className="w-5 h-5 text-primary" />
-                Próximo Desafio
+                Próximo Conteúdo
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-              <ChallengeCard challenge={recommendedChallenge} />
+              <div className="flex items-center gap-4 p-4 rounded-lg bg-secondary">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Target className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-foreground">{recommendedChallenge.title}</h4>
+                  <p className="text-sm text-muted-foreground">{recommendedChallenge.description}</p>
+                </div>
+                <span className="text-sm font-medium text-xp-gold">+{recommendedChallenge.xpReward} XP</span>
+              </div>
             </CardContent>
           </Card>
         )}
