@@ -1,19 +1,17 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ChallengeCard } from '@/components/trails/ChallengeCard';
-import { trails, currentUser, calculateTrailProgress } from '@/data/mockData';
-import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, ChevronDown, ChevronRight } from 'lucide-react';
+import { SubTrackCard } from '@/components/trails/SubTrackCard';
+import { trails, currentUser, calculateTrailProgress, calculateSubTrackProgress } from '@/data/mockData';
+import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 export default function TrailDetail() {
   const { trailId } = useParams();
+  const navigate = useNavigate();
   const trail = trails.find(t => t.id === trailId);
-  const [openModules, setOpenModules] = useState<string[]>([]);
   
   if (!trail) {
     return (
@@ -30,17 +28,6 @@ export default function TrailDetail() {
   
   const progress = calculateTrailProgress(trail, currentUser);
   const isLocked = trail.prerequisites.some(p => !currentUser.completedTrails.includes(p));
-  
-  const toggleModule = (moduleId: string) => {
-    setOpenModules(prev => 
-      prev.includes(moduleId) 
-        ? prev.filter(id => id !== moduleId)
-        : [...prev, moduleId]
-    );
-  };
-  
-  const isLessonCompleted = (lessonId: string) => currentUser.completedLessons.includes(lessonId);
-  const isChallengeCompleted = (challengeId: string) => currentUser.completedChallenges.includes(challengeId);
 
   return (
     <MainLayout>
@@ -69,14 +56,14 @@ export default function TrailDetail() {
                 <span>{trail.xpReward} XP</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5" />
-                <span>{trail.modules.length} módulos</span>
+                <Layers className="w-5 h-5" />
+                <span>{trail.subTracks.length} sub-trilhas</span>
               </div>
             </div>
             
             <div className="mt-6 space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Progresso</span>
+                <span>Progresso Geral</span>
                 <span>{progress}%</span>
               </div>
               <div className="h-3 bg-primary-foreground/20 rounded-full overflow-hidden">
@@ -89,118 +76,31 @@ export default function TrailDetail() {
           </div>
         </div>
 
-        {/* Modules */}
+        {/* Sub-Tracks */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">Módulos</h2>
+          <h2 className="text-xl font-semibold text-foreground">Sub-trilhas</h2>
           
-          {trail.modules.map((module, moduleIdx) => {
-            const isOpen = openModules.includes(module.id);
-            const moduleCompleted = module.lessons.every(l => isLessonCompleted(l.id));
-            const moduleLocked = moduleIdx > 0 && !trail.modules.slice(0, moduleIdx).every(m => 
-              m.lessons.every(l => isLessonCompleted(l.id))
-            );
-            
-            return (
-              <Card 
-                key={module.id} 
-                className={cn(
-                  'animate-fade-in transition-all',
-                  moduleLocked && 'opacity-60'
-                )}
-                style={{ animationDelay: `${moduleIdx * 0.1}s` }}
-              >
-                <Collapsible open={isOpen} onOpenChange={() => !moduleLocked && toggleModule(module.id)}>
-                  <CollapsibleTrigger asChild>
-                    <CardHeader className={cn(
-                      'cursor-pointer hover:bg-muted/50 transition-colors',
-                      moduleLocked && 'cursor-not-allowed'
-                    )}>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className={cn(
-                            'w-10 h-10 rounded-xl flex items-center justify-center font-bold',
-                            moduleCompleted 
-                              ? 'bg-success text-success-foreground' 
-                              : moduleLocked 
-                                ? 'bg-muted text-muted-foreground'
-                                : 'bg-primary/10 text-primary'
-                          )}>
-                            {moduleCompleted ? (
-                              <CheckCircle2 className="w-5 h-5" />
-                            ) : moduleLocked ? (
-                              <Lock className="w-5 h-5" />
-                            ) : (
-                              moduleIdx + 1
-                            )}
-                          </div>
-                          <div>
-                            <CardTitle className="text-base">{module.title}</CardTitle>
-                            <p className="text-sm text-muted-foreground">{module.description}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right hidden md:block">
-                            <p className="text-sm font-medium text-xp-gold">+{module.xpReward} XP</p>
-                            <p className="text-xs text-muted-foreground">{module.lessons.length} lições</p>
-                          </div>
-                          {isOpen ? (
-                            <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                          ) : (
-                            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                          )}
-                        </div>
-                      </div>
-                    </CardHeader>
-                  </CollapsibleTrigger>
-                  
-                  <CollapsibleContent>
-                    <CardContent className="pt-0 space-y-4">
-                      {module.lessons.map((lesson, lessonIdx) => {
-                        const lessonCompleted = isLessonCompleted(lesson.id);
-                        const lessonLocked = lessonIdx > 0 && !module.lessons.slice(0, lessonIdx).every(l => isLessonCompleted(l.id));
-                        
-                        return (
-                          <div key={lesson.id} className="space-y-3">
-                            <div className={cn(
-                              'flex items-center gap-3 p-3 rounded-lg',
-                              lessonCompleted ? 'bg-success/10' : lessonLocked ? 'bg-muted/50' : 'bg-secondary'
-                            )}>
-                              <div className={cn(
-                                'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium',
-                                lessonCompleted 
-                                  ? 'bg-success text-success-foreground' 
-                                  : lessonLocked 
-                                    ? 'bg-muted text-muted-foreground'
-                                    : 'bg-primary text-primary-foreground'
-                              )}>
-                                {lessonCompleted ? <CheckCircle2 className="w-4 h-4" /> : lessonIdx + 1}
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="font-medium text-foreground">{lesson.title}</h4>
-                                <p className="text-sm text-muted-foreground">{lesson.description}</p>
-                              </div>
-                              <span className="text-sm font-medium text-xp-gold">+{lesson.xpReward} XP</span>
-                            </div>
-                            
-                            <div className="pl-11 space-y-2">
-                              {lesson.challenges.map(challenge => (
-                                <ChallengeCard 
-                                  key={challenge.id}
-                                  challenge={challenge}
-                                  isCompleted={isChallengeCompleted(challenge.id)}
-                                  isLocked={lessonLocked}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </CardContent>
-                  </CollapsibleContent>
-                </Collapsible>
-              </Card>
-            );
-          })}
+          <div className="grid gap-4 md:grid-cols-2">
+            {trail.subTracks.map((subTrack, idx) => {
+              const subTrackProgress = calculateSubTrackProgress(subTrack, currentUser);
+              
+              return (
+                <div
+                  key={subTrack.id}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${idx * 0.1}s` }}
+                >
+                  <SubTrackCard
+                    subTrack={subTrack}
+                    progress={subTrackProgress}
+                    isLocked={isLocked}
+                    trailColor={trail.color}
+                    onClick={() => navigate(`/trails/${trailId}/subtrack/${subTrack.id}`)}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </MainLayout>
