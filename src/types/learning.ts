@@ -52,6 +52,39 @@ export interface QuizQuestion {
   correctAnswer: number;
 }
 
+export interface LearningContent {
+  id: string;
+  title: string;
+  description: string;
+  type: 'video' | 'article' | 'slides';
+  duration: number;
+  xpReward: number;
+  content?: string;
+  videoUrl?: string;
+}
+
+export interface Assessment {
+  id: string;
+  title: string;
+  description: string;
+  questions: QuizQuestion[];
+  passingScore: number;
+  xpReward: number;
+  isCompleted?: boolean;
+}
+
+export interface BossChallenge {
+  id: string;
+  title: string;
+  description: string;
+  instructions: string;
+  acceptedFormats: string[];
+  xpReward: number;
+  submissionUrl?: string;
+  isCompleted?: boolean;
+  isLocked?: boolean;
+}
+
 export interface Lesson {
   id: string;
   title: string;
@@ -67,7 +100,10 @@ export interface Module {
   title: string;
   description: string;
   icon: string;
-  lessons: Lesson[];
+  learningContent: LearningContent[];
+  assessment: Assessment;
+  bossChallenge: BossChallenge;
+  lessons?: Lesson[]; // deprecated, kept for compatibility
   xpReward: number;
   isCompleted?: boolean;
   isLocked?: boolean;
