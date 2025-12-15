@@ -73,13 +73,25 @@ export interface Module {
   isLocked?: boolean;
 }
 
+export interface SubTrack {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  modules: Module[];
+  xpReward: number;
+  isCompleted?: boolean;
+  isLocked?: boolean;
+  progress?: number;
+}
+
 export interface Trail {
   id: string;
   title: string;
   description: string;
   icon: string;
   color: string;
-  modules: Module[];
+  subTracks: SubTrack[];
   xpReward: number;
   prerequisites: string[];
   estimatedHours: number;

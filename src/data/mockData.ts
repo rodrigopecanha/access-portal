@@ -1,4 +1,4 @@
-import { User, Trail, Badge, Challenge, Lesson, Module } from '@/types/learning';
+import { User, Trail, Badge, Challenge, Lesson, Module, SubTrack } from '@/types/learning';
 
 // Current user mock
 export const currentUser: User = {
@@ -10,9 +10,9 @@ export const currentUser: User = {
   xp: 1850,
   xpToNextLevel: 3000,
   badges: ['badge-1', 'badge-2', 'badge-3'],
-  completedChallenges: ['ch-1', 'ch-2', 'ch-3', 'ch-4', 'ch-5'],
-  completedLessons: ['lesson-1', 'lesson-2'],
-  completedModules: ['module-1'],
+  completedChallenges: ['ch-iam-nav-1', 'ch-iam-nav-2', 'ch-iam-maestro-1'],
+  completedLessons: ['les-iam-nav-1'],
+  completedModules: ['mod-iam-nav-1'],
   completedTrails: [],
   currentStreak: 7,
   longestStreak: 14,
@@ -31,8 +31,8 @@ export const allUsers: User[] = [
     xp: 450,
     xpToNextLevel: 1000,
     badges: ['badge-1'],
-    completedChallenges: ['ch-1', 'ch-2'],
-    completedLessons: ['lesson-1'],
+    completedChallenges: ['ch-iam-nav-1'],
+    completedLessons: [],
     completedModules: [],
     completedTrails: [],
     currentStreak: 3,
@@ -48,10 +48,10 @@ export const allUsers: User[] = [
     xp: 4200,
     xpToNextLevel: 7000,
     badges: ['badge-1', 'badge-2', 'badge-3', 'badge-4', 'badge-5'],
-    completedChallenges: ['ch-1', 'ch-2', 'ch-3', 'ch-4', 'ch-5', 'ch-6', 'ch-7'],
-    completedLessons: ['lesson-1', 'lesson-2', 'lesson-3', 'lesson-4'],
-    completedModules: ['module-1', 'module-2'],
-    completedTrails: ['trail-1'],
+    completedChallenges: ['ch-iam-nav-1', 'ch-iam-nav-2', 'ch-iam-nav-3', 'ch-iam-maestro-1', 'ch-esig-basic-1', 'ch-esig-basic-2'],
+    completedLessons: ['les-iam-nav-1', 'les-iam-nav-2', 'les-esig-basic-1'],
+    completedModules: ['mod-iam-nav-1', 'mod-esig-basic-1'],
+    completedTrails: [],
     currentStreak: 21,
     longestStreak: 21,
     joinedAt: '2023-11-10',
@@ -65,9 +65,9 @@ export const allUsers: User[] = [
     xp: 2100,
     xpToNextLevel: 3000,
     badges: ['badge-1', 'badge-2', 'badge-3', 'badge-4'],
-    completedChallenges: ['ch-1', 'ch-2', 'ch-3', 'ch-4', 'ch-5', 'ch-6'],
-    completedLessons: ['lesson-1', 'lesson-2', 'lesson-3'],
-    completedModules: ['module-1'],
+    completedChallenges: ['ch-iam-nav-1', 'ch-iam-nav-2', 'ch-iam-maestro-1', 'ch-iam-maestro-2'],
+    completedLessons: ['les-iam-nav-1', 'les-iam-maestro-1'],
+    completedModules: ['mod-iam-nav-1'],
     completedTrails: [],
     currentStreak: 0,
     longestStreak: 12,
@@ -85,7 +85,7 @@ export const allUsers: User[] = [
     completedChallenges: [],
     completedLessons: [],
     completedModules: [],
-    completedTrails: ['trail-1', 'trail-2'],
+    completedTrails: ['trail-iam'],
     currentStreak: 45,
     longestStreak: 45,
     joinedAt: '2023-06-01',
@@ -104,27 +104,27 @@ export const badges: Badge[] = [
   },
   {
     id: 'badge-2',
-    name: 'Conhecedor do Produto',
-    description: 'Complete a trilha Produto & Plataforma',
-    icon: '💡',
+    name: 'IAM Expert',
+    description: 'Complete a trilha IAM',
+    icon: '🔐',
     category: 'completion',
     xpReward: 200,
   },
   {
     id: 'badge-3',
-    name: 'Storyteller',
-    description: 'Domine a arte de contar histórias técnicas',
-    icon: '📖',
-    category: 'skill',
-    xpReward: 150,
+    name: 'eSignature Pro',
+    description: 'Complete a trilha eSignature',
+    icon: '✍️',
+    category: 'completion',
+    xpReward: 250,
   },
   {
     id: 'badge-4',
-    name: 'Arquiteto de Soluções',
-    description: 'Complete a trilha de Integrações & Arquitetura',
-    icon: '🏗️',
-    category: 'completion',
-    xpReward: 300,
+    name: 'Navigator Master',
+    description: 'Domine o Navigator completamente',
+    icon: '🧭',
+    category: 'skill',
+    xpReward: 150,
   },
   {
     id: 'badge-5',
@@ -191,142 +191,156 @@ const createModule = (
   xpReward: lessons.reduce((sum, l) => sum + l.xpReward, 0),
 });
 
-// Trails data
+// Helper to create sub-tracks
+const createSubTrack = (
+  id: string,
+  title: string,
+  description: string,
+  icon: string,
+  modules: Module[]
+): SubTrack => ({
+  id,
+  title,
+  description,
+  icon,
+  modules,
+  xpReward: modules.reduce((sum, m) => sum + m.xpReward, 0),
+});
+
+// IAM Trail
+const iamSubTracks: SubTrack[] = [
+  createSubTrack('subtrack-iam-navigator', 'Navigator', 'Domine o Navigator para gestão de identidades', 'Compass', [
+    createModule('mod-iam-nav-1', 'Introdução ao Navigator', 'Fundamentos e interface', 'Layout', [
+      createLesson('les-iam-nav-1', 'Visão Geral', 'Conheça a interface do Navigator', [
+        createChallenge('ch-iam-nav-1', 'Vídeo: Tour pelo Navigator', 'Tour completo pela interface', 'video', 40, 15),
+        createChallenge('ch-iam-nav-2', 'Quiz: Componentes', 'Teste seu conhecimento', 'quiz', 50, 10),
+      ]),
+      createLesson('les-iam-nav-2', 'Configuração Inicial', 'Setup e primeiros passos', [
+        createChallenge('ch-iam-nav-3', 'Hands-on: Primeiro Setup', 'Configure do zero', 'practical', 80, 30),
+      ]),
+    ]),
+    createModule('mod-iam-nav-2', 'Gestão de Usuários', 'Criação e gerenciamento de usuários', 'Users', [
+      createLesson('les-iam-nav-3', 'CRUD de Usuários', 'Operações básicas de usuários', [
+        createChallenge('ch-iam-nav-4', 'Case: Onboarding em Massa', 'Estudo de caso real', 'case-study', 60, 25),
+        createChallenge('ch-iam-nav-5', 'Prática: Bulk Import', 'Importe 100 usuários', 'practical', 100, 45),
+      ]),
+    ]),
+  ]),
+  createSubTrack('subtrack-iam-maestro', 'Maestro', 'Orquestração avançada de identidades', 'Wand2', [
+    createModule('mod-iam-maestro-1', 'Automação de Provisionamento', 'Workflows automáticos', 'Workflow', [
+      createLesson('les-iam-maestro-1', 'Workflows Básicos', 'Criando sua primeira automação', [
+        createChallenge('ch-iam-maestro-1', 'Vídeo: Introdução ao Maestro', 'Conceitos fundamentais', 'video', 50, 20),
+        createChallenge('ch-iam-maestro-2', 'Hands-on: Primeiro Workflow', 'Crie um workflow simples', 'practical', 120, 45),
+      ]),
+    ]),
+  ]),
+  createSubTrack('subtrack-iam-agreement', 'Agreement Desk', 'Gestão de termos e consentimentos', 'FileCheck', [
+    createModule('mod-iam-agreement-1', 'Termos de Uso', 'Configuração de termos', 'FileText', [
+      createLesson('les-iam-agreement-1', 'Criando Termos', 'Configuração de termos customizados', [
+        createChallenge('ch-iam-agreement-1', 'Vídeo: Agreement Desk', 'Visão geral da ferramenta', 'video', 35, 15),
+        createChallenge('ch-iam-agreement-2', 'Quiz: Compliance', 'Teste de conformidade', 'quiz', 45, 10),
+      ]),
+    ]),
+  ]),
+  createSubTrack('subtrack-iam-workspaces', 'Workspaces', 'Ambientes isolados e multi-tenancy', 'Building2', [
+    createModule('mod-iam-workspaces-1', 'Arquitetura Multi-tenant', 'Conceitos de isolamento', 'Layers', [
+      createLesson('les-iam-workspaces-1', 'Fundamentos de Workspaces', 'Entenda a arquitetura', [
+        createChallenge('ch-iam-workspaces-1', 'Vídeo: Multi-tenancy', 'Conceitos avançados', 'video', 45, 20),
+        createChallenge('ch-iam-workspaces-2', 'Case: Enterprise Setup', 'Cenário enterprise real', 'case-study', 70, 35),
+      ]),
+    ]),
+  ]),
+];
+
+// eSignature Trail
+const esignatureSubTracks: SubTrack[] = [
+  createSubTrack('subtrack-esig-basic', 'Features Básicas', 'Funcionalidades essenciais de assinatura', 'PenTool', [
+    createModule('mod-esig-basic-1', 'Assinatura Simples', 'Fluxo básico de assinatura', 'Edit3', [
+      createLesson('les-esig-basic-1', 'Primeiro Documento', 'Enviando para assinatura', [
+        createChallenge('ch-esig-basic-1', 'Vídeo: Quick Start', 'Início rápido com eSignature', 'video', 30, 12),
+        createChallenge('ch-esig-basic-2', 'Hands-on: Envie um Documento', 'Envie seu primeiro documento', 'practical', 60, 20),
+      ]),
+    ]),
+    createModule('mod-esig-basic-2', 'Templates', 'Criação e uso de templates', 'FileCode', [
+      createLesson('les-esig-basic-2', 'Criando Templates', 'Templates reutilizáveis', [
+        createChallenge('ch-esig-basic-3', 'Vídeo: Power of Templates', 'Aumente produtividade', 'video', 40, 18),
+        createChallenge('ch-esig-basic-4', 'Prática: Template Wizard', 'Crie 3 templates', 'practical', 90, 40),
+      ]),
+    ]),
+  ]),
+  createSubTrack('subtrack-esig-advanced-wf', 'Advanced Workflows', 'Fluxos avançados de assinatura', 'GitBranch', [
+    createModule('mod-esig-adv-wf-1', 'Fluxos Sequenciais', 'Múltiplos signatários em ordem', 'ListOrdered', [
+      createLesson('les-esig-adv-wf-1', 'Routing Avançado', 'Defina ordem de assinatura', [
+        createChallenge('ch-esig-adv-wf-1', 'Vídeo: Sequential Signing', 'Fluxos em cadeia', 'video', 45, 20),
+        createChallenge('ch-esig-adv-wf-2', 'Case: Aprovação Hierárquica', 'Cenário corporativo', 'case-study', 70, 30),
+      ]),
+    ]),
+  ]),
+  createSubTrack('subtrack-esig-advanced-feat', 'Features Avançadas', 'Recursos avançados da plataforma', 'Sparkles', [
+    createModule('mod-esig-adv-feat-1', 'Campos Inteligentes', 'Campos dinâmicos e condicionais', 'FormInput', [
+      createLesson('les-esig-adv-feat-1', 'Smart Fields', 'Campos que se adaptam', [
+        createChallenge('ch-esig-adv-feat-1', 'Vídeo: Dynamic Fields', 'Campos condicionais', 'video', 50, 22),
+        createChallenge('ch-esig-adv-feat-2', 'Hands-on: Formulário Inteligente', 'Crie um formulário dinâmico', 'practical', 110, 50),
+      ]),
+    ]),
+  ]),
+  createSubTrack('subtrack-esig-admin', 'Ferramentas Administrativas', 'Gestão e configurações administrativas', 'Settings', [
+    createModule('mod-esig-admin-1', 'Painel Administrativo', 'Configurações avançadas', 'SlidersHorizontal', [
+      createLesson('les-esig-admin-1', 'Admin Console', 'Configurações do sistema', [
+        createChallenge('ch-esig-admin-1', 'Vídeo: Admin Overview', 'Tour pelo admin', 'video', 40, 18),
+        createChallenge('ch-esig-admin-2', 'Quiz: Best Practices', 'Teste de boas práticas', 'quiz', 55, 15),
+      ]),
+    ]),
+  ]),
+  createSubTrack('subtrack-esig-sso', 'SSO & Organization Management', 'Single Sign-On e gestão organizacional', 'Shield', [
+    createModule('mod-esig-sso-1', 'Configuração de SSO', 'Integração com identity providers', 'Key', [
+      createLesson('les-esig-sso-1', 'SAML & OIDC', 'Protocolos de autenticação', [
+        createChallenge('ch-esig-sso-1', 'Vídeo: SSO Deep Dive', 'Entenda SSO completo', 'video', 55, 25),
+        createChallenge('ch-esig-sso-2', 'Hands-on: Configure Okta', 'Integre com Okta', 'practical', 130, 60),
+      ]),
+    ]),
+    createModule('mod-esig-sso-2', 'Organization Management', 'Gestão de organizações', 'Building', [
+      createLesson('les-esig-sso-2', 'Hierarquia Organizacional', 'Estrutura de organizações', [
+        createChallenge('ch-esig-sso-3', 'Case: Enterprise Rollout', 'Implantação enterprise', 'case-study', 80, 40),
+      ]),
+    ]),
+  ]),
+];
+
+// Trails data with sub-tracks
 export const trails: Trail[] = [
   {
-    id: 'trail-1',
-    title: 'Foundations',
-    description: 'Empresa, mercado, ICP e proposta de valor. A base para todo Solution Consultant.',
-    icon: 'Building2',
-    color: 'from-blue-500 to-blue-600',
+    id: 'trail-iam',
+    title: 'IAM',
+    description: 'Identity and Access Management - Domine a gestão de identidades, acessos e provisionamento.',
+    icon: 'Shield',
+    color: 'from-blue-500 to-indigo-600',
     prerequisites: [],
-    estimatedHours: 8,
-    xpReward: 800,
-    modules: [
-      createModule('mod-1-1', 'Nossa Empresa', 'História, missão e valores', 'Building', [
-        createLesson('les-1-1-1', 'História e Cultura', 'Conheça nossa jornada e cultura', [
-          createChallenge('ch-1-1-1-1', 'Vídeo: Nossa História', 'Assista ao vídeo institucional', 'video', 30, 15),
-          createChallenge('ch-1-1-1-2', 'Quiz: Cultura', 'Teste seus conhecimentos', 'quiz', 50, 10),
-        ]),
-        createLesson('les-1-1-2', 'Missão e Valores', 'Entenda o que nos move', [
-          createChallenge('ch-1-1-2-1', 'Leitura: Manifesto', 'Leia nosso manifesto', 'case-study', 40, 20),
-          createChallenge('ch-1-1-2-2', 'Reflexão Prática', 'Aplique os valores em cenário real', 'practical', 80, 30),
-        ]),
-      ]),
-      createModule('mod-1-2', 'Nosso Mercado', 'Entenda o mercado B2B SaaS Enterprise', 'TrendingUp', [
-        createLesson('les-1-2-1', 'Panorama do Mercado', 'Visão geral do mercado', [
-          createChallenge('ch-1-2-1-1', 'Vídeo: Mercado B2B', 'Tendências e oportunidades', 'video', 40, 20),
-          createChallenge('ch-1-2-1-2', 'Análise de Competidores', 'Estudo dos principais players', 'case-study', 60, 25),
-        ]),
-      ]),
-      createModule('mod-1-3', 'ICP & Personas', 'Ideal Customer Profile e Buyer Personas', 'Users', [
-        createLesson('les-1-3-1', 'Definindo o ICP', 'Como identificar clientes ideais', [
-          createChallenge('ch-1-3-1-1', 'Workshop ICP', 'Exercício prático de ICP', 'practical', 100, 45),
-        ]),
-      ]),
-    ],
+    estimatedHours: 20,
+    xpReward: iamSubTracks.reduce((sum, st) => sum + st.xpReward, 0),
+    subTracks: iamSubTracks,
   },
   {
-    id: 'trail-2',
-    title: 'Produto & Plataforma',
-    description: 'Domine cada recurso, caso de uso e diferencial competitivo da nossa plataforma.',
-    icon: 'Layers',
-    color: 'from-purple-500 to-purple-600',
-    prerequisites: ['trail-1'],
-    estimatedHours: 12,
-    xpReward: 1200,
-    modules: [
-      createModule('mod-2-1', 'Visão Geral', 'Arquitetura e capacidades principais', 'Layout', [
-        createLesson('les-2-1-1', 'Arquitetura da Plataforma', 'Entenda como tudo funciona', [
-          createChallenge('ch-2-1-1-1', 'Diagrama Interativo', 'Explore a arquitetura', 'video', 50, 25),
-          createChallenge('ch-2-1-1-2', 'Quiz Técnico', 'Valide seu entendimento', 'quiz', 60, 15),
-        ]),
-      ]),
-      createModule('mod-2-2', 'Funcionalidades Core', 'Features principais em profundidade', 'Zap', [
-        createLesson('les-2-2-1', 'Feature Deep Dive', 'Cada funcionalidade explicada', [
-          createChallenge('ch-2-2-1-1', 'Hands-on: Setup', 'Configure do zero', 'practical', 120, 60),
-        ]),
-      ]),
-    ],
-  },
-  {
-    id: 'trail-3',
-    title: 'Casos de Uso & Indústrias',
-    description: 'Aprenda os principais casos de uso por indústria e como posicionar soluções.',
-    icon: 'Briefcase',
-    color: 'from-emerald-500 to-emerald-600',
-    prerequisites: ['trail-2'],
-    estimatedHours: 10,
-    xpReward: 1000,
-    modules: [
-      createModule('mod-3-1', 'Varejo & E-commerce', 'Soluções para o varejo digital', 'ShoppingCart', [
-        createLesson('les-3-1-1', 'Desafios do Varejo', 'Principais dores e soluções', [
-          createChallenge('ch-3-1-1-1', 'Case: Grande Varejista', 'Estudo de caso real', 'case-study', 80, 40),
-        ]),
-      ]),
-    ],
-  },
-  {
-    id: 'trail-4',
-    title: 'Demo & Storytelling Técnico',
-    description: 'A arte de apresentar soluções técnicas de forma envolvente e persuasiva.',
-    icon: 'Presentation',
-    color: 'from-orange-500 to-orange-600',
-    prerequisites: ['trail-2'],
-    estimatedHours: 8,
-    xpReward: 900,
-    modules: [
-      createModule('mod-4-1', 'Estrutura de Demo', 'Como estruturar demos memoráveis', 'PlayCircle', [
-        createLesson('les-4-1-1', 'Framework de Demo', 'Metodologia passo a passo', [
-          createChallenge('ch-4-1-1-1', 'Demo ao Vivo', 'Pratique sua demo', 'practical', 150, 60),
-        ]),
-      ]),
-    ],
-  },
-  {
-    id: 'trail-5',
-    title: 'Integrações & Arquitetura',
-    description: 'APIs, integrações e arquitetura de soluções enterprise.',
-    icon: 'Network',
-    color: 'from-cyan-500 to-cyan-600',
-    prerequisites: ['trail-2'],
-    estimatedHours: 15,
-    xpReward: 1500,
-    modules: [
-      createModule('mod-5-1', 'APIs & Webhooks', 'Domine nossas APIs', 'Code', [
-        createLesson('les-5-1-1', 'API Reference', 'Documentação e exemplos', [
-          createChallenge('ch-5-1-1-1', 'Hands-on: Primeira Integração', 'Crie sua primeira integração', 'practical', 100, 45),
-        ]),
-      ]),
-    ],
-  },
-  {
-    id: 'trail-6',
-    title: 'Soft Skills para Pré-vendas',
-    description: 'Comunicação, negociação e habilidades interpessoais essenciais.',
-    icon: 'MessageCircle',
-    color: 'from-pink-500 to-pink-600',
+    id: 'trail-esignature',
+    title: 'eSignature',
+    description: 'Assinatura Eletrônica - Do básico ao avançado em workflows de assinatura digital.',
+    icon: 'PenTool',
+    color: 'from-emerald-500 to-teal-600',
     prerequisites: [],
-    estimatedHours: 6,
-    xpReward: 600,
-    modules: [
-      createModule('mod-6-1', 'Comunicação Executiva', 'Como se comunicar com C-level', 'Mic', [
-        createLesson('les-6-1-1', 'Linguagem Executiva', 'Adapte sua comunicação', [
-          createChallenge('ch-6-1-1-1', 'Role Play: CEO Meeting', 'Simule reunião com CEO', 'practical', 120, 45),
-        ]),
-      ]),
-    ],
+    estimatedHours: 18,
+    xpReward: esignatureSubTracks.reduce((sum, st) => sum + st.xpReward, 0),
+    subTracks: esignatureSubTracks,
   },
 ];
 
-// Calculate progress for trails
-export function calculateTrailProgress(trail: Trail, user: User): number {
-  const totalChallenges = trail.modules.reduce(
+// Calculate progress for sub-tracks
+export function calculateSubTrackProgress(subTrack: SubTrack, user: User): number {
+  const totalChallenges = subTrack.modules.reduce(
     (sum, mod) => sum + mod.lessons.reduce((lSum, les) => lSum + les.challenges.length, 0),
     0
   );
   
-  const completedChallenges = trail.modules.reduce(
+  const completedChallenges = subTrack.modules.reduce(
     (sum, mod) =>
       sum +
       mod.lessons.reduce(
@@ -340,6 +354,33 @@ export function calculateTrailProgress(trail: Trail, user: User): number {
   return totalChallenges > 0 ? Math.round((completedChallenges / totalChallenges) * 100) : 0;
 }
 
+// Calculate progress for trails (aggregates from sub-tracks)
+export function calculateTrailProgress(trail: Trail, user: User): number {
+  const totalChallenges = trail.subTracks.reduce(
+    (sum, st) => sum + st.modules.reduce(
+      (mSum, mod) => mSum + mod.lessons.reduce((lSum, les) => lSum + les.challenges.length, 0),
+      0
+    ),
+    0
+  );
+  
+  const completedChallenges = trail.subTracks.reduce(
+    (sum, st) => sum + st.modules.reduce(
+      (mSum, mod) =>
+        mSum +
+        mod.lessons.reduce(
+          (lSum, les) =>
+            lSum + les.challenges.filter((ch) => user.completedChallenges.includes(ch.id)).length,
+          0
+        ),
+      0
+    ),
+    0
+  );
+  
+  return totalChallenges > 0 ? Math.round((completedChallenges / totalChallenges) * 100) : 0;
+}
+
 // Get recommended challenge for user
 export function getRecommendedChallenge(user: User): Challenge | null {
   for (const trail of trails) {
@@ -347,11 +388,13 @@ export function getRecommendedChallenge(user: User): Challenge | null {
       continue;
     }
     
-    for (const module of trail.modules) {
-      for (const lesson of module.lessons) {
-        for (const challenge of lesson.challenges) {
-          if (!user.completedChallenges.includes(challenge.id)) {
-            return challenge;
+    for (const subTrack of trail.subTracks) {
+      for (const module of subTrack.modules) {
+        for (const lesson of module.lessons) {
+          for (const challenge of lesson.challenges) {
+            if (!user.completedChallenges.includes(challenge.id)) {
+              return challenge;
+            }
           }
         }
       }

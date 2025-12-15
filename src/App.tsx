@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Trails from "./pages/Trails";
 import TrailDetail from "./pages/TrailDetail";
+import SubTrackDetail from "./pages/SubTrackDetail";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/trails" element={<Trails />} />
           <Route path="/trails/:trailId" element={<TrailDetail />} />
+          <Route path="/trails/:trailId/subtrack/:subTrackId" element={<SubTrackDetail />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />

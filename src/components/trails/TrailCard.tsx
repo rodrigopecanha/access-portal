@@ -2,11 +2,11 @@ import { cn } from '@/lib/utils';
 import { Trail } from '@/types/learning';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Clock, Lock, ChevronRight, Zap, Building2, Layers, Briefcase, Presentation, Network, MessageCircle, BookOpen } from 'lucide-react';
+import { Clock, Lock, ChevronRight, Zap, Building2, Layers, Briefcase, Presentation, Network, MessageCircle, BookOpen, Shield, PenTool } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Building2, Layers, Briefcase, Presentation, Network, MessageCircle, BookOpen
+  Building2, Layers, Briefcase, Presentation, Network, MessageCircle, BookOpen, Shield, PenTool
 };
 
 interface TrailCardProps {
