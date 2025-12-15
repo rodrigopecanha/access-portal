@@ -2,12 +2,18 @@ import { useParams, Link } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChallengeCard } from '@/components/trails/ChallengeCard';
-import { trails, currentUser, calculateSubTrackProgress } from '@/data/mockData';
-import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, ChevronDown, ChevronRight } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { trails, currentUser, calculateSubTrackProgress, calculateModuleProgress, isLearningComplete, isAssessmentUnlocked, isBossChallengeUnlocked, isModuleComplete } from '@/data/mockData';
+import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, ChevronDown, ChevronRight, Play, FileText, Presentation, ClipboardCheck, Swords, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+
+const contentTypeIcons = {
+  video: Play,
+  article: FileText,
+  slides: Presentation,
+};
 
 export default function SubTrackDetail() {
   const { trailId, subTrackId } = useParams();
@@ -29,7 +35,6 @@ export default function SubTrackDetail() {
   }
   
   const progress = calculateSubTrackProgress(subTrack, currentUser);
-  const isLocked = trail.prerequisites.some(p => !currentUser.completedTrails.includes(p));
   
   const toggleModule = (moduleId: string) => {
     setOpenModules(prev => 
@@ -39,14 +44,12 @@ export default function SubTrackDetail() {
     );
   };
   
-  const isLessonCompleted = (lessonId: string) => currentUser.completedLessons.includes(lessonId);
-  const isChallengeCompleted = (challengeId: string) => currentUser.completedChallenges.includes(challengeId);
+  const isContentCompleted = (contentId: string) => currentUser.completedChallenges.includes(contentId);
+  const isAssessmentCompleted = (assessmentId: string) => currentUser.completedAssessments?.includes(assessmentId) || false;
+  const isBossCompleted = (bossId: string) => currentUser.completedBossChallenges?.includes(bossId) || false;
 
   const totalDuration = subTrack.modules.reduce(
-    (sum, mod) => sum + mod.lessons.reduce(
-      (lSum, les) => lSum + les.challenges.reduce((cSum, ch) => cSum + ch.duration, 0),
-      0
-    ),
+    (sum, mod) => sum + mod.learningContent.reduce((lSum, lc) => lSum + lc.duration, 0),
     0
   );
 
@@ -111,16 +114,18 @@ export default function SubTrackDetail() {
           
           {subTrack.modules.map((module, moduleIdx) => {
             const isOpen = openModules.includes(module.id);
-            const moduleCompleted = module.lessons.every(l => isLessonCompleted(l.id));
-            const moduleLocked = moduleIdx > 0 && !subTrack.modules.slice(0, moduleIdx).every(m => 
-              m.lessons.every(l => isLessonCompleted(l.id))
-            );
+            const moduleProgress = calculateModuleProgress(module, currentUser);
+            const moduleCompleted = isModuleComplete(module, currentUser);
+            const learningDone = isLearningComplete(module, currentUser);
+            const assessmentUnlocked = isAssessmentUnlocked(module, currentUser);
+            const bossUnlocked = isBossChallengeUnlocked(module, currentUser);
+            const moduleLocked = moduleIdx > 0 && !isModuleComplete(subTrack.modules[moduleIdx - 1], currentUser);
             
             return (
               <Card 
                 key={module.id} 
                 className={cn(
-                  'animate-fade-in transition-all',
+                  'animate-fade-in transition-all overflow-hidden',
                   moduleLocked && 'opacity-60'
                 )}
                 style={{ animationDelay: `${moduleIdx * 0.1}s` }}
@@ -157,7 +162,9 @@ export default function SubTrackDetail() {
                         <div className="flex items-center gap-4">
                           <div className="text-right hidden md:block">
                             <p className="text-sm font-medium text-xp-gold">+{module.xpReward} XP</p>
-                            <p className="text-xs text-muted-foreground">{module.lessons.length} lições</p>
+                            <p className="text-xs text-muted-foreground">
+                              {module.learningContent.length} conteúdos
+                            </p>
                           </div>
                           {isOpen ? (
                             <ChevronDown className="w-5 h-5 text-muted-foreground" />
@@ -170,47 +177,179 @@ export default function SubTrackDetail() {
                   </CollapsibleTrigger>
                   
                   <CollapsibleContent>
-                    <CardContent className="pt-0 space-y-4">
-                      {module.lessons.map((lesson, lessonIdx) => {
-                        const lessonCompleted = isLessonCompleted(lesson.id);
-                        const lessonLocked = lessonIdx > 0 && !module.lessons.slice(0, lessonIdx).every(l => isLessonCompleted(l.id));
+                    <CardContent className="pt-0 space-y-6">
+                      {/* Section 1: Learning Content */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-primary text-xs">1</span>
+                          </div>
+                          <span>Conteúdo de Aprendizado</span>
+                          <span className="text-muted-foreground font-normal">({moduleProgress.learning}%)</span>
+                        </div>
                         
-                        return (
-                          <div key={lesson.id} className="space-y-3">
-                            <div className={cn(
-                              'flex items-center gap-3 p-3 rounded-lg',
-                              lessonCompleted ? 'bg-success/10' : lessonLocked ? 'bg-muted/50' : 'bg-secondary'
-                            )}>
+                        <div className="pl-8 space-y-2">
+                          {module.learningContent.map((content) => {
+                            const ContentIcon = contentTypeIcons[content.type];
+                            const completed = isContentCompleted(content.id);
+                            
+                            return (
+                              <div 
+                                key={content.id}
+                                className={cn(
+                                  'flex items-center gap-3 p-3 rounded-lg transition-colors',
+                                  completed ? 'bg-success/10' : 'bg-secondary hover:bg-secondary/80'
+                                )}
+                              >
+                                <div className={cn(
+                                  'w-8 h-8 rounded-lg flex items-center justify-center',
+                                  completed ? 'bg-success text-success-foreground' : 'bg-primary/10 text-primary'
+                                )}>
+                                  {completed ? <CheckCircle2 className="w-4 h-4" /> : <ContentIcon className="w-4 h-4" />}
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="font-medium text-foreground text-sm">{content.title}</h4>
+                                  <p className="text-xs text-muted-foreground">{content.description}</p>
+                                </div>
+                                <div className="text-right">
+                                  <span className="text-xs font-medium text-xp-gold">+{content.xpReward} XP</span>
+                                  <p className="text-xs text-muted-foreground">{content.duration} min</p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      
+                      {/* Section 2: Assessment */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                          <div className={cn(
+                            'w-6 h-6 rounded-full flex items-center justify-center',
+                            assessmentUnlocked ? 'bg-accent/10' : 'bg-muted'
+                          )}>
+                            <span className={assessmentUnlocked ? 'text-accent text-xs' : 'text-muted-foreground text-xs'}>2</span>
+                          </div>
+                          <span>Avaliação Final</span>
+                          {!assessmentUnlocked && <Lock className="w-3 h-3 text-muted-foreground" />}
+                        </div>
+                        
+                        <div className="pl-8">
+                          <div className={cn(
+                            'p-4 rounded-lg border-2 border-dashed transition-all',
+                            isAssessmentCompleted(module.assessment.id) 
+                              ? 'border-success bg-success/5' 
+                              : assessmentUnlocked 
+                                ? 'border-accent/50 bg-accent/5 hover:border-accent'
+                                : 'border-muted bg-muted/30 opacity-60'
+                          )}>
+                            <div className="flex items-center gap-4">
                               <div className={cn(
-                                'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium',
-                                lessonCompleted 
-                                  ? 'bg-success text-success-foreground' 
-                                  : lessonLocked 
-                                    ? 'bg-muted text-muted-foreground'
-                                    : 'bg-primary text-primary-foreground'
+                                'w-12 h-12 rounded-xl flex items-center justify-center',
+                                isAssessmentCompleted(module.assessment.id)
+                                  ? 'bg-success text-success-foreground'
+                                  : assessmentUnlocked
+                                    ? 'bg-accent text-accent-foreground'
+                                    : 'bg-muted text-muted-foreground'
                               )}>
-                                {lessonCompleted ? <CheckCircle2 className="w-4 h-4" /> : lessonIdx + 1}
+                                {isAssessmentCompleted(module.assessment.id) ? (
+                                  <CheckCircle2 className="w-6 h-6" />
+                                ) : assessmentUnlocked ? (
+                                  <ClipboardCheck className="w-6 h-6" />
+                                ) : (
+                                  <Lock className="w-6 h-6" />
+                                )}
                               </div>
                               <div className="flex-1">
-                                <h4 className="font-medium text-foreground">{lesson.title}</h4>
-                                <p className="text-sm text-muted-foreground">{lesson.description}</p>
+                                <h4 className="font-semibold text-foreground">{module.assessment.title}</h4>
+                                <p className="text-sm text-muted-foreground">{module.assessment.description}</p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {module.assessment.questions.length} questões • Mínimo: {module.assessment.passingScore}%
+                                </p>
                               </div>
-                              <span className="text-sm font-medium text-xp-gold">+{lesson.xpReward} XP</span>
-                            </div>
-                            
-                            <div className="pl-11 space-y-2">
-                              {lesson.challenges.map(challenge => (
-                                <ChallengeCard 
-                                  key={challenge.id}
-                                  challenge={challenge}
-                                  isCompleted={isChallengeCompleted(challenge.id)}
-                                  isLocked={lessonLocked}
-                                />
-                              ))}
+                              <div className="text-right">
+                                <span className="text-sm font-medium text-xp-gold">+{module.assessment.xpReward} XP</span>
+                                {isAssessmentCompleted(module.assessment.id) && currentUser.assessmentScores?.[module.assessment.id] && (
+                                  <p className="text-xs text-success">Score: {currentUser.assessmentScores[module.assessment.id]}%</p>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        );
-                      })}
+                        </div>
+                      </div>
+                      
+                      {/* Section 3: Boss Challenge */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                          <div className={cn(
+                            'w-6 h-6 rounded-full flex items-center justify-center',
+                            bossUnlocked ? 'bg-destructive/10' : 'bg-muted'
+                          )}>
+                            <span className={bossUnlocked ? 'text-destructive text-xs' : 'text-muted-foreground text-xs'}>3</span>
+                          </div>
+                          <span>Boss Challenge</span>
+                          <Swords className={cn('w-4 h-4', bossUnlocked ? 'text-destructive' : 'text-muted-foreground')} />
+                          {!bossUnlocked && <Lock className="w-3 h-3 text-muted-foreground" />}
+                        </div>
+                        
+                        <div className="pl-8">
+                          <div className={cn(
+                            'p-4 rounded-lg border-2 transition-all',
+                            isBossCompleted(module.bossChallenge.id)
+                              ? 'border-success bg-success/5'
+                              : bossUnlocked
+                                ? 'border-destructive/50 bg-gradient-to-br from-destructive/5 to-destructive/10 hover:border-destructive'
+                                : 'border-muted bg-muted/30 opacity-60'
+                          )}>
+                            <div className="flex items-start gap-4">
+                              <div className={cn(
+                                'w-14 h-14 rounded-xl flex items-center justify-center shrink-0',
+                                isBossCompleted(module.bossChallenge.id)
+                                  ? 'bg-success text-success-foreground'
+                                  : bossUnlocked
+                                    ? 'bg-gradient-to-br from-destructive to-destructive/80 text-destructive-foreground shadow-lg'
+                                    : 'bg-muted text-muted-foreground'
+                              )}>
+                                {isBossCompleted(module.bossChallenge.id) ? (
+                                  <CheckCircle2 className="w-7 h-7" />
+                                ) : bossUnlocked ? (
+                                  <Swords className="w-7 h-7" />
+                                ) : (
+                                  <Lock className="w-7 h-7" />
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-bold text-foreground text-lg">{module.bossChallenge.title}</h4>
+                                <p className="text-sm text-muted-foreground mb-3">{module.bossChallenge.description}</p>
+                                
+                                {bossUnlocked && !isBossCompleted(module.bossChallenge.id) && (
+                                  <div className="space-y-3">
+                                    <div className="p-3 bg-background/80 rounded-lg text-sm">
+                                      <h5 className="font-medium text-foreground mb-2">Instruções:</h5>
+                                      <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-line">
+                                        {module.bossChallenge.instructions}
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                      <Upload className="w-4 h-4" />
+                                      <span>Formatos aceitos: {module.bossChallenge.acceptedFormats.map(f => f.toUpperCase()).join(', ')}</span>
+                                    </div>
+                                    
+                                    <Button className="w-full" variant="destructive">
+                                      <Upload className="w-4 h-4 mr-2" />
+                                      Enviar Submissão
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-right shrink-0">
+                                <span className="text-sm font-bold text-xp-gold">+{module.bossChallenge.xpReward} XP</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </CardContent>
                   </CollapsibleContent>
                 </Collapsible>

@@ -337,8 +337,14 @@ export const trails: Trail[] = [
   },
 ];
 
-// Progress calculation helpers
-export function calculateModuleProgress(module: Module, user: typeof currentUser): { learning: number; assessment: boolean; boss: boolean } {
+// Progress calculation helpers - use User type with optional extended properties
+type ExtendedUser = User & { 
+  completedAssessments?: string[]; 
+  completedBossChallenges?: string[];
+  assessmentScores?: Record<string, number>;
+};
+
+export function calculateModuleProgress(module: Module, user: ExtendedUser): { learning: number; assessment: boolean; boss: boolean } {
   const learningCompleted = module.learningContent.filter(lc => user.completedChallenges.includes(lc.id)).length;
   const learningTotal = module.learningContent.length;
   
@@ -349,29 +355,29 @@ export function calculateModuleProgress(module: Module, user: typeof currentUser
   };
 }
 
-export function isLearningComplete(module: Module, user: typeof currentUser): boolean {
+export function isLearningComplete(module: Module, user: ExtendedUser): boolean {
   return module.learningContent.every(lc => user.completedChallenges.includes(lc.id));
 }
 
-export function isAssessmentUnlocked(module: Module, user: typeof currentUser): boolean {
+export function isAssessmentUnlocked(module: Module, user: ExtendedUser): boolean {
   return isLearningComplete(module, user);
 }
 
-export function isBossChallengeUnlocked(module: Module, user: typeof currentUser): boolean {
+export function isBossChallengeUnlocked(module: Module, user: ExtendedUser): boolean {
   return user.completedAssessments?.includes(module.assessment.id) || false;
 }
 
-export function isModuleComplete(module: Module, user: typeof currentUser): boolean {
+export function isModuleComplete(module: Module, user: ExtendedUser): boolean {
   return user.completedBossChallenges?.includes(module.bossChallenge.id) || false;
 }
 
-export function calculateSubTrackProgress(subTrack: SubTrack, user: typeof currentUser): number {
+export function calculateSubTrackProgress(subTrack: SubTrack, user: ExtendedUser): number {
   const totalModules = subTrack.modules.length;
   const completedModules = subTrack.modules.filter(mod => isModuleComplete(mod, user)).length;
   return totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0;
 }
 
-export function calculateTrailProgress(trail: Trail, user: typeof currentUser): number {
+export function calculateTrailProgress(trail: Trail, user: ExtendedUser): number {
   const totalModules = trail.subTracks.reduce((sum, st) => sum + st.modules.length, 0);
   const completedModules = trail.subTracks.reduce(
     (sum, st) => sum + st.modules.filter(mod => isModuleComplete(mod, user)).length,
@@ -380,7 +386,7 @@ export function calculateTrailProgress(trail: Trail, user: typeof currentUser): 
   return totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0;
 }
 
-export function getRecommendedChallenge(user: typeof currentUser): LearningContent | null {
+export function getRecommendedChallenge(user: ExtendedUser): LearningContent | null {
   for (const trail of trails) {
     for (const subTrack of trail.subTracks) {
       for (const module of subTrack.modules) {
@@ -399,7 +405,10 @@ export function getTotalXpAvailable(): number {
   return trails.reduce((sum, trail) => sum + trail.xpReward, 0);
 }
 
-export function getOverallProgress(user: typeof currentUser): number {
+export function getOverallProgress(user: ExtendedUser): number {
   const totalXp = getTotalXpAvailable();
   return totalXp > 0 ? Math.round((user.xp / totalXp) * 100) : 0;
 }
+
+// Export the ExtendedUser type for use in other files
+export type { ExtendedUser };
