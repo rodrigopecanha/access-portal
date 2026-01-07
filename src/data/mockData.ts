@@ -1,4 +1,4 @@
-import { User, Trail, Badge, SubTrack, LearningContent, Assessment, BossChallenge, QuizQuestion, Module } from '@/types/learning';
+import { User, Trail, Badge, SubTrack, LearningContent, Assessment, BossChallenge, QuizQuestion, Module, PracticalChallenge, OptionalLearning, ChallengeMedal } from '@/types/learning';
 
 // Current user mock - includes completed assessments and boss challenges
 export const currentUser: User & { 
@@ -140,6 +140,44 @@ const createModule = (id: string, title: string, description: string, icon: stri
   xpReward: learningContent.reduce((sum, l) => sum + l.xpReward, 0) + assessment.xpReward + bossChallenge.xpReward,
 });
 
+const createChallengeBasedModule = (
+  id: string, 
+  title: string, 
+  description: string, 
+  icon: string, 
+  optionalLearning: OptionalLearning[], 
+  practicalChallenges: PracticalChallenge[]
+): Module => ({
+  id, title, description, icon,
+  learningContent: [],
+  assessment: { id: '', title: '', description: '', questions: [], passingScore: 0, xpReward: 0 },
+  bossChallenge: { id: '', title: '', description: '', instructions: '', acceptedFormats: [], xpReward: 0 },
+  isChallengeBased: true,
+  optionalLearning,
+  practicalChallenges,
+  xpReward: optionalLearning.reduce((sum, l) => sum + l.xpReward, 0) + practicalChallenges.reduce((sum, c) => sum + c.xpReward, 0),
+});
+
+const createPracticalChallenge = (
+  id: string, 
+  title: string, 
+  description: string, 
+  instructions: string, 
+  medals: ChallengeMedal[], 
+  xpReward: number, 
+  isFinal = false
+): PracticalChallenge => ({
+  id, title, description, instructions, medals, acceptedFormats: ['json'], xpReward, isFinalChallenge: isFinal,
+});
+
+const createMedal = (id: string, icon: string, name: string, description?: string): ChallengeMedal => ({
+  id, icon, name, description,
+});
+
+const createOptionalLearning = (id: string, title: string, description: string, type: OptionalLearning['type'], duration: number, xpReward: number): OptionalLearning => ({
+  id, title, description, type, duration, xpReward,
+});
+
 const createSubTrack = (id: string, title: string, description: string, icon: string, modules: Module[]): SubTrack => ({
   id, title, description, icon, modules, xpReward: modules.reduce((sum, m) => sum + m.xpReward, 0),
 });
@@ -232,28 +270,61 @@ const iamSubTracks: SubTrack[] = [
   ]),
 ];
 
-// eSignature Trail with new structure
+// eSignature Trail with new structure - Features Básicas is now challenge-based
+const esigBasicChallenges: PracticalChallenge[] = [
+  createPracticalChallenge(
+    'prac-esig-1',
+    'Crie um envelope entregue em múltiplos canais, com camadas de segurança e campos de interação',
+    'Configure um envelope completo com entrega multicanal, autenticação reforçada e campos interativos para os signatários.',
+    '## 🎯 Objetivo\nCrie um envelope que demonstre domínio de:\n- Entrega multicanal (email + SMS)\n- Autenticação do signatário\n- Campos de interação\n\n## 📋 Requisitos\n\n### 1. Configuração de Entrega\n- Configure notificação por email E SMS\n- Defina lembretes automáticos\n\n### 2. Segurança\n- Adicione pelo menos 2 camadas de autenticação\n- Configure verificação de identidade\n\n### 3. Campos Interativos\n- Inclua campos de texto editáveis\n- Adicione checkboxes ou radio buttons\n- Configure campos obrigatórios\n\n## 📁 Entrega\nExporte o template do envelope em formato JSON.',
+    [
+      createMedal('medal-1', '🎖️', 'Código de Acesso', 'Usou código de acesso para autenticação'),
+      createMedal('medal-2', '🎖️', 'Liveness', 'Implementou verificação de liveness'),
+    ],
+    150
+  ),
+  createPracticalChallenge(
+    'prac-esig-2',
+    'Prepare um envelope que valide a formatação dos dados do primeiro signatário',
+    'Crie um template com validações de formato para garantir que os dados inseridos pelo signatário estejam corretos.',
+    '## 🎯 Objetivo\nConfigure validações de campo para garantir integridade dos dados.\n\n## 📋 Requisitos de Validação\n\n### Campos Obrigatórios\n1. **CPF** - Validação de formato XXX.XXX.XXX-XX\n2. **CNPJ** - Validação de formato XX.XXX.XXX/XXXX-XX\n3. **Data de nascimento** - Formato DD/MM/AAAA\n4. **Um campo adicional** de sua escolha com validação customizada\n\n## 💡 Dicas\n- Use expressões regulares (regex) para validações\n- Configure mensagens de erro claras\n- Teste as validações antes de exportar\n\n## 📁 Entrega\nExporte o template com as validações configuradas em formato JSON.',
+    [
+      createMedal('medal-3', '🎖️', 'Regex correto', 'Implementou regex personalizado funcionando'),
+    ],
+    200
+  ),
+  createPracticalChallenge(
+    'prac-esig-final',
+    'DESAFIO FINAL: Construa um modelo baseado no documento em anexo (use case de RH), onde o salário deverá mudar de acordo com o cargo',
+    'Este é o desafio final do módulo. Demonstre domínio completo criando um template de RH com campos condicionais e dinâmicos.',
+    '## 🏆 DESAFIO FINAL\n\n### Contexto\nVocê foi solicitado a criar um template de contrato de trabalho para o departamento de RH. O template deve ser inteligente o suficiente para adaptar o salário automaticamente baseado no cargo selecionado.\n\n## 📋 Requisitos\n\n### 1. Campos do Colaborador\n- Nome completo\n- CPF com validação\n- Data de admissão\n- Departamento\n\n### 2. Campo de Cargo (Obrigatório)\nCrie um campo dropdown com os seguintes cargos:\n- Analista Jr - R$ 4.000\n- Analista Pleno - R$ 6.500\n- Analista Sr - R$ 9.000\n- Coordenador - R$ 12.000\n- Gerente - R$ 18.000\n\n### 3. Campo de Salário Condicional\n- O valor do salário deve mudar automaticamente baseado no cargo selecionado\n- Use lógica condicional para mostrar/ocultar benefícios específicos por nível\n\n### 4. Campos Adicionais (para medalhas)\n- Campo de anexo para documentos do colaborador\n- Campo de desenho para rubrica/iniciais\n- Campos de aprovação para RH e Gestor\n\n## 📁 Formato de Entrega\nEnvie um arquivo JSON contendo:\n- Template completo do contrato\n- Configurações de campos condicionais\n- Documentação das regras aplicadas\n\n## ✅ Critérios de Avaliação\n- Funcionamento correto da lógica condicional\n- Usabilidade do template\n- Qualidade da documentação',
+    [
+      createMedal('medal-4', '🎖️', 'Campo Anexo', 'Incluiu campo para upload de documentos'),
+      createMedal('medal-5', '🎖️', 'Campo Draw', 'Implementou campo de desenho/rubrica'),
+      createMedal('medal-6', '🎖️', 'Campo Radio Button', 'Usou radio buttons corretamente'),
+      createMedal('medal-7', '🎖️', 'Campo Condicional', 'Implementou lógica condicional funcionando'),
+      createMedal('medal-8', '🎖️', 'Campo Aprovar', 'Incluiu fluxo de aprovação'),
+    ],
+    350,
+    true // isFinalChallenge
+  ),
+];
+
+const esigBasicOptionalLearning: OptionalLearning[] = [
+  createOptionalLearning('opt-esig-1', 'Visão Geral das Features', 'Conheça as principais funcionalidades do eSignature', 'video', 15, 20),
+  createOptionalLearning('opt-esig-2', 'Campos e Validações', 'Como funcionam os campos e validações', 'video', 12, 15),
+  createOptionalLearning('opt-esig-3', 'Lógica Condicional', 'Introdução a campos condicionais', 'video', 18, 25),
+];
+
 const esignatureSubTracks: SubTrack[] = [
-  createSubTrack('subtrack-esig-basic', 'Features Básicas', 'Funcionalidades essenciais de assinatura', 'PenTool', [
-    createModule('mod-esig-basic-1', 'Assinatura Simples', 'Fluxo básico de assinatura eletrônica', 'Edit3',
-      [
-        createLearningContent('lc-esig-basic-1', 'Quick Start eSignature', 'Início rápido com eSignature', 'video', 12, 30),
-        createLearningContent('lc-esig-basic-2', 'Enviando seu Primeiro Documento', 'Passo a passo do envio', 'article', 15, 25),
-        createLearningContent('lc-esig-basic-3', 'Interface do Editor', 'Conhecendo o editor de documentos', 'video', 18, 35),
-      ],
-      createAssessment('assess-esig-basic-1', 'Exame Final: Features Básicas', 'Teste seus conhecimentos sobre eSignature com 20 questões', esigBasicQuestions, 250),
-      createBossChallenge('boss-esig-basic-1', 'Crie um envio em massa utilizando DocGen', 'Demonstre domínio do DocGen criando um envio em massa completo',
-        '## 🎯 Objetivo\nCrie um envio em massa utilizando o DocGen para demonstrar domínio das funcionalidades básicas do eSignature.\n\n## 📋 Requisitos\n\n### 1. Preparação do Template\n- Crie um template de contrato com pelo menos 3 campos dinâmicos\n- Inclua campos de assinatura, data e texto\n- Configure as tags de merge corretamente\n\n### 2. Dados para Envio em Massa\n- Prepare um arquivo CSV com no mínimo 10 destinatários\n- Inclua dados variáveis que serão mesclados no template\n- Valide o formato dos dados\n\n### 3. Configuração do Envio\n- Configure as opções de notificação\n- Defina a ordem de assinatura (se aplicável)\n- Configure expiração e lembretes\n\n### 4. Execução e Documentação\n- Execute o envio em massa\n- Documente os passos realizados\n- Capture evidências do processo\n\n## 📁 Formato de Entrega\nEnvie um arquivo ZIP contendo:\n- Template utilizado (JSON ou PDF)\n- Arquivo CSV com os dados\n- Screenshots ou relatório do envio\n- README com explicação do processo\n\n## ✅ Critérios de Avaliação\n- Correta configuração do template\n- Qualidade dos dados preparados\n- Uso adequado das funcionalidades do DocGen\n- Documentação clara do processo', 300)
-    ),
-    createModule('mod-esig-basic-2', 'Templates', 'Criação e uso de templates', 'FileCode',
-      [
-        createLearningContent('lc-esig-basic-4', 'Power of Templates', 'Por que usar templates', 'video', 18, 40),
-        createLearningContent('lc-esig-basic-5', 'Template Design Best Practices', 'Melhores práticas de design', 'article', 20, 35),
-        createLearningContent('lc-esig-basic-6', 'Advanced Template Features', 'Recursos avançados', 'slides', 15, 30),
-      ],
-      createAssessment('assess-esig-basic-2', 'Exame: Templates', 'Teste sobre criação de templates', genericQuestions('q-template'), 100),
-      createBossChallenge('boss-esig-basic-2', 'Template Library', 'Crie uma biblioteca de templates profissionais',
-        '## Objetivo\nCrie 3 templates profissionais reutilizáveis.\n\n## Requisitos\n1. Template de contrato de trabalho\n2. Template de NDA\n3. Template de proposta comercial\n\n## Entrega\nEnvie os templates em formato JSON ou ZIP.', 180)
+  createSubTrack('subtrack-esig-basic', 'Features Básicas', 'Domine as funcionalidades essenciais através de desafios práticos', 'PenTool', [
+    createChallengeBasedModule(
+      'mod-esig-basic-challenges',
+      'Desafios Práticos de eSignature',
+      'Complete os desafios para demonstrar domínio das features básicas. Submeta templates JSON para cada desafio.',
+      'Target',
+      esigBasicOptionalLearning,
+      esigBasicChallenges
     ),
   ]),
   createSubTrack('subtrack-esig-advanced-wf', 'Advanced Workflows', 'Fluxos avançados de assinatura', 'GitBranch', [

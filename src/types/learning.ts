@@ -85,6 +85,39 @@ export interface BossChallenge {
   isLocked?: boolean;
 }
 
+// New: Practical Challenge for challenge-based modules
+export interface PracticalChallenge {
+  id: string;
+  title: string;
+  description: string;
+  instructions?: string;
+  medals: ChallengeMedal[];
+  acceptedFormats: string[];
+  xpReward: number;
+  isFinalChallenge?: boolean;
+  isCompleted?: boolean;
+  isLocked?: boolean;
+}
+
+export interface ChallengeMedal {
+  id: string;
+  icon: string;
+  name: string;
+  description?: string;
+  isEarned?: boolean;
+}
+
+// Optional video section for challenge-based modules
+export interface OptionalLearning {
+  id: string;
+  title: string;
+  description: string;
+  type: 'video' | 'article' | 'slides';
+  duration: number;
+  xpReward: number;
+  videoUrl?: string;
+}
+
 export interface Lesson {
   id: string;
   title: string;
@@ -107,6 +140,10 @@ export interface Module {
   xpReward: number;
   isCompleted?: boolean;
   isLocked?: boolean;
+  // New: challenge-based module structure
+  isChallengeBased?: boolean;
+  optionalLearning?: OptionalLearning[];
+  practicalChallenges?: PracticalChallenge[];
 }
 
 export interface SubTrack {
