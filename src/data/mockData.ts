@@ -165,9 +165,10 @@ const createPracticalChallenge = (
   instructions: string, 
   medals: ChallengeMedal[], 
   xpReward: number, 
-  isFinal = false
+  isFinal = false,
+  isSubmitted = false
 ): PracticalChallenge => ({
-  id, title, description, instructions, medals, acceptedFormats: ['json'], xpReward, isFinalChallenge: isFinal,
+  id, title, description, instructions, medals, acceptedFormats: ['json'], xpReward, isFinalChallenge: isFinal, isSubmitted,
 });
 
 const createMedal = (id: string, icon: string, name: string, description?: string): ChallengeMedal => ({
@@ -281,7 +282,9 @@ const esigBasicChallenges: PracticalChallenge[] = [
       createMedal('medal-1', '🎖️', 'Código de Acesso', 'Usou código de acesso para autenticação'),
       createMedal('medal-2', '🎖️', 'Liveness', 'Implementou verificação de liveness'),
     ],
-    150
+    150,
+    false,
+    true // isSubmitted - unlocks second challenge
   ),
   createPracticalChallenge(
     'prac-esig-2',
