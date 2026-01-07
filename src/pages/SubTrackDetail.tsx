@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { trails, currentUser, calculateSubTrackProgress, calculateModuleProgress, isLearningComplete, isAssessmentUnlocked, isBossChallengeUnlocked, isModuleComplete } from '@/data/mockData';
-import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, ChevronDown, ChevronRight, Play, FileText, Presentation, ClipboardCheck, Swords, Upload } from 'lucide-react';
+import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, ChevronDown, ChevronRight, Play, FileText, Presentation, ClipboardCheck, Swords, Upload, Target, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -121,6 +121,74 @@ export default function SubTrackDetail() {
             const bossUnlocked = isBossChallengeUnlocked(module, currentUser);
             const moduleLocked = moduleIdx > 0 && !isModuleComplete(subTrack.modules[moduleIdx - 1], currentUser);
             
+            // Handle challenge-based modules differently
+            if (module.isChallengeBased) {
+              const completedChallenges = module.practicalChallenges?.filter(
+                c => currentUser.completedChallenges.includes(c.id)
+              ).length || 0;
+              const totalChallenges = module.practicalChallenges?.length || 0;
+              const challengeProgress = totalChallenges > 0 ? Math.round((completedChallenges / totalChallenges) * 100) : 0;
+              
+              return (
+                <Link 
+                  key={module.id}
+                  to={`/trails/${trailId}/subtrack/${subTrackId}/module/${module.id}`}
+                  className="block"
+                >
+                  <Card 
+                    className={cn(
+                      'animate-fade-in transition-all overflow-hidden cursor-pointer hover:shadow-md hover:border-primary/30',
+                      moduleLocked && 'opacity-60 pointer-events-none'
+                    )}
+                    style={{ animationDelay: `${moduleIdx * 0.1}s` }}
+                  >
+                    <CardContent className="p-5">
+                      <div className="flex items-center gap-4">
+                        <div className={cn(
+                          'w-12 h-12 rounded-xl flex items-center justify-center shrink-0',
+                          challengeProgress === 100 
+                            ? 'bg-success text-success-foreground' 
+                            : moduleLocked 
+                              ? 'bg-muted text-muted-foreground'
+                              : 'bg-gradient-to-br from-primary to-primary/80 text-primary-foreground'
+                        )}>
+                          {challengeProgress === 100 ? (
+                            <CheckCircle2 className="w-6 h-6" />
+                          ) : moduleLocked ? (
+                            <Lock className="w-6 h-6" />
+                          ) : (
+                            <Target className="w-6 h-6" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                              DESAFIOS PRÁTICOS
+                            </span>
+                          </div>
+                          <CardTitle className="text-base mb-1">{module.title}</CardTitle>
+                          <p className="text-sm text-muted-foreground">{module.description}</p>
+                          <div className="flex items-center gap-4 mt-3 text-sm">
+                            <span className="text-muted-foreground">
+                              {completedChallenges}/{totalChallenges} desafios
+                            </span>
+                            <div className="flex-1 max-w-32">
+                              <Progress value={challengeProgress} className="h-2" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2 shrink-0">
+                          <p className="text-sm font-bold text-xp-gold">+{module.xpReward} XP</p>
+                          <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            }
+            
+            // Regular modules with learning content, assessment, and boss challenge
             return (
               <Card 
                 key={module.id} 
