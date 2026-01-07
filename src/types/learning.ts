@@ -95,6 +95,7 @@ export interface PracticalChallenge {
   acceptedFormats: string[];
   xpReward: number;
   isFinalChallenge?: boolean;
+  isSubmitted?: boolean;
   isCompleted?: boolean;
   isLocked?: boolean;
 }
