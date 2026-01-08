@@ -517,7 +517,14 @@ const iamSubTracks: SubTrack[] = [
       "Criação e gerenciamento de usuários",
       "Users",
       [
-        createLearningContent("lc-iam-nav-4", "CRUD de Usuários", "Operações básicas com usuários", "video", 25, 50),
+        createLearningContent(
+          "lc-iam-nav-4",
+          "Gerenciamento de Usuários",
+          "Operações básicas com usuários",
+          "video",
+          25,
+          50,
+        ),
         createLearningContent(
           "lc-iam-nav-5",
           "Bulk Import Guide",
