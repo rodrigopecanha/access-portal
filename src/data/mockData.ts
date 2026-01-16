@@ -678,7 +678,7 @@ const esigBasicChallenges: PracticalChallenge[] = [
     "prac-esig-1",
     "Crie um envelope entregue em múltiplos canais, com camadas de segurança e campos de interação",
     "Configure um envelope completo com entrega multicanal, autenticação reforçada e campos interativos para os signatários.",
-    "## 🎯 Objetivo\nCrie um envelope que demonstre domínio de:\n- Entrega multicanal (email + SMS)\n- Autenticação do signatário\n- Campos de interação\n\n## 📋 Requisitos\n\n### 1. Configuração de Entrega\n- Configure notificação por email E SMS\n- Defina lembretes automáticos\n\n### 2. Segurança\n- Adicione pelo menos 2 camadas de autenticação\n- Configure verificação de identidade\n\n### 3. Campos Interativos\n- Inclua campos de texto editáveis\n- Adicione checkboxes ou radio buttons\n- Configure campos obrigatórios\n\n## 📁 Entrega\nExporte o template do envelope em formato JSON.",
+    "## 🎯 Objetivo\nCrie um envelope que demonstre domínio de:\n- Entrega multicanal (Email + Whatsapp ou SMS)\n- Autenticação do signatário\n- Campos de interação\n\n## 📋 Requisitos\n\n### 1. Configuração de Entrega\n- Configure notificação por email E SMS\n- Defina lembretes automáticos\n\n### 2. Segurança\n- Adicione pelo menos 2 camadas de autenticação\n- Configure verificação de identidade\n\n### 3. Campos Interativos\n- Inclua campos de texto editáveis\n- Adicione checkboxes ou radio buttons\n- Configure campos obrigatórios\n\n## 📁 Entrega\nExporte o template do envelope em formato JSON.",
     [
       createMedal("medal-1", "🎖️", "Código de Acesso", "Usou código de acesso para autenticação"),
       createMedal("medal-2", "🎖️", "Liveness", "Implementou verificação de liveness"),
