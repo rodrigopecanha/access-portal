@@ -696,6 +696,17 @@ const esigBasicChallenges: PracticalChallenge[] = [
     200,
   ),
   createPracticalChallenge(
+    "prac-esig-3",
+    "Construa um Modelo populado por Webform",
+    "Crie um modelo e faça com que ele seja populado através de um formulário. Após, envie um envelope para um segundo destinatário validar os dados e assinar.",
+    "## 🎯 Objetivo\nModelo precisa conter pelo menos:\n- Nome e email do destinatário\n- Mostrar no 'Assunto' do envelope o nome do primeiro destinatário\n- Utilizar mais de uma página para simplificar a experiência do destinatário\n\n## 📋 Requisitos\n\n### 1. Dados do Destinatário\n- O modelo precisa conter pelo menos nome e email do destinatário\n\n### 2. Webform\n- Webform deve popular os dados do primeiro destinatário\n- Configure no mínimo 2 destinatários no fluxo\n\n### 3. Assunto Dinâmico\n- O 'Assunto' do envelope deve conter o nome do primeiro signatário (preenchedor do Webform)\n\n## 📁 Entrega\nExporte o template e o webform em formato JSON.",
+    [
+      createMedal("medal-webform-1", "🎖️", "Webform Configurado", "Configurou o webform corretamente para popular o modelo"),
+      createMedal("medal-webform-2", "🎖️", "Assunto Dinâmico", "O assunto do envelope mostra o nome do primeiro destinatário"),
+    ],
+    175,
+  ),
+  createPracticalChallenge(
     "prac-esig-final",
     "DESAFIO FINAL: Construa um modelo baseado no documento em anexo (use case de RH), onde o salário deverá mudar de acordo com o cargo",
     "Este é o desafio final do módulo. Demonstre domínio completo criando um template de RH com campos condicionais e dinâmicos.",
