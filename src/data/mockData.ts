@@ -676,7 +676,7 @@ const iamSubTracks: SubTrack[] = [
 const esigBasicChallenges: PracticalChallenge[] = [
   createPracticalChallenge(
     "prac-esig-1",
-    "Crie um envelope entregue em múltiplos canais, com camadas de segurança e campos de interação",
+    "Crie um Modelo de envelope com multicanais e validação de identidade",
     "Configure um envelope completo com entrega multicanal, autenticação reforçada e campos interativos para os signatários.",
     "## 🎯 Objetivo\nModelo de Envelope com:\n- Entrega multicanal (Email + Whatsapp ou SMS)\n- Autenticação do signatário\n- Campos de interação\n\n## 📋 Requisitos\n\n### 1. Configuração de Entrega\n- Configure entrega por Email + SMS ou Whatsapp\n- Defina lembretes automáticos\n\n### 2. Segurança\n- Adicione pelo menos 2 camadas de autenticação\n- Configure verificação de identidade\n\n### 3. Campos Interativos\n- Inclua campos de texto editáveis\n- Adicione checkboxes ou radio buttons\n- Configure campos obrigatórios\n\n## 📁 Entrega\nExporte o template do envelope em formato JSON.",
     [
