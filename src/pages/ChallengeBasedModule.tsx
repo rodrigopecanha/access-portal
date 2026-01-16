@@ -47,18 +47,8 @@ export default function ChallengeBasedModule() {
     setCompletedChallenges(prev => [...prev, challengeId]);
   };
 
-  // Challenges 1 and 2 are available in parallel
-  // Final challenge (isFinalChallenge) unlocks only after all non-final challenges are completed
-  const isChallengeUnlocked = (index: number): boolean => {
-    const challenge = practicalChallenges[index];
-    
-    // If it's the final challenge, check that ALL non-final challenges are completed
-    if (challenge.isFinalChallenge) {
-      const nonFinalChallenges = practicalChallenges.filter(c => !c.isFinalChallenge);
-      return nonFinalChallenges.every(c => completedChallenges.includes(c.id));
-    }
-    
-    // Non-final challenges are always unlocked (parallel access)
+  // All challenges are unlocked (including the final challenge)
+  const isChallengeUnlocked = (_index: number): boolean => {
     return true;
   };
 
