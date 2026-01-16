@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { PracticalChallenge } from '@/types/learning';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, CheckCircle2, Lock, Upload, Trophy, Swords, ChevronDown, ChevronUp, Sparkles, Award } from 'lucide-react';
+import { Zap, CheckCircle2, Lock, Upload, Trophy, Swords, ChevronDown, ChevronUp, Sparkles, Award, BookOpen } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { InstructionSection } from './InstructionSection';
 
 interface PracticalChallengeCardProps {
   challenge: PracticalChallenge;
@@ -203,11 +204,12 @@ export function PracticalChallengeCard({
               
               {/* Instructions */}
               {challenge.instructions && (
-                <div className="bg-secondary/50 rounded-lg p-4">
-                  <h4 className="font-medium text-foreground mb-2">Instruções</h4>
-                  <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-line">
-                    {challenge.instructions}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-foreground">
+                    <BookOpen className="w-5 h-5" />
+                    <h4 className="font-semibold text-base">Instruções</h4>
                   </div>
+                  <InstructionSection instructions={challenge.instructions} />
                 </div>
               )}
 
