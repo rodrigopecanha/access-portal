@@ -689,7 +689,7 @@ const esigBasicChallenges: PracticalChallenge[] = [
   ),
   createPracticalChallenge(
     "prac-esig-2",
-    "Prepare um envelope que valide a formatação dos dados do primeiro signatário",
+    "Prepare um Modelo que valide a formatação dos dados do signatário",
     "Crie um template com validações de formato para garantir que os dados inseridos pelo signatário estejam corretos.",
     "## 🎯 Objetivo\nConfigure validações de campo para garantir integridade dos dados.\n\n## 📋 Requisitos de Validação\n\n### Campos Obrigatórios\n1. **CPF** - Validação de formato XXX.XXX.XXX-XX\n2. **CNPJ** - Validação de formato XX.XXX.XXX/XXXX-XX\n3. **Data de nascimento** - Formato DD/MM/AAAA\n4. **Um campo adicional** de sua escolha com validação customizada\n\n## 💡 Dicas\n- Use expressões regulares (regex) para validações\n- Configure mensagens de erro claras\n- Teste as validações antes de exportar\n\n## 📁 Entrega\nExporte o template com as validações configuradas em formato JSON.",
     [createMedal("medal-3", "🎖️", "Regex correto", "Implementou regex personalizado funcionando")],
