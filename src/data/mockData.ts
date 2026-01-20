@@ -780,36 +780,43 @@ const esignatureSubTracks: SubTrack[] = [
     ),
   ]),
   createSubTrack("subtrack-esig-advanced-feat", "Features Avançadas", "Recursos avançados da plataforma", "Sparkles", [
-    createModule(
-      "mod-esig-adv-feat-1",
-      "Campos Inteligentes",
-      "Campos dinâmicos e condicionais",
-      "FormInput",
+    createChallengeBasedModule(
+      "mod-esig-adv-feat-challenges",
+      "Desafios Práticos Avançados",
+      "Complete os desafios para demonstrar domínio das features avançadas do eSignature.",
+      "Sparkles",
       [
-        createLearningContent("lc-esig-feat-1", "Dynamic Fields", "Campos que se adaptam", "video", 22, 50),
-        createLearningContent(
-          "lc-esig-feat-2",
-          "Conditional Logic",
-          "Lógica condicional em formulários",
-          "article",
-          30,
-          45,
+        createOptionalLearning(
+          "opt-esig-adv-1",
+          "Bulk Send Overview",
+          "Entenda como funciona o envio em massa",
+          "video",
+          12,
+          20,
+        ),
+        createOptionalLearning(
+          "opt-esig-adv-2",
+          "DocGen for eSign",
+          "Introdução ao DocGen para eSignature",
+          "video",
+          15,
+          25,
         ),
       ],
-      createAssessment(
-        "assess-esig-feat-1",
-        "Exame: Smart Fields",
-        "Teste sobre campos inteligentes",
-        genericQuestions("q-feat"),
-        100,
-      ),
-      createBossChallenge(
-        "boss-esig-feat-1",
-        "Smart Form",
-        "Crie um formulário inteligente completo",
-        "## Objetivo\nDesenvolva um formulário com campos dinâmicos e lógica condicional.\n\n## Requisitos\n1. Campos que aparecem/desaparecem\n2. Validações customizadas\n3. Cálculos automáticos\n\n## Entrega\nExporte o formulário em formato JSON.",
-        220,
-      ),
+      [
+        createPracticalChallenge(
+          "prac-esig-adv-1",
+          "Bulk Send",
+          "Gere um modelo preparado para Envio em Massa (Bulk Send) com pelo menos 3 campos variáveis além de Nome e Email.",
+          "## 🎯 Objetivo\n- Envio em Massa configurado\n- CSV gerado e populado\n- **Bônus:** Configurar o DocGen for eSign\n\n## 📋 Requisitos\n\n### 1. Campos Variáveis\n- Ao menos 3 campos variáveis precisam ser populados\n- Popule Nome e Email de cada destinatário\n- Mostre no 'Assunto' do envelope o nome de cada destinatário\n\n### 2. CSV\n- Popule o CSV corretamente enviando para ao menos 3 destinatários\n- Ao final, anexe o CSV populado\n\n### 3. 🌟 BÔNUS – DocGen for eSign\n- Ao invés de utilizar tags de texto do eSignature, popule o documento utilizando DocGen for eSign\n\n## 📁 Entrega\n- Anexar o JSON do Template\n- Anexar o CSV devidamente populado",
+          [
+            createMedal("medal-bulk-1", "🎖️", "Bulk Configurado", "Configurou o Bulk Send com campos variáveis"),
+            createMedal("medal-bulk-2", "🎖️", "CSV Válido", "CSV populado corretamente com 3+ destinatários"),
+            createMedal("medal-bulk-bonus", "⭐", "DocGen Master", "Utilizou DocGen for eSign para popular o documento"),
+          ],
+          200,
+        ),
+      ],
     ),
   ]),
   createSubTrack(
