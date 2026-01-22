@@ -846,6 +846,19 @@ const esignatureSubTracks: SubTrack[] = [
           ],
           200,
         ),
+        createPracticalChallenge(
+          "prac-esig-adv-final",
+          "DESAFIO FINAL: Fórmulas e Flags",
+          "Solucione uma demanda complexa utilizando Fórmulas e Condições avançadas.",
+          "## 🏢 Cenário\n\n**Cliente:** Fontara Pharma\n\n### Descrição do Problema\n\n- A Fontara Pharma possui um formulário onde o paciente deve declarar se já sofreu de determinada condição de saúde\n- Caso a resposta seja positiva, o paciente deverá escrever em uma caixa de texto livre qual o status atual da condição e se está tomando medicações\n- Se o paciente marcar qualquer condição médica, a caixa de texto deverá aparecer como campo obrigatório\n- Se nenhuma condição for marcada, nenhuma caixa de texto deve ser exibida\n\n## 📋 Requisitos\n\nUtilize a função **Formula** para resolver o problema descrito.\n\n- A função Formula deve ser obrigatoriamente utilizada\n- Caso o paciente marque qualquer um dos checkboxes de condição médica:\n  - A caixa de texto deve ser exibida\n  - A caixa de texto deve ser configurada como **Campo Obrigatório**\n- Caso o paciente não marque nenhum checkbox:\n  - Nenhuma caixa de texto deve ser exibida\n\n## 📁 Entrega\n\n- Enviar o JSON do Template\n- O template deve cumprir integralmente as necessidades do cliente descritas no cenário",
+          [
+            createMedal("medal-formula-1", "🏆", "Formula Master", "Utilizou a função Formula corretamente"),
+            createMedal("medal-formula-2", "🏆", "Conditional Logic", "Implementou lógica condicional de visibilidade"),
+            createMedal("medal-formula-3", "🏆", "Required Field Logic", "Configurou campo obrigatório condicionalmente"),
+          ],
+          400,
+          true, // isFinalChallenge
+        ),
       ],
     ),
   ]),
