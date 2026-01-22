@@ -206,11 +206,16 @@ export function InstructionSection({ instructions, className }: InstructionSecti
                 }
                 
                 if (content.type === 'list') {
+                  const useCheckIcon = section.type === 'requirements' || section.type === 'delivery';
                   return (
                     <ul key={contentIdx} className="space-y-2">
                       {content.items?.map((item, itemIdx) => (
                         <li key={itemIdx} className="flex items-start gap-2 text-sm">
-                          <CheckCircle2 className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+                          {useCheckIcon ? (
+                            <CheckCircle2 className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+                          ) : (
+                            <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground mt-2 shrink-0" />
+                          )}
                           <span className="leading-relaxed">{formatListItem(item)}</span>
                         </li>
                       ))}
