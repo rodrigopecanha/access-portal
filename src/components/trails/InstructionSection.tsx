@@ -43,7 +43,7 @@ function parseInstructions(raw: string): ParsedSection[] {
     const content = parts[i + 1]?.trim() || '';
     
     // Remove emoji from header to determine type
-    const cleanHeader = headerText.replace(/[🎯📋💡📁📝✅⚠️]/g, '').trim();
+    const cleanHeader = headerText.replace(/[🎯📋💡📁📝✅⚠️🏢]/g, '').trim();
     const sectionType = getSectionType(cleanHeader);
     
     sections.push({
