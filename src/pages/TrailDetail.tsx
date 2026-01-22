@@ -57,7 +57,7 @@ export default function TrailDetail() {
               </div>
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5" />
-                <span>{trail.subTracks.length} sub-trilhas</span>
+                <span>{trail.subTracks.filter(st => st.status !== 'coming-soon' && st.status !== 'hidden').length} sub-trilhas</span>
               </div>
             </div>
             
@@ -81,25 +81,27 @@ export default function TrailDetail() {
           <h2 className="text-xl font-semibold text-foreground">Sub-trilhas</h2>
           
           <div className="grid gap-4 md:grid-cols-2">
-            {trail.subTracks.map((subTrack, idx) => {
-              const subTrackProgress = calculateSubTrackProgress(subTrack, currentUser);
-              
-              return (
-                <div
-                  key={subTrack.id}
-                  className="animate-fade-in"
-                  style={{ animationDelay: `${idx * 0.1}s` }}
-                >
-                  <SubTrackCard
-                    subTrack={subTrack}
-                    progress={subTrackProgress}
-                    isLocked={isLocked}
-                    trailColor={trail.color}
-                    onClick={() => navigate(`/trails/${trailId}/subtrack/${subTrack.id}`)}
-                  />
-                </div>
-              );
-            })}
+            {trail.subTracks
+              .filter(st => st.status !== 'coming-soon' && st.status !== 'hidden')
+              .map((subTrack, idx) => {
+                const subTrackProgress = calculateSubTrackProgress(subTrack, currentUser);
+                
+                return (
+                  <div
+                    key={subTrack.id}
+                    className="animate-fade-in"
+                    style={{ animationDelay: `${idx * 0.1}s` }}
+                  >
+                    <SubTrackCard
+                      subTrack={subTrack}
+                      progress={subTrackProgress}
+                      isLocked={isLocked}
+                      trailColor={trail.color}
+                      onClick={() => navigate(`/trails/${trailId}/subtrack/${subTrack.id}`)}
+                    />
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>
