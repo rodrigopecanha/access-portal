@@ -827,6 +827,17 @@ const esignatureSubTracks: SubTrack[] = [
           ],
           225,
         ),
+        createPracticalChallenge(
+          "prac-esig-adv-3",
+          "Ações com Documentos",
+          "Resolva um problema complexo do cliente usando ações avançadas de documentos.",
+          "## 🏢 Cenário\n\n**Cliente:** Fontara Services\n**Contraparte:** ACME Inc.\n\n### Descrição do Problema\n\n- A Fontara Services possui um processo de Compras onde um contrato é enviado para assinatura com 2 documentos acessórios no mesmo envelope\n- Um desses documentos é uma \"Folha de Rosto\", de uso exclusivamente interno, que deve ser visualizada apenas pelo Diretor da Fontara (primeiro signatário)\n- O envelope também contém um NDA com mais de 30 páginas, que compromete a experiência de visualização\n\n## 📋 Requisitos\n\nUtilize funcionalidades presentes no módulo Advanced Workflows e ações de documentos.\n\n- O envelope deve conter ao menos 2 destinatários\n- O documento \"Folha de Rosto\" deve ser visível somente para o Diretor da Fontara (primeiro signatário)\n- O documento NDA não deve constar como documento \"aberto\" no envelope; ele deve ser configurado como complemento\n\n## 📁 Entrega\n\n- Enviar o JSON do Template\n- O template deve cumprir todas as necessidades do cliente descritas no cenário",
+          [
+            createMedal("medal-doc-actions-1", "🎖️", "Document Visibility", "Configurou visibilidade de documento corretamente"),
+            createMedal("medal-doc-actions-2", "🎖️", "Attachment Master", "Configurou documento como anexo/complemento"),
+          ],
+          200,
+        ),
       ],
     ),
   ]),
