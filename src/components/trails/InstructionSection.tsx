@@ -7,7 +7,7 @@ interface InstructionSectionProps {
 }
 
 interface ParsedSection {
-  type: 'objective' | 'requirements' | 'tips' | 'delivery' | 'general';
+  type: 'objective' | 'requirements' | 'tips' | 'delivery' | 'scenario' | 'general';
   title: string;
   icon: string;
   content: ParsedContent[];
@@ -60,6 +60,7 @@ function parseInstructions(raw: string): ParsedSection[] {
 function getSectionType(header: string): ParsedSection['type'] {
   const lower = header.toLowerCase();
   if (lower.includes('objetivo')) return 'objective';
+  if (lower.includes('cenário') || lower.includes('scenario')) return 'scenario';
   if (lower.includes('requisito') || lower.includes('requirements')) return 'requirements';
   if (lower.includes('dica') || lower.includes('tip')) return 'tips';
   if (lower.includes('entrega') || lower.includes('delivery')) return 'delivery';
@@ -144,6 +145,7 @@ function parseContent(content: string): ParsedContent[] {
 
 const sectionIcons = {
   objective: Target,
+  scenario: Target,
   requirements: ClipboardList,
   tips: Lightbulb,
   delivery: FolderOpen,
@@ -152,6 +154,7 @@ const sectionIcons = {
 
 const sectionColors = {
   objective: 'border-l-primary bg-primary/5',
+  scenario: 'border-l-primary bg-primary/5',
   requirements: 'border-l-warning bg-warning/5',
   tips: 'border-l-xp-gold bg-xp-gold/5',
   delivery: 'border-l-success bg-success/5',
@@ -160,6 +163,7 @@ const sectionColors = {
 
 const sectionHeaderColors = {
   objective: 'text-primary',
+  scenario: 'text-primary',
   requirements: 'text-warning',
   tips: 'text-xp-gold',
   delivery: 'text-success',
