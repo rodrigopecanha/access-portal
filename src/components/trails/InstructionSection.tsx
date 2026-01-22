@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Target, ClipboardList, Lightbulb, FolderOpen, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Target, ClipboardList, Lightbulb, FolderOpen, CheckCircle2, AlertCircle, Building2, Handshake } from 'lucide-react';
 
 interface InstructionSectionProps {
   instructions: string;
@@ -13,11 +13,17 @@ interface ParsedSection {
   content: ParsedContent[];
 }
 
+interface PartyInfo {
+  client?: string;
+  counterparty?: string;
+}
+
 interface ParsedContent {
-  type: 'text' | 'list' | 'subsection';
+  type: 'text' | 'list' | 'subsection' | 'parties';
   title?: string;
   items?: string[];
   text?: string;
+  parties?: PartyInfo;
 }
 
 function parseInstructions(raw: string): ParsedSection[] {
@@ -84,8 +90,27 @@ function parseContent(content: string): ParsedContent[] {
   let currentList: string[] = [];
   let currentText = '';
   
+  // Check for Cliente/Contraparte pattern at the beginning
+  const clientMatch = content.match(/\*\*Cliente:\*\*\s*([^\n*]+)/);
+  const counterpartyMatch = content.match(/\*\*Contraparte:\*\*\s*([^\n*]+)/);
+  
+  if (clientMatch || counterpartyMatch) {
+    result.push({
+      type: 'parties',
+      parties: {
+        client: clientMatch?.[1]?.trim(),
+        counterparty: counterpartyMatch?.[1]?.trim()
+      }
+    });
+  }
+  
   for (const line of lines) {
     const trimmed = line.trim();
+    
+    // Skip Cliente/Contraparte lines as they're already handled
+    if (trimmed.startsWith('**Cliente:**') || trimmed.startsWith('**Contraparte:**')) {
+      continue;
+    }
     
     // Check for ### subsection
     if (trimmed.startsWith('###')) {
@@ -197,6 +222,52 @@ export function InstructionSection({ instructions, className }: InstructionSecti
             {/* Section Content */}
             <div className="space-y-3 text-foreground">
               {section.content.map((content, contentIdx) => {
+                if (content.type === 'parties' && content.parties) {
+                  return (
+                    <div key={contentIdx} className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                      {/* Client Card */}
+                      {content.parties.client && (
+                        <div className="bg-background border border-border rounded-lg p-4 shadow-sm">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <Building2 className="w-4 h-4 text-primary" />
+                            </div>
+                            <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                              Cliente
+                            </span>
+                          </div>
+                          <p className="text-lg font-semibold text-foreground">
+                            {content.parties.client}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Origina o contrato
+                          </p>
+                        </div>
+                      )}
+                      
+                      {/* Counterparty Card */}
+                      {content.parties.counterparty && (
+                        <div className="bg-background border border-border rounded-lg p-4 shadow-sm">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                              <Handshake className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                              Contraparte
+                            </span>
+                          </div>
+                          <p className="text-lg font-semibold text-foreground">
+                            {content.parties.counterparty}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Parte externa
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+                
                 if (content.type === 'text') {
                   return (
                     <p key={contentIdx} className="text-sm leading-relaxed">
