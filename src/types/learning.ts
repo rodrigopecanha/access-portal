@@ -157,6 +157,7 @@ export interface SubTrack {
   isCompleted?: boolean;
   isLocked?: boolean;
   progress?: number;
+  status?: 'active' | 'coming-soon' | 'hidden';
 }
 
 export interface Trail {
