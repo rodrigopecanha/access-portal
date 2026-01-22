@@ -324,13 +324,21 @@ const createOptionalLearning = (
   xpReward,
 });
 
-const createSubTrack = (id: string, title: string, description: string, icon: string, modules: Module[]): SubTrack => ({
+const createSubTrack = (
+  id: string,
+  title: string,
+  description: string,
+  icon: string,
+  modules: Module[],
+  status: SubTrack['status'] = 'active',
+): SubTrack => ({
   id,
   title,
   description,
   icon,
   modules,
   xpReward: modules.reduce((sum, m) => sum + m.xpReward, 0),
+  status,
 });
 
 // eSignature Features Básicas - 20 exam questions
@@ -778,7 +786,7 @@ const esignatureSubTracks: SubTrack[] = [
         200,
       ),
     ),
-  ]),
+  ], 'coming-soon'),
   createSubTrack("subtrack-esig-advanced-feat", "Features Avançadas", "Recursos avançados da plataforma", "Sparkles", [
     createChallengeBasedModule(
       "mod-esig-adv-feat-challenges",
@@ -886,6 +894,7 @@ const esignatureSubTracks: SubTrack[] = [
         ),
       ),
     ],
+    'coming-soon',
   ),
   createSubTrack(
     "subtrack-esig-sso",
@@ -943,6 +952,7 @@ const esignatureSubTracks: SubTrack[] = [
         ),
       ),
     ],
+    'coming-soon',
   ),
 ];
 
