@@ -317,8 +317,8 @@ const createMedal = (id: string, icon: string, name: LocalizedText, description?
 
 const createOptionalLearning = (
   id: string,
-  title: string,
-  description: string,
+  title: LocalizedText,
+  description: LocalizedText,
   type: OptionalLearning["type"],
   duration: number,
   xpReward: number,
@@ -780,14 +780,28 @@ const esigBasicChallenges: PracticalChallenge[] = [
 const esigBasicOptionalLearning: OptionalLearning[] = [
   createOptionalLearning(
     "opt-esig-1",
-    "Visão Geral das Features",
-    "Conheça as principais funcionalidades do eSignature",
+    localized("Visão Geral das Features", "Features Overview"),
+    localized("Conheça as principais funcionalidades do eSignature", "Learn about the main eSignature features"),
     "video",
     15,
     20,
   ),
-  createOptionalLearning("opt-esig-2", "Campos e Validações", "Como funcionam os campos e validações", "video", 12, 15),
-  createOptionalLearning("opt-esig-3", "Lógica Condicional", "Introdução a campos condicionais", "video", 18, 25),
+  createOptionalLearning(
+    "opt-esig-2",
+    localized("Campos e Validações", "Fields and Validations"),
+    localized("Como funcionam os campos e validações", "How fields and validations work"),
+    "video",
+    12,
+    15,
+  ),
+  createOptionalLearning(
+    "opt-esig-3",
+    localized("Lógica Condicional", "Conditional Logic"),
+    localized("Introdução a campos condicionais", "Introduction to conditional fields"),
+    "video",
+    18,
+    25,
+  ),
 ];
 
 const esignatureSubTracks: SubTrack[] = [
@@ -854,16 +868,16 @@ const esignatureSubTracks: SubTrack[] = [
       [
         createOptionalLearning(
           "opt-esig-adv-1",
-          "Bulk Send Overview",
-          "Entenda como funciona o envio em massa",
+          localized("Visão Geral do Bulk Send", "Bulk Send Overview"),
+          localized("Entenda como funciona o envio em massa", "Understand how bulk sending works"),
           "video",
           12,
           20,
         ),
         createOptionalLearning(
           "opt-esig-adv-2",
-          "DocGen for eSign",
-          "Introdução ao DocGen para eSignature",
+          localized("DocGen para eSign", "DocGen for eSign"),
+          localized("Introdução ao DocGen para eSignature", "Introduction to DocGen for eSignature"),
           "video",
           15,
           25,

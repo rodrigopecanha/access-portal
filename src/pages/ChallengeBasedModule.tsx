@@ -132,7 +132,7 @@ export default function ChallengeBasedModule() {
                         className="gap-2"
                       >
                         <Play className="w-3.5 h-3.5" />
-                        {item.title}
+                        {getLocalizedText(item.title, language)}
                         <span className="text-xs text-muted-foreground">({item.duration}min)</span>
                       </Button>
                     ))}

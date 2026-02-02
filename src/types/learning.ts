@@ -125,8 +125,8 @@ export interface ChallengeMedal {
 // Optional video section for challenge-based modules
 export interface OptionalLearning {
   id: string;
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
   type: 'video' | 'article' | 'slides';
   duration: number;
   xpReward: number;
