@@ -154,8 +154,13 @@ export const enUS: TranslationDictionary = {
     completedTracks: 'Tracks completed',
     completedChallenges: 'Challenges completed',
     totalXP: 'Total XP',
+    currentStreak: 'Current streak',
+    longestStreak: 'Longest streak',
+    badges: 'Badges',
+    challenges: 'Challenges',
+    progressByTrack: 'Progress by Track',
   },
-  
+
   // Admin / Management
   admin: {
     title: 'Management',
