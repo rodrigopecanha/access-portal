@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { InstructionSection } from './InstructionSection';
+import { useTranslation } from '@/i18n';
 
 interface PracticalChallengeCardProps {
   challenge: PracticalChallenge;
@@ -57,6 +58,7 @@ export function PracticalChallengeCard({
   onSubmit,
   className
 }: PracticalChallengeCardProps) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(!isLocked && !isCompleted);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,7 +73,7 @@ export function PracticalChallengeCard({
       if (challenge.acceptedFormats.includes(ext || '')) {
         setSelectedFile(file);
       } else {
-        alert(`Formato inválido. Formatos aceitos: ${challenge.acceptedFormats.join(', ').toUpperCase()}`);
+        alert(`${t.challenges.invalidFormat}: ${challenge.acceptedFormats.join(', ').toUpperCase()}`);
       }
     }
   };
@@ -146,7 +148,7 @@ export function PracticalChallengeCard({
                   {isFinal && (
                     <span className="inline-flex items-center gap-1 text-xs font-bold text-destructive mb-1 uppercase tracking-wide">
                       <Trophy className="w-3.5 h-3.5" />
-                      Desafio Final
+                      {t.challenges.finalChallenge}
                     </span>
                   )}
                   <h3 className={cn(
@@ -207,7 +209,7 @@ export function PracticalChallengeCard({
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-foreground">
                     <BookOpen className="w-5 h-5" />
-                    <h4 className="font-semibold text-base">Instruções</h4>
+                    <h4 className="font-semibold text-base">{t.challenges.instructions}</h4>
                   </div>
                   <InstructionSection instructions={challenge.instructions} />
                 </div>
@@ -218,7 +220,7 @@ export function PracticalChallengeCard({
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Upload className="w-4 h-4" />
-                    <span>Formatos aceitos: {challenge.acceptedFormats.map(f => f.toUpperCase()).join(', ')}</span>
+                    <span>{t.challenges.acceptedFormats}: {challenge.acceptedFormats.map(f => f.toUpperCase()).join(', ')}</span>
                   </div>
                   
                   <div className="flex flex-col sm:flex-row gap-3">
@@ -237,7 +239,7 @@ export function PracticalChallengeCard({
                       )}>
                         <Upload className="w-5 h-5" />
                         <span className="text-sm font-medium">
-                          {selectedFile ? selectedFile.name : 'Selecionar arquivo'}
+                          {selectedFile ? selectedFile.name : t.challenges.selectFile}
                         </span>
                       </div>
                     </label>
@@ -253,10 +255,10 @@ export function PracticalChallengeCard({
                       {isSubmitting ? (
                         <span className="flex items-center gap-2">
                           <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Validando...
+                          {t.common.validating}
                         </span>
                       ) : (
-                        'Enviar Solução'
+                        t.challenges.submitSolution
                       )}
                     </Button>
                   </div>
@@ -268,8 +270,8 @@ export function PracticalChallengeCard({
                 <div className="flex items-center gap-3 p-4 bg-success/10 rounded-lg">
                   <CheckCircle2 className="w-6 h-6 text-success" />
                   <div>
-                    <p className="font-medium text-success">Desafio Concluído!</p>
-                    <p className="text-sm text-muted-foreground">Sua solução foi enviada com sucesso.</p>
+                    <p className="font-medium text-success">{t.challenges.challengeCompleted}</p>
+                    <p className="text-sm text-muted-foreground">{t.challenges.solutionSubmittedSuccess}</p>
                   </div>
                 </div>
               )}
@@ -284,7 +286,7 @@ export function PracticalChallengeCard({
           <DialogHeader>
             <DialogTitle className="text-center flex items-center justify-center gap-2">
               <Sparkles className="w-6 h-6 text-xp-gold" />
-              <span>Template Validado!</span>
+              <span>{t.challenges.templateValidated}</span>
             </DialogTitle>
           </DialogHeader>
           
@@ -295,10 +297,10 @@ export function PracticalChallengeCard({
                 <CheckCircle2 className="w-10 h-10 text-success" />
               </div>
               <p className="text-lg font-medium text-foreground">
-                🎉 Solução enviada com sucesso!
+                🎉 {t.challenges.solutionSubmittedSuccess}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                {isFinal ? 'Você completou o Desafio Final!' : 'Continue para o próximo desafio.'}
+                {isFinal ? t.challenges.completedFinalChallenge : t.challenges.continueNextChallenge}
               </p>
             </div>
 
@@ -307,7 +309,7 @@ export function PracticalChallengeCard({
               <div className="text-center">
                 <div className="flex items-center justify-center gap-2 text-xp-gold mb-2">
                   <Zap className="w-6 h-6" />
-                  <span className="text-sm font-medium uppercase tracking-wider">XP Ganho</span>
+                  <span className="text-sm font-medium uppercase tracking-wider">{t.challenges.xpGained}</span>
                 </div>
                 <div className="text-4xl font-bold text-xp-gold">
                   +<AnimatedXP value={challenge.xpReward} />
@@ -320,7 +322,7 @@ export function PracticalChallengeCard({
               <div className="space-y-3">
                 <div className="flex items-center justify-center gap-2 text-muted-foreground">
                   <Award className="w-5 h-5" />
-                  <span className="text-sm font-medium uppercase tracking-wider">Medalhas Conquistadas</span>
+                  <span className="text-sm font-medium uppercase tracking-wider">{t.challenges.medalsEarned}</span>
                 </div>
                 <div className="grid gap-2">
                   {earnedMedals.map((medal, idx) => (
@@ -349,7 +351,7 @@ export function PracticalChallengeCard({
               className="w-full"
               size="lg"
             >
-              Continuar
+              {t.common.continue}
             </Button>
           </div>
         </DialogContent>

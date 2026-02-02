@@ -21,6 +21,14 @@ export interface TranslationDictionary {
     edit: string;
     delete: string;
     confirm: string;
+    continue: string;
+    validating: string;
+    hours: string;
+    minutes: string;
+    contents: string;
+    questions: string;
+    minimum: string;
+    score: string;
   };
   
   // Navigation
@@ -76,24 +84,39 @@ export interface TranslationDictionary {
     subtitle: string;
     challenge: string;
     practicalChallenge: string;
+    practicalChallenges: string;
     finalChallenge: string;
+    bossChallenge: string;
     quiz: string;
     caseStudy: string;
     video: string;
     scenario: string;
     client: string;
+    counterparty: string;
+    originatesContract: string;
+    externalParty: string;
     problemDescription: string;
     requirements: string;
     delivery: string;
     objective: string;
+    context: string;
+    instructions: string;
     submitFile: string;
     dragDropFile: string;
     selectFile: string;
-    supportedFormats: string;
-    submitChallenge: string;
+    acceptedFormats: string;
+    invalidFormat: string;
+    submitSolution: string;
+    submitSubmission: string;
     challengeCompleted: string;
+    templateValidated: string;
+    solutionSubmittedSuccess: string;
+    completedFinalChallenge: string;
+    continueNextChallenge: string;
     congratulations: string;
     xpEarned: string;
+    xpGained: string;
+    medalsEarned: string;
     moduleCompleted: string;
     allChallengesCompleted: string;
     backToSubTrack: string;
@@ -101,6 +124,8 @@ export interface TranslationDictionary {
     watchVideos: string;
     medals: string;
     optionalMedals: string;
+    learningContent: string;
+    finalAssessment: string;
   };
   
   // Gamification
@@ -143,6 +168,7 @@ export interface TranslationDictionary {
     notFound: string;
     moduleNotFound: string;
     trackNotFound: string;
+    subTrackNotFound: string;
     noData: string;
     comingSoon: string;
     backToTracks: string;

@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Target, ClipboardList, Lightbulb, FolderOpen, CheckCircle2, AlertCircle, Building2, Handshake } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
 interface InstructionSectionProps {
   instructions: string;
@@ -37,7 +38,7 @@ function parseInstructions(raw: string): ParsedSection[] {
   if (parts[0]?.trim()) {
     sections.push({
       type: 'general',
-      title: 'Contexto',
+      title: 'context', // Will be translated
       icon: '📝',
       content: parseContent(parts[0].trim())
     });
@@ -65,7 +66,7 @@ function parseInstructions(raw: string): ParsedSection[] {
 
 function getSectionType(header: string): ParsedSection['type'] {
   const lower = header.toLowerCase();
-  if (lower.includes('objetivo')) return 'objective';
+  if (lower.includes('objetivo') || lower.includes('objective')) return 'objective';
   if (lower.includes('cenário') || lower.includes('scenario')) return 'scenario';
   if (lower.includes('requisito') || lower.includes('requirements')) return 'requirements';
   if (lower.includes('dica') || lower.includes('tip')) return 'tips';
@@ -196,12 +197,19 @@ const sectionHeaderColors = {
 };
 
 export function InstructionSection({ instructions, className }: InstructionSectionProps) {
+  const { t } = useTranslation();
   const sections = parseInstructions(instructions);
   
   return (
     <div className={cn('space-y-4', className)}>
       {sections.map((section, sectionIdx) => {
         const IconComponent = sectionIcons[section.type];
+        
+        // Get translated title for known section types
+        const getTranslatedTitle = (sectionType: string, originalTitle: string) => {
+          if (originalTitle === 'context') return t.challenges.context;
+          return originalTitle;
+        };
         
         return (
           <div 
@@ -215,7 +223,7 @@ export function InstructionSection({ instructions, className }: InstructionSecti
             <div className="flex items-center gap-2 mb-3">
               <IconComponent className={cn('w-5 h-5', sectionHeaderColors[section.type])} />
               <h4 className={cn('font-semibold text-base', sectionHeaderColors[section.type])}>
-                {section.title}
+                {getTranslatedTitle(section.type, section.title)}
               </h4>
             </div>
             
@@ -233,14 +241,14 @@ export function InstructionSection({ instructions, className }: InstructionSecti
                               <Building2 className="w-4 h-4 text-primary" />
                             </div>
                             <span className="text-xs font-bold uppercase tracking-wider text-primary">
-                              Cliente
+                              {t.challenges.client}
                             </span>
                           </div>
                           <p className="text-lg font-semibold text-foreground">
                             {content.parties.client}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            Origina o contrato
+                            {t.challenges.originatesContract}
                           </p>
                         </div>
                       )}
@@ -253,14 +261,14 @@ export function InstructionSection({ instructions, className }: InstructionSecti
                               <Handshake className="w-4 h-4 text-muted-foreground" />
                             </div>
                             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                              Contraparte
+                              {t.challenges.counterparty}
                             </span>
                           </div>
                           <p className="text-lg font-semibold text-foreground">
                             {content.parties.counterparty}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            Parte externa
+                            {t.challenges.externalParty}
                           </p>
                         </div>
                       )}

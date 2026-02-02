@@ -165,14 +165,14 @@ export default function SubTrackDetail() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                              DESAFIOS PRÁTICOS
+                              {t.challenges.practicalChallenges.toUpperCase()}
                             </span>
                           </div>
                           <CardTitle className="text-base mb-1">{module.title}</CardTitle>
                           <p className="text-sm text-muted-foreground">{module.description}</p>
                           <div className="flex items-center gap-4 mt-3 text-sm">
                             <span className="text-muted-foreground">
-                              {completedChallenges}/{totalChallenges} desafios
+                              {completedChallenges}/{totalChallenges} {t.dashboard.challenges.toLowerCase()}
                             </span>
                             <div className="flex-1 max-w-32">
                               <Progress value={challengeProgress} className="h-2" />
@@ -254,7 +254,7 @@ export default function SubTrackDetail() {
                           <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
                             <span className="text-primary text-xs">1</span>
                           </div>
-                          <span>Conteúdo de Aprendizado</span>
+                          <span>{t.challenges.learningContent}</span>
                           <span className="text-muted-foreground font-normal">({moduleProgress.learning}%)</span>
                         </div>
                         
@@ -300,7 +300,7 @@ export default function SubTrackDetail() {
                           )}>
                             <span className={assessmentUnlocked ? 'text-accent text-xs' : 'text-muted-foreground text-xs'}>2</span>
                           </div>
-                          <span>Avaliação Final</span>
+                          <span>{t.challenges.finalAssessment}</span>
                           {!assessmentUnlocked && <Lock className="w-3 h-3 text-muted-foreground" />}
                         </div>
                         
@@ -334,13 +334,13 @@ export default function SubTrackDetail() {
                                 <h4 className="font-semibold text-foreground">{module.assessment.title}</h4>
                                 <p className="text-sm text-muted-foreground">{module.assessment.description}</p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  {module.assessment.questions.length} questões • Mínimo: {module.assessment.passingScore}%
+                                  {module.assessment.questions.length} {t.common.questions} • {t.common.minimum}: {module.assessment.passingScore}%
                                 </p>
                               </div>
                               <div className="text-right">
                                 <span className="text-sm font-medium text-xp-gold">+{module.assessment.xpReward} XP</span>
                                 {isAssessmentCompleted(module.assessment.id) && currentUser.assessmentScores?.[module.assessment.id] && (
-                                  <p className="text-xs text-success">Score: {currentUser.assessmentScores[module.assessment.id]}%</p>
+                                  <p className="text-xs text-success">{t.common.score}: {currentUser.assessmentScores[module.assessment.id]}%</p>
                                 )}
                               </div>
                             </div>
@@ -357,7 +357,7 @@ export default function SubTrackDetail() {
                           )}>
                             <span className={bossUnlocked ? 'text-destructive text-xs' : 'text-muted-foreground text-xs'}>3</span>
                           </div>
-                          <span>Boss Challenge</span>
+                          <span>{t.challenges.bossChallenge}</span>
                           <Swords className={cn('w-4 h-4', bossUnlocked ? 'text-destructive' : 'text-muted-foreground')} />
                           {!bossUnlocked && <Lock className="w-3 h-3 text-muted-foreground" />}
                         </div>
@@ -395,7 +395,7 @@ export default function SubTrackDetail() {
                                 {bossUnlocked && !isBossCompleted(module.bossChallenge.id) && (
                                   <div className="space-y-3">
                                     <div className="p-3 bg-background/80 rounded-lg text-sm">
-                                      <h5 className="font-medium text-foreground mb-2">Instruções:</h5>
+                                      <h5 className="font-medium text-foreground mb-2">{t.challenges.instructions}:</h5>
                                       <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-line">
                                         {module.bossChallenge.instructions}
                                       </div>
@@ -403,12 +403,12 @@ export default function SubTrackDetail() {
                                     
                                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                       <Upload className="w-4 h-4" />
-                                      <span>Formatos aceitos: {module.bossChallenge.acceptedFormats.map(f => f.toUpperCase()).join(', ')}</span>
+                                      <span>{t.challenges.acceptedFormats}: {module.bossChallenge.acceptedFormats.map(f => f.toUpperCase()).join(', ')}</span>
                                     </div>
                                     
                                     <Button className="w-full" variant="destructive">
                                       <Upload className="w-4 h-4 mr-2" />
-                                      Enviar Submissão
+                                      {t.challenges.submitSubmission}
                                     </Button>
                                   </div>
                                 )}

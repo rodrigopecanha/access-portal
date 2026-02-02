@@ -2,6 +2,8 @@ import { cn } from '@/lib/utils';
 import { Challenge } from '@/types/learning';
 import { Card, CardContent } from '@/components/ui/card';
 import { Play, HelpCircle, FileText, Wrench, Zap, Clock, Check, Box } from 'lucide-react';
+import { useTranslation } from '@/i18n';
+
 interface ChallengeCardProps {
   challenge: Challenge;
   isCompleted?: boolean;
@@ -9,18 +11,7 @@ interface ChallengeCardProps {
   onClick?: () => void;
   className?: string;
 }
-const challengeIcons = {
-  video: Play,
-  quiz: HelpCircle,
-  'case-study': FileText,
-  practical: Wrench
-};
-const challengeLabels = {
-  video: 'Challenge',
-  quiz: 'Quiz',
-  'case-study': 'Estudo de Caso',
-  practical: 'Desafio Prático'
-};
+
 export function ChallengeCard({
   challenge,
   isCompleted = false,
@@ -28,10 +19,40 @@ export function ChallengeCard({
   onClick,
   className
 }: ChallengeCardProps) {
+  const { t } = useTranslation();
+  
+  const challengeIcons = {
+    video: Play,
+    quiz: HelpCircle,
+    'case-study': FileText,
+    practical: Wrench
+  };
+  
+  const challengeLabels: Record<string, string> = {
+    video: t.challenges.challenge,
+    quiz: t.challenges.quiz,
+    'case-study': t.challenges.caseStudy,
+    practical: t.challenges.practicalChallenge
+  };
+
   const IconComponent = challengeIcons[challenge.type];
-  return <Card className={cn('group cursor-pointer transition-all duration-300', isLocked && 'opacity-50 cursor-not-allowed', isCompleted && 'border-success/30 bg-success/5', !isLocked && !isCompleted && 'hover:shadow-md hover:border-primary/30', className)} onClick={!isLocked ? onClick : undefined}>
+  
+  return (
+    <Card 
+      className={cn(
+        'group cursor-pointer transition-all duration-300',
+        isLocked && 'opacity-50 cursor-not-allowed',
+        isCompleted && 'border-success/30 bg-success/5',
+        !isLocked && !isCompleted && 'hover:shadow-md hover:border-primary/30',
+        className
+      )} 
+      onClick={!isLocked ? onClick : undefined}
+    >
       <CardContent className="p-4 flex items-center gap-4">
-        <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center shrink-0', isCompleted ? 'bg-success text-success-foreground' : 'bg-primary/10 text-primary')}>
+        <div className={cn(
+          'w-12 h-12 rounded-xl flex items-center justify-center shrink-0',
+          isCompleted ? 'bg-success text-success-foreground' : 'bg-primary/10 text-primary'
+        )}>
           {isCompleted ? <Check className="w-6 h-6" /> : <Box className="w-6 h-6" />}
         </div>
         
@@ -52,9 +73,10 @@ export function ChallengeCard({
           </div>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Clock className="w-3.5 h-3.5" />
-            <span>{challenge.duration}min</span>
+            <span>{challenge.duration}{t.common.minutes}</span>
           </div>
         </div>
       </CardContent>
-    </Card>;
+    </Card>
+  );
 }
