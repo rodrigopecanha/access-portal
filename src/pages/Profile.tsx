@@ -7,11 +7,12 @@ import { ProgressRing } from '@/components/gamification/ProgressRing';
 import { currentUser, badges, trails, calculateTrailProgress, getOverallProgress } from '@/data/mockData';
 import { User, Calendar, Flame, Trophy } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { useLanguage } from '@/i18n';
+import { useLanguage, useTranslation } from '@/i18n';
 import { getLocalizedText } from '@/types/learning';
 
 export default function Profile() {
   const { language } = useLanguage();
+  const { t } = useTranslation();
   const userBadges = badges.filter(b => currentUser.badges.includes(b.id));
   const overallProgress = getOverallProgress(currentUser);
 
@@ -43,28 +44,28 @@ export default function Profile() {
             <CardContent className="p-4 text-center">
               <Flame className="w-8 h-8 text-orange-500 mx-auto mb-2" />
               <p className="text-2xl font-bold">{currentUser.currentStreak}</p>
-              <p className="text-sm text-muted-foreground">Streak atual</p>
+              <p className="text-sm text-muted-foreground">{t.profile.currentStreak}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <Trophy className="w-8 h-8 text-xp-gold mx-auto mb-2" />
               <p className="text-2xl font-bold">{userBadges.length}</p>
-              <p className="text-sm text-muted-foreground">Badges</p>
+              <p className="text-sm text-muted-foreground">{t.profile.badges}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <User className="w-8 h-8 text-primary mx-auto mb-2" />
               <p className="text-2xl font-bold">{currentUser.completedChallenges.length}</p>
-              <p className="text-sm text-muted-foreground">Desafios</p>
+              <p className="text-sm text-muted-foreground">{t.profile.challenges}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <Calendar className="w-8 h-8 text-accent mx-auto mb-2" />
               <p className="text-2xl font-bold">{currentUser.longestStreak}</p>
-              <p className="text-sm text-muted-foreground">Maior streak</p>
+              <p className="text-sm text-muted-foreground">{t.profile.longestStreak}</p>
             </CardContent>
           </Card>
         </div>
@@ -72,7 +73,7 @@ export default function Profile() {
         {/* Badges */}
         <Card>
           <CardHeader>
-            <CardTitle>Conquistas</CardTitle>
+            <CardTitle>{t.profile.achievements}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-6">
@@ -90,7 +91,7 @@ export default function Profile() {
         {/* Trail Progress */}
         <Card>
           <CardHeader>
-            <CardTitle>Progresso por Trilha</CardTitle>
+            <CardTitle>{t.profile.progressByTrack}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {trails.map(trail => {

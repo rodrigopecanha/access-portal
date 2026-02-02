@@ -154,8 +154,13 @@ export interface TranslationDictionary {
     completedTracks: string;
     completedChallenges: string;
     totalXP: string;
+    currentStreak: string;
+    longestStreak: string;
+    badges: string;
+    challenges: string;
+    progressByTrack: string;
   };
-  
+
   // Admin / Management
   admin: {
     title: string;

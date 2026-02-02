@@ -154,8 +154,13 @@ export const ptBR: TranslationDictionary = {
     completedTracks: 'Trilhas completas',
     completedChallenges: 'Desafios concluídos',
     totalXP: 'XP Total',
+    currentStreak: 'Streak atual',
+    longestStreak: 'Maior streak',
+    badges: 'Badges',
+    challenges: 'Desafios',
+    progressByTrack: 'Progresso por Trilha',
   },
-  
+
   // Admin / Management
   admin: {
     title: 'Gestão',
