@@ -333,8 +333,8 @@ const createOptionalLearning = (
 
 const createSubTrack = (
   id: string,
-  title: string,
-  description: string,
+  title: LocalizedText,
+  description: LocalizedText,
   icon: string,
   modules: Module[],
   status: SubTrack['status'] = 'active',
@@ -500,7 +500,7 @@ const genericQuestions = (prefix: string) => [
 
 // IAM Trail Modules
 const iamSubTracks: SubTrack[] = [
-  createSubTrack("subtrack-iam-navigator", "Navigator", "Domine o Navigator para gestão de identidades", "Compass", [
+  createSubTrack("subtrack-iam-navigator", localized("Navigator", "Navigator"), localized("Domine o Navigator para gestão de identidades", "Master Navigator for identity management"), "Compass", [
     createModule(
       "mod-iam-nav-1",
       "Introdução ao Navigator",
@@ -565,7 +565,7 @@ const iamSubTracks: SubTrack[] = [
       ),
     ),
   ]),
-  createSubTrack("subtrack-iam-maestro", "Maestro", "Orquestração avançada de identidades", "Wand2", [
+  createSubTrack("subtrack-iam-maestro", localized("Maestro", "Maestro"), localized("Orquestração avançada de identidades", "Advanced identity orchestration"), "Wand2", [
     createModule(
       "mod-iam-maestro-1",
       "Automação de Provisionamento",
@@ -605,7 +605,7 @@ const iamSubTracks: SubTrack[] = [
       ),
     ),
   ]),
-  createSubTrack("subtrack-iam-agreement", "Agreement Desk", "Gestão de termos e consentimentos", "FileCheck", [
+  createSubTrack("subtrack-iam-agreement", localized("Agreement Desk", "Agreement Desk"), localized("Gestão de termos e consentimentos", "Terms and consent management"), "FileCheck", [
     createModule(
       "mod-iam-agreement-1",
       "Termos de Uso",
@@ -645,7 +645,7 @@ const iamSubTracks: SubTrack[] = [
       ),
     ),
   ]),
-  createSubTrack("subtrack-iam-workspaces", "Workspaces", "Ambientes isolados e multi-tenancy", "Building2", [
+  createSubTrack("subtrack-iam-workspaces", localized("Workspaces", "Workspaces"), localized("Ambientes isolados e multi-tenancy", "Isolated environments and multi-tenancy"), "Building2", [
     createModule(
       "mod-iam-workspaces-1",
       "Arquitetura Multi-tenant",
@@ -793,8 +793,8 @@ const esigBasicOptionalLearning: OptionalLearning[] = [
 const esignatureSubTracks: SubTrack[] = [
   createSubTrack(
     "subtrack-esig-basic",
-    "Features Básicas",
-    "Domine as funcionalidades essenciais através de desafios práticos",
+    localized("Features Básicas", "Basic Features"),
+    localized("Domine as funcionalidades essenciais através de desafios práticos", "Master essential features through practical challenges"),
     "PenTool",
     [
       createChallengeBasedModule(
@@ -807,33 +807,45 @@ const esignatureSubTracks: SubTrack[] = [
       ),
     ],
   ),
-  createSubTrack("subtrack-esig-advanced-wf", "Advanced Workflows", "Fluxos avançados de assinatura", "GitBranch", [
-    createModule(
-      "mod-esig-adv-wf-1",
-      "Fluxos Sequenciais",
-      "Múltiplos signatários em ordem",
-      "ListOrdered",
-      [
-        createLearningContent("lc-esig-adv-1", "Sequential Signing", "Fluxos em cadeia explicados", "video", 20, 45),
-        createLearningContent("lc-esig-adv-2", "Routing Strategies", "Estratégias de roteamento", "article", 25, 40),
-      ],
-      createAssessment(
-        "assess-esig-adv-1",
-        "Exame: Workflows",
-        "Teste sobre fluxos avançados",
-        genericQuestions("q-adv"),
-        90,
+  createSubTrack(
+    "subtrack-esig-advanced-wf",
+    localized("Advanced Workflows", "Advanced Workflows"),
+    localized("Fluxos avançados de assinatura", "Advanced signature workflows"),
+    "GitBranch",
+    [
+      createModule(
+        "mod-esig-adv-wf-1",
+        "Fluxos Sequenciais",
+        "Múltiplos signatários em ordem",
+        "ListOrdered",
+        [
+          createLearningContent("lc-esig-adv-1", "Sequential Signing", "Fluxos em cadeia explicados", "video", 20, 45),
+          createLearningContent("lc-esig-adv-2", "Routing Strategies", "Estratégias de roteamento", "article", 25, 40),
+        ],
+        createAssessment(
+          "assess-esig-adv-1",
+          "Exame: Workflows",
+          "Teste sobre fluxos avançados",
+          genericQuestions("q-adv"),
+          90,
+        ),
+        createBossChallenge(
+          "boss-esig-adv-1",
+          "Approval Hierarchy",
+          "Configure um fluxo de aprovação hierárquica",
+          "## Objetivo\nCrie um fluxo de aprovação com múltiplos níveis hierárquicos.\n\n## Requisitos\n1. 3 níveis de aprovação\n2. Regras condicionais\n3. Notificações personalizadas\n\n## Entrega\nExporte a configuração em formato JSON.",
+          200,
+        ),
       ),
-      createBossChallenge(
-        "boss-esig-adv-1",
-        "Approval Hierarchy",
-        "Configure um fluxo de aprovação hierárquica",
-        "## Objetivo\nCrie um fluxo de aprovação com múltiplos níveis hierárquicos.\n\n## Requisitos\n1. 3 níveis de aprovação\n2. Regras condicionais\n3. Notificações personalizadas\n\n## Entrega\nExporte a configuração em formato JSON.",
-        200,
-      ),
-    ),
-  ], 'coming-soon'),
-  createSubTrack("subtrack-esig-advanced-feat", "Features Avançadas", "Recursos avançados da plataforma", "Sparkles", [
+    ],
+    'coming-soon',
+  ),
+  createSubTrack(
+    "subtrack-esig-advanced-feat",
+    localized("Features Avançadas", "Advanced Features"),
+    localized("Recursos avançados da plataforma", "Advanced platform features"),
+    "Sparkles",
+    [
     createChallengeBasedModule(
       "mod-esig-adv-feat-challenges",
       "Desafios Práticos Avançados",
@@ -934,8 +946,8 @@ const esignatureSubTracks: SubTrack[] = [
   ]),
   createSubTrack(
     "subtrack-esig-admin",
-    "Ferramentas Administrativas",
-    "Gestão e configurações administrativas",
+    localized("Ferramentas Administrativas", "Administrative Tools"),
+    localized("Gestão e configurações administrativas", "Administrative settings and management"),
     "Settings",
     [
       createModule(
@@ -981,8 +993,8 @@ const esignatureSubTracks: SubTrack[] = [
   ),
   createSubTrack(
     "subtrack-esig-sso",
-    "SSO & Organization Management",
-    "Single Sign-On e gestão organizacional",
+    localized("SSO & Organization Management", "SSO & Organization Management"),
+    localized("Single Sign-On e gestão organizacional", "Single Sign-On and organizational management"),
     "Shield",
     [
       createModule(
@@ -1043,8 +1055,11 @@ const esignatureSubTracks: SubTrack[] = [
 export const trails: Trail[] = [
   {
     id: "trail-iam",
-    title: "IAM",
-    description: "Identity and Access Management - Domine a gestão de identidades, acessos e provisionamento.",
+    title: localized("IAM", "IAM"),
+    description: localized(
+      "Identity and Access Management - Domine a gestão de identidades, acessos e provisionamento.",
+      "Identity and Access Management - Master identity, access, and provisioning management."
+    ),
     icon: "Shield",
     color: "from-blue-500 to-indigo-600",
     prerequisites: [],
@@ -1054,8 +1069,11 @@ export const trails: Trail[] = [
   },
   {
     id: "trail-esignature",
-    title: "eSignature",
-    description: "Assinatura Eletrônica - Do básico ao avançado em workflows de assinatura digital.",
+    title: localized("eSignature", "eSignature"),
+    description: localized(
+      "Assinatura Eletrônica - Do básico ao avançado em workflows de assinatura digital.",
+      "Electronic Signature - From basics to advanced digital signature workflows."
+    ),
     icon: "PenTool",
     color: "from-emerald-500 to-teal-600",
     prerequisites: [],

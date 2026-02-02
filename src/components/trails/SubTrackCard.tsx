@@ -1,4 +1,4 @@
-import { SubTrack } from '@/types/learning';
+import { SubTrack, getLocalizedText } from '@/types/learning';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
@@ -7,7 +7,7 @@ import {
   Sparkles, Settings, Shield, ChevronRight, CheckCircle2, Clock 
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useTranslation } from '@/i18n';
+import { useTranslation, useLanguage } from '@/i18n';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Compass,
@@ -39,6 +39,7 @@ export function SubTrackCard({
   className 
 }: SubTrackCardProps) {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const IconComponent = iconMap[subTrack.icon] || Compass;
   const isCompleted = progress === 100;
   const isComingSoon = subTrack.status === 'coming-soon';
@@ -82,7 +83,7 @@ export function SubTrackCard({
                 "text-base font-semibold transition-colors",
                 isComingSoon ? 'text-muted-foreground' : 'text-foreground group-hover:text-primary'
               )}>
-                {subTrack.title}
+                {getLocalizedText(subTrack.title, language)}
               </CardTitle>
               {isComingSoon && (
                 <Badge variant="secondary" className="text-xs font-normal">
@@ -90,7 +91,7 @@ export function SubTrackCard({
                 </Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground line-clamp-1">{subTrack.description}</p>
+            <p className="text-sm text-muted-foreground line-clamp-1">{getLocalizedText(subTrack.description, language)}</p>
           </div>
           {!isComingSoon && (
             <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />

@@ -163,8 +163,8 @@ export interface Module {
 
 export interface SubTrack {
   id: string;
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
   icon: string;
   modules: Module[];
   xpReward: number;
@@ -176,8 +176,8 @@ export interface SubTrack {
 
 export interface Trail {
   id: string;
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
   icon: string;
   color: string;
   subTracks: SubTrack[];
