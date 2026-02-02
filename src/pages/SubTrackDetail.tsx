@@ -170,8 +170,8 @@ export default function SubTrackDetail() {
                               {t.challenges.practicalChallenges.toUpperCase()}
                             </span>
                           </div>
-                          <CardTitle className="text-base mb-1">{module.title}</CardTitle>
-                          <p className="text-sm text-muted-foreground">{module.description}</p>
+                          <CardTitle className="text-base mb-1">{getLocalizedText(module.title, language)}</CardTitle>
+                          <p className="text-sm text-muted-foreground">{getLocalizedText(module.description, language)}</p>
                           <div className="flex items-center gap-4 mt-3 text-sm">
                             <span className="text-muted-foreground">
                               {completedChallenges}/{totalChallenges} {t.dashboard.challenges.toLowerCase()}
@@ -227,8 +227,8 @@ export default function SubTrackDetail() {
                             )}
                           </div>
                           <div>
-                            <CardTitle className="text-base">{module.title}</CardTitle>
-                            <p className="text-sm text-muted-foreground">{module.description}</p>
+                            <CardTitle className="text-base">{getLocalizedText(module.title, language)}</CardTitle>
+                            <p className="text-sm text-muted-foreground">{getLocalizedText(module.description, language)}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-4">

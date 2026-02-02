@@ -76,10 +76,10 @@ export default function ChallengeBasedModule() {
               <ChevronRight className="w-4 h-4" />
               <span>{getLocalizedText(subTrack.title, language)}</span>
               <ChevronRight className="w-4 h-4" />
-              <span className="text-primary-foreground font-medium">{module.title}</span>
+              <span className="text-primary-foreground font-medium">{getLocalizedText(module.title, language)}</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">{module.title}</h1>
-            <p className="text-primary-foreground/80 mb-6">{module.description}</p>
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">{getLocalizedText(module.title, language)}</h1>
+            <p className="text-primary-foreground/80 mb-6">{getLocalizedText(module.description, language)}</p>
             
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2">
@@ -177,7 +177,7 @@ export default function ChallengeBasedModule() {
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">🎉 {t.challenges.moduleCompleted}</h3>
               <p className="text-muted-foreground mb-4">
-                {t.challenges.congratulations} {t.challenges.allChallengesCompleted} {module.title}.
+                {t.challenges.congratulations} {t.challenges.allChallengesCompleted} {getLocalizedText(module.title, language)}.
               </p>
               <div className="flex items-center justify-center gap-2 text-xp-gold font-bold text-lg">
                 <Zap className="w-5 h-5" />
