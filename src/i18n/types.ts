@@ -62,6 +62,7 @@ export interface TranslationDictionary {
     track: string;
     subTrack: string;
     module: string;
+    modules: string;
     feature: string;
     advancedFeature: string;
     basicFeatures: string;
@@ -76,6 +77,7 @@ export interface TranslationDictionary {
     completed: string;
     inProgress: string;
     notStarted: string;
+    hours: string;
   };
   
   // Challenges

@@ -62,6 +62,7 @@ export const ptBR: TranslationDictionary = {
     track: 'Trilha',
     subTrack: 'Sub-trilha',
     module: 'Módulo',
+    modules: 'módulos',
     feature: 'Feature',
     advancedFeature: 'Feature Avançada',
     basicFeatures: 'Features Básicas',
@@ -76,6 +77,7 @@ export const ptBR: TranslationDictionary = {
     completed: 'Concluído',
     inProgress: 'Em andamento',
     notStarted: 'Não iniciado',
+    hours: 'horas',
   },
   
   // Challenges
