@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { PracticalChallenge } from '@/types/learning';
+import { PracticalChallenge, getLocalizedText, SupportedLocale } from '@/types/learning';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Zap, CheckCircle2, Lock, Upload, Trophy, Swords, ChevronDown, ChevronUp, Sparkles, Award, BookOpen } from 'lucide-react';
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { InstructionSection } from './InstructionSection';
 import { useTranslation } from '@/i18n';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface PracticalChallengeCardProps {
   challenge: PracticalChallenge;
@@ -59,6 +60,8 @@ export function PracticalChallengeCard({
   className
 }: PracticalChallengeCardProps) {
   const { t } = useTranslation();
+  const { language } = useLanguage();
+  const locale = language as SupportedLocale;
   const [isExpanded, setIsExpanded] = useState(!isLocked && !isCompleted);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -155,10 +158,10 @@ export function PracticalChallengeCard({
                     'font-semibold text-foreground leading-tight',
                     isFinal ? 'text-lg' : 'text-base'
                   )}>
-                    {challenge.title}
+                    {getLocalizedText(challenge.title, locale)}
                   </h3>
                   {challenge.description && (
-                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{challenge.description}</p>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{getLocalizedText(challenge.description, locale)}</p>
                   )}
                   
                   {/* Medals Preview */}
@@ -175,7 +178,7 @@ export function PracticalChallengeCard({
                           )}
                         >
                           <span>{medal.icon}</span>
-                          <span>{medal.name}</span>
+                          <span>{getLocalizedText(medal.name, locale)}</span>
                         </span>
                       ))}
                     </div>
@@ -211,7 +214,7 @@ export function PracticalChallengeCard({
                     <BookOpen className="w-5 h-5" />
                     <h4 className="font-semibold text-base">{t.challenges.instructions}</h4>
                   </div>
-                  <InstructionSection instructions={challenge.instructions} />
+                  <InstructionSection instructions={getLocalizedText(challenge.instructions, locale)} />
                 </div>
               )}
 
@@ -335,8 +338,8 @@ export function PracticalChallengeCard({
                         {medal.icon}
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-foreground">{medal.name}</p>
-                        <p className="text-xs text-muted-foreground">{medal.description}</p>
+                        <p className="font-medium text-foreground">{getLocalizedText(medal.name, locale)}</p>
+                        <p className="text-xs text-muted-foreground">{medal.description ? getLocalizedText(medal.description, locale) : ''}</p>
                       </div>
                       <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
                     </div>
