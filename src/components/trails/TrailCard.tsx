@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Clock, Lock, ChevronRight, Zap, Building2, Layers, Briefcase, Presentation, Network, MessageCircle, BookOpen, Shield, PenTool } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from '@/i18n';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Building2, Layers, Briefcase, Presentation, Network, MessageCircle, BookOpen, Shield, PenTool
@@ -17,6 +18,7 @@ interface TrailCardProps {
 }
 
 export function TrailCard({ trail, progress = 0, isLocked = false, className }: TrailCardProps) {
+  const { t } = useTranslation();
   const IconComponent = iconMap[trail.icon] || BookOpen;
   
   const content = (
@@ -64,7 +66,7 @@ export function TrailCard({ trail, progress = 0, isLocked = false, className }: 
         {!isLocked && (
           <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Progresso</span>
+              <span className="text-muted-foreground">{t.dashboard.progress}</span>
               <span className="font-medium text-foreground">{progress}%</span>
             </div>
             <Progress value={progress} className="h-2" />
@@ -73,7 +75,7 @@ export function TrailCard({ trail, progress = 0, isLocked = false, className }: 
         
         {isLocked && trail.prerequisites.length > 0 && (
           <p className="text-xs text-muted-foreground">
-            Complete as trilhas anteriores para desbloquear
+            {t.tracks.completePrerequisites}
           </p>
         )}
       </CardContent>

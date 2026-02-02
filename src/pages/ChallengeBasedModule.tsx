@@ -2,16 +2,16 @@ import { useParams, Link } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { trails, currentUser } from '@/data/mockData';
 import { ArrowLeft, Zap, CheckCircle2, ChevronRight, Play, Video, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { PracticalChallengeCard } from '@/components/trails/PracticalChallengeCard';
-import { Module } from '@/types/learning';
+import { useTranslation } from '@/i18n';
 
 export default function ChallengeBasedModule() {
   const { trailId, subTrackId, moduleId } = useParams();
+  const { t } = useTranslation();
   const trail = trails.find(t => t.id === trailId);
   const subTrack = trail?.subTracks.find(st => st.id === subTrackId);
   const module = subTrack?.modules.find(m => m.id === moduleId);
@@ -26,9 +26,9 @@ export default function ChallengeBasedModule() {
     return (
       <MainLayout>
         <div className="text-center py-12">
-          <p className="text-muted-foreground">Módulo não encontrado</p>
+          <p className="text-muted-foreground">{t.states.moduleNotFound}</p>
           <Link to="/trails">
-            <Button variant="link">Voltar às trilhas</Button>
+            <Button variant="link">{t.states.backToTracks}</Button>
           </Link>
         </div>
       </MainLayout>
@@ -62,7 +62,7 @@ export default function ChallengeBasedModule() {
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
-            Voltar para {subTrack.title}
+            {t.challenges.backToSubTrack} {subTrack.title}
           </Link>
           
           <div className={cn(
@@ -82,7 +82,7 @@ export default function ChallengeBasedModule() {
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5" />
-                <span>{completedCount}/{totalChallenges} desafios</span>
+                <span>{completedCount}/{totalChallenges} {t.dashboard.challenges.toLowerCase()}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5" />
@@ -92,7 +92,7 @@ export default function ChallengeBasedModule() {
             
             <div className="mt-6 space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Progresso</span>
+                <span>{t.dashboard.progress}</span>
                 <span>{progress}%</span>
               </div>
               <div className="h-3 bg-primary-foreground/20 rounded-full overflow-hidden">
@@ -115,11 +115,11 @@ export default function ChallengeBasedModule() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-medium text-foreground">Conteúdo de Apoio</h3>
-                    <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded-full">Opcional</span>
+                    <h3 className="font-medium text-foreground">{t.challenges.supportContent}</h3>
+                    <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded-full">{t.common.optional}</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Assista aos vídeos para revisar os conceitos antes de começar os desafios.
+                    {t.challenges.watchVideos}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {optionalLearning.map((item) => (
@@ -145,10 +145,10 @@ export default function ChallengeBasedModule() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">Desafios Práticos</h2>
+            <h2 className="text-xl font-semibold text-foreground">{t.challenges.practicalChallenge}s</h2>
           </div>
           <p className="text-muted-foreground">
-            Complete cada desafio submetendo um template JSON. Medalhas são opcionais e demonstram conhecimento avançado.
+            {t.challenges.optionalMedals}
           </p>
           
           <div className="space-y-4">
@@ -173,13 +173,13 @@ export default function ChallengeBasedModule() {
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-success flex items-center justify-center">
                 <CheckCircle2 className="w-8 h-8 text-success-foreground" />
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">🎉 Módulo Concluído!</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">🎉 {t.challenges.moduleCompleted}</h3>
               <p className="text-muted-foreground mb-4">
-                Parabéns! Você completou todos os desafios de {module.title}.
+                {t.challenges.congratulations} {t.challenges.allChallengesCompleted} {module.title}.
               </p>
               <div className="flex items-center justify-center gap-2 text-xp-gold font-bold text-lg">
                 <Zap className="w-5 h-5" />
-                <span>+{module.xpReward} XP conquistados!</span>
+                <span>+{module.xpReward} {t.challenges.xpEarned}</span>
               </div>
             </CardContent>
           </Card>

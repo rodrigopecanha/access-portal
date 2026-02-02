@@ -1,8 +1,11 @@
 import { MainLayout } from '@/components/layout/MainLayout';
 import { TrailCard } from '@/components/trails/TrailCard';
 import { trails, currentUser, calculateTrailProgress } from '@/data/mockData';
+import { useTranslation } from '@/i18n';
 
 export default function Trails() {
+  const { t } = useTranslation();
+  
   const trailsWithProgress = trails.map(trail => ({
     ...trail,
     progress: calculateTrailProgress(trail, currentUser),
@@ -13,8 +16,8 @@ export default function Trails() {
     <MainLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Trilhas de Aprendizado</h1>
-          <p className="text-muted-foreground">Escolha uma trilha e evolua suas habilidades</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">{t.tracks.title}</h1>
+          <p className="text-muted-foreground">{t.tracks.subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

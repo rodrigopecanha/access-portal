@@ -1,0 +1,150 @@
+import { TranslationDictionary } from '../types';
+
+export const ptBR: TranslationDictionary = {
+  // Common UI elements
+  common: {
+    loading: 'Carregando...',
+    error: 'Erro',
+    success: 'Sucesso',
+    save: 'Salvar',
+    cancel: 'Cancelar',
+    back: 'Voltar',
+    next: 'Próximo',
+    submit: 'Enviar',
+    close: 'Fechar',
+    search: 'Buscar',
+    filter: 'Filtrar',
+    optional: 'Opcional',
+    required: 'Obrigatório',
+    actions: 'Ações',
+    view: 'Visualizar',
+    edit: 'Editar',
+    delete: 'Excluir',
+    confirm: 'Confirmar',
+  },
+  
+  // Navigation
+  nav: {
+    dashboard: 'Dashboard',
+    tracks: 'Trilhas',
+    profile: 'Perfil',
+    management: 'Gestão',
+    learningPath: 'Trilha de Aprendizado',
+  },
+  
+  // Dashboard / Home
+  dashboard: {
+    greeting: 'Olá',
+    continueJourney: 'Continue sua jornada de aprendizado',
+    overallProgress: 'Progresso Geral',
+    complete: 'Completo',
+    consecutiveDays: 'Dias seguidos',
+    badges: 'Badges',
+    challenges: 'Desafios',
+    nextContent: 'Próximo Conteúdo',
+    yourAchievements: 'Suas Conquistas',
+    featuredTracks: 'Trilhas em Destaque',
+    progress: 'Progresso',
+  },
+  
+  // Tracks
+  tracks: {
+    title: 'Trilhas de Aprendizado',
+    subtitle: 'Escolha uma trilha e evolua suas habilidades',
+    track: 'Trilha',
+    subTrack: 'Sub-trilha',
+    module: 'Módulo',
+    feature: 'Feature',
+    advancedFeature: 'Feature Avançada',
+    basicFeatures: 'Features Básicas',
+    advancedFeatures: 'Features Avançadas',
+    estimatedTime: 'Tempo estimado',
+    xpReward: 'XP',
+    prerequisites: 'Pré-requisitos',
+    completePrerequisites: 'Complete as trilhas anteriores para desbloquear',
+    comingSoon: 'Em breve',
+    locked: 'Bloqueado',
+    unlocked: 'Desbloqueado',
+    completed: 'Concluído',
+    inProgress: 'Em andamento',
+    notStarted: 'Não iniciado',
+  },
+  
+  // Challenges
+  challenges: {
+    title: 'Desafios',
+    subtitle: 'Complete os desafios para ganhar XP e medalhas',
+    challenge: 'Challenge',
+    practicalChallenge: 'Desafio Prático',
+    finalChallenge: 'DESAFIO FINAL',
+    quiz: 'Quiz',
+    caseStudy: 'Estudo de Caso',
+    video: 'Vídeo',
+    scenario: 'Cenário',
+    client: 'Cliente',
+    problemDescription: 'Descrição do Problema',
+    requirements: 'Requisitos',
+    delivery: 'Entrega',
+    objective: 'Objetivo',
+    submitFile: 'Enviar arquivo',
+    dragDropFile: 'Arraste e solte seu arquivo aqui ou',
+    selectFile: 'selecione um arquivo',
+    supportedFormats: 'Formatos suportados',
+    submitChallenge: 'Submeter Desafio',
+    challengeCompleted: 'Desafio Concluído!',
+    congratulations: 'Parabéns!',
+    xpEarned: 'XP conquistados!',
+    moduleCompleted: 'Módulo Concluído!',
+    allChallengesCompleted: 'Você completou todos os desafios de',
+    backToSubTrack: 'Voltar para',
+    supportContent: 'Conteúdo de Apoio',
+    watchVideos: 'Assista aos vídeos para revisar os conceitos antes de começar os desafios.',
+    medals: 'Medalhas',
+    optionalMedals: 'Medalhas são opcionais e demonstram conhecimento avançado.',
+  },
+  
+  // Gamification
+  gamification: {
+    level: 'Nível',
+    xp: 'XP',
+    currentLevel: 'Nível atual',
+    nextLevel: 'Próximo nível',
+    streak: 'Sequência',
+    badge: 'Badge',
+    achievement: 'Conquista',
+    unlocked: 'Desbloqueado',
+    locked: 'Bloqueado',
+    earned: 'Conquistado',
+  },
+  
+  // Profile
+  profile: {
+    title: 'Perfil',
+    myProfile: 'Meu Perfil',
+    stats: 'Estatísticas',
+    achievements: 'Conquistas',
+    settings: 'Configurações',
+    completedTracks: 'Trilhas completas',
+    completedChallenges: 'Desafios concluídos',
+    totalXP: 'XP Total',
+  },
+  
+  // Admin / Management
+  admin: {
+    title: 'Gestão',
+    users: 'Usuários',
+    analytics: 'Análises',
+    content: 'Conteúdo',
+    settings: 'Configurações',
+  },
+  
+  // Errors & Empty States
+  states: {
+    notFound: 'Página não encontrada',
+    moduleNotFound: 'Módulo não encontrado',
+    trackNotFound: 'Trilha não encontrada',
+    noData: 'Nenhum dado disponível',
+    comingSoon: 'Em breve',
+    backToTracks: 'Voltar às trilhas',
+  },
+};
