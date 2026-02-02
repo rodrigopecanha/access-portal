@@ -62,6 +62,7 @@ export const enUS: TranslationDictionary = {
     track: 'Track',
     subTrack: 'Sub-track',
     module: 'Module',
+    modules: 'modules',
     feature: 'Feature',
     advancedFeature: 'Advanced Feature',
     basicFeatures: 'Basic Features',
@@ -76,6 +77,7 @@ export const enUS: TranslationDictionary = {
     completed: 'Completed',
     inProgress: 'In Progress',
     notStarted: 'Not Started',
+    hours: 'hours',
   },
   
   // Challenges

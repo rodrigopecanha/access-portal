@@ -83,7 +83,7 @@ export default function SubTrackDetail() {
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5" />
-                <span>~{Math.round(totalDuration / 60)} horas</span>
+                <span>~{Math.round(totalDuration / 60)} {t.tracks.hours}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5" />
@@ -91,7 +91,7 @@ export default function SubTrackDetail() {
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5" />
-                <span>{subTrack.modules.length} módulos</span>
+                <span>{subTrack.modules.length} {t.tracks.modules}</span>
               </div>
             </div>
             
@@ -233,7 +233,7 @@ export default function SubTrackDetail() {
                           <div className="text-right hidden md:block">
                             <p className="text-sm font-medium text-xp-gold">+{module.xpReward} XP</p>
                             <p className="text-xs text-muted-foreground">
-                              {module.learningContent.length} conteúdos
+                              {module.learningContent.length} {t.common.contents}
                             </p>
                           </div>
                           {isOpen ? (
