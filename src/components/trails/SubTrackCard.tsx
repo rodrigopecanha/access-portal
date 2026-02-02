@@ -7,6 +7,7 @@ import {
   Sparkles, Settings, Shield, ChevronRight, CheckCircle2, Clock 
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from '@/i18n';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Compass,
@@ -37,6 +38,7 @@ export function SubTrackCard({
   trailColor = 'from-primary to-primary',
   className 
 }: SubTrackCardProps) {
+  const { t } = useTranslation();
   const IconComponent = iconMap[subTrack.icon] || Compass;
   const isCompleted = progress === 100;
   const isComingSoon = subTrack.status === 'coming-soon';
@@ -84,7 +86,7 @@ export function SubTrackCard({
               </CardTitle>
               {isComingSoon && (
                 <Badge variant="secondary" className="text-xs font-normal">
-                  Em breve
+                  {t.tracks.comingSoon}
                 </Badge>
               )}
             </div>
@@ -99,7 +101,7 @@ export function SubTrackCard({
       <CardContent className="pt-0">
         <div className="flex items-center justify-between text-sm mb-2">
           <span className="text-muted-foreground">
-            {totalModules} módulos · {totalLearningItems} conteúdos
+            {totalModules} {t.tracks.module.toLowerCase()}s · {totalLearningItems} conteúdos
           </span>
           <span className={cn(
             "font-medium",
@@ -112,7 +114,7 @@ export function SubTrackCard({
         {!isComingSoon && (
           <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Progresso</span>
+              <span className="text-muted-foreground">{t.dashboard.progress}</span>
               <span className={cn(
                 'font-medium',
                 isCompleted ? 'text-success' : 'text-foreground'

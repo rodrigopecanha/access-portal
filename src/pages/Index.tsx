@@ -6,9 +6,11 @@ import { ProgressRing } from '@/components/gamification/ProgressRing';
 import { BadgeCard } from '@/components/gamification/BadgeCard';
 import { TrailCard } from '@/components/trails/TrailCard';
 import { currentUser, trails, badges, calculateTrailProgress, getRecommendedChallenge, getOverallProgress } from '@/data/mockData';
-import { Flame, Trophy, Target, Play, FileText, Presentation } from 'lucide-react';
+import { Flame, Trophy, Target } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
 export default function Index() {
+  const { t } = useTranslation();
   const overallProgress = getOverallProgress(currentUser);
   const recommendedChallenge = getRecommendedChallenge(currentUser);
   const userBadges = badges.filter(b => currentUser.badges.includes(b.id));
@@ -26,9 +28,9 @@ export default function Index() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-              Olá, {currentUser.name.split(' ')[0]}! 👋
+              {t.dashboard.greeting}, {currentUser.name.split(' ')[0]}! 👋
             </h1>
-            <p className="text-muted-foreground">Continue sua jornada de aprendizado</p>
+            <p className="text-muted-foreground">{t.dashboard.continueJourney}</p>
           </div>
           <XPDisplay xp={currentUser.xp} showProgress size="lg" />
         </div>
@@ -41,7 +43,7 @@ export default function Index() {
               <ProgressRing progress={overallProgress} size={140}>
                 <div className="text-center">
                   <span className="text-3xl font-bold text-foreground">{overallProgress}%</span>
-                  <p className="text-xs text-muted-foreground">Completo</p>
+                  <p className="text-xs text-muted-foreground">{t.dashboard.complete}</p>
                 </div>
               </ProgressRing>
               <div className="mt-4">
@@ -60,7 +62,7 @@ export default function Index() {
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-foreground">{currentUser.currentStreak}</p>
-                    <p className="text-sm text-muted-foreground">Dias seguidos</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.consecutiveDays}</p>
                   </div>
                 </div>
                 
@@ -70,7 +72,7 @@ export default function Index() {
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-foreground">{userBadges.length}</p>
-                    <p className="text-sm text-muted-foreground">Badges</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.badges}</p>
                   </div>
                 </div>
                 
@@ -80,7 +82,7 @@ export default function Index() {
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-foreground">{currentUser.completedChallenges.length}</p>
-                    <p className="text-sm text-muted-foreground">Desafios</p>
+                    <p className="text-sm text-muted-foreground">{t.dashboard.challenges}</p>
                   </div>
                 </div>
               </div>
@@ -94,7 +96,7 @@ export default function Index() {
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Target className="w-5 h-5 text-primary" />
-                Próximo Conteúdo
+                {t.dashboard.nextContent}
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
@@ -117,7 +119,7 @@ export default function Index() {
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <Trophy className="w-5 h-5 text-xp-gold" />
-              Suas Conquistas
+              {t.dashboard.yourAchievements}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
@@ -135,7 +137,7 @@ export default function Index() {
 
         {/* Trails Preview */}
         <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-          <h2 className="text-xl font-semibold text-foreground mb-4">Trilhas em Destaque</h2>
+          <h2 className="text-xl font-semibold text-foreground mb-4">{t.dashboard.featuredTracks}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {trailsWithProgress.map((trail, idx) => (
               <div key={trail.id} className="animate-scale-in" style={{ animationDelay: `${0.5 + idx * 0.1}s` }}>

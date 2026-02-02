@@ -12,6 +12,8 @@ import { currentUser } from '@/data/mockData';
 import { LevelBadge } from '@/components/gamification/LevelBadge';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useTranslation } from '@/i18n';
+import { LanguageToggle } from './LanguageToggle';
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -25,7 +27,18 @@ const adminItems = [
 
 export function MainNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useTranslation();
   const isAdmin = currentUser.role === 'manager' || currentUser.role === 'admin';
+  
+  const navItems = [
+    { to: '/', icon: LayoutDashboard, label: t.nav.dashboard },
+    { to: '/trails', icon: Map, label: t.nav.tracks },
+    { to: '/profile', icon: User, label: t.nav.profile },
+  ];
+
+  const adminItems = [
+    { to: '/admin', icon: Users, label: t.nav.management },
+  ];
   
   const allItems = isAdmin ? [...navItems, ...adminItems] : navItems;
   
@@ -35,7 +48,7 @@ export function MainNav() {
       <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border min-h-screen p-4">
         <div className="mb-8">
           <h1 className="text-xl font-bold text-gradient-primary">SC Academy</h1>
-          <p className="text-xs text-muted-foreground">Trilha de Aprendizado</p>
+          <p className="text-xs text-muted-foreground">{t.nav.learningPath}</p>
         </div>
         
         <nav className="flex-1 space-y-1">
@@ -56,7 +69,8 @@ export function MainNav() {
           ))}
         </nav>
         
-        <div className="pt-4 border-t border-border">
+        <div className="pt-4 border-t border-border space-y-3">
+          <LanguageToggle />
           <LevelBadge xp={currentUser.xp} size="sm" />
         </div>
       </aside>
@@ -64,13 +78,16 @@ export function MainNav() {
       {/* Mobile header */}
       <header className="md:hidden fixed top-0 left-0 right-0 bg-card border-b border-border z-50 px-4 h-14 flex items-center justify-between">
         <h1 className="text-lg font-bold text-gradient-primary">SC Academy</h1>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </Button>
+        <div className="flex items-center gap-2">
+          <LanguageToggle variant="compact" />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </Button>
+        </div>
       </header>
       
       {/* Mobile menu */}

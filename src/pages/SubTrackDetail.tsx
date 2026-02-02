@@ -8,6 +8,7 @@ import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, ChevronDown, ChevronRight, P
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useTranslation } from '@/i18n';
 
 const contentTypeIcons = {
   video: Play,
@@ -17,6 +18,7 @@ const contentTypeIcons = {
 
 export default function SubTrackDetail() {
   const { trailId, subTrackId } = useParams();
+  const { t } = useTranslation();
   const trail = trails.find(t => t.id === trailId);
   const subTrack = trail?.subTracks.find(st => st.id === subTrackId);
   const [openModules, setOpenModules] = useState<string[]>([]);
@@ -25,9 +27,9 @@ export default function SubTrackDetail() {
     return (
       <MainLayout>
         <div className="text-center py-12">
-          <p className="text-muted-foreground">Sub-trilha não encontrada</p>
+          <p className="text-muted-foreground">{t.states.trackNotFound}</p>
           <Link to="/trails">
-            <Button variant="link">Voltar às trilhas</Button>
+            <Button variant="link">{t.states.backToTracks}</Button>
           </Link>
         </div>
       </MainLayout>
@@ -63,7 +65,7 @@ export default function SubTrackDetail() {
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
-            Voltar para {trail.title}
+            {t.common.back}
           </Link>
           
           <div className={cn(
@@ -95,7 +97,7 @@ export default function SubTrackDetail() {
             
             <div className="mt-6 space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Progresso</span>
+                <span>{t.dashboard.progress}</span>
                 <span>{progress}%</span>
               </div>
               <div className="h-3 bg-primary-foreground/20 rounded-full overflow-hidden">
@@ -110,7 +112,7 @@ export default function SubTrackDetail() {
 
         {/* Modules */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">Módulos</h2>
+          <h2 className="text-xl font-semibold text-foreground">{t.tracks.module}s</h2>
           
           {subTrack.modules.map((module, moduleIdx) => {
             const isOpen = openModules.includes(module.id);
