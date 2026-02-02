@@ -13,7 +13,6 @@ import { LevelBadge } from '@/components/gamification/LevelBadge';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useTranslation } from '@/i18n';
-import { LanguageToggle } from './LanguageToggle';
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -69,8 +68,7 @@ export function MainNav() {
           ))}
         </nav>
         
-        <div className="pt-4 border-t border-border space-y-3">
-          <LanguageToggle />
+        <div className="pt-4 border-t border-border">
           <LevelBadge xp={currentUser.xp} size="sm" />
         </div>
       </aside>
@@ -78,16 +76,13 @@ export function MainNav() {
       {/* Mobile header */}
       <header className="md:hidden fixed top-0 left-0 right-0 bg-card border-b border-border z-50 px-4 h-14 flex items-center justify-between">
         <h1 className="text-lg font-bold text-gradient-primary">SC Academy</h1>
-        <div className="flex items-center gap-2">
-          <LanguageToggle variant="compact" />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setMobileOpen(!mobileOpen)}
+        >
+          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </Button>
       </header>
       
       {/* Mobile menu */}
