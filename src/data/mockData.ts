@@ -241,8 +241,8 @@ const createBossChallenge = (
 
 const createModule = (
   id: string,
-  title: string,
-  description: string,
+  title: LocalizedText,
+  description: LocalizedText,
   icon: string,
   learningContent: LearningContent[],
   assessment: Assessment,
@@ -260,8 +260,8 @@ const createModule = (
 
 const createChallengeBasedModule = (
   id: string,
-  title: string,
-  description: string,
+  title: LocalizedText,
+  description: LocalizedText,
   icon: string,
   optionalLearning: OptionalLearning[],
   practicalChallenges: PracticalChallenge[],
@@ -503,8 +503,8 @@ const iamSubTracks: SubTrack[] = [
   createSubTrack("subtrack-iam-navigator", localized("Navigator", "Navigator"), localized("Domine o Navigator para gestão de identidades", "Master Navigator for identity management"), "Compass", [
     createModule(
       "mod-iam-nav-1",
-      "Introdução ao Navigator",
-      "Fundamentos e interface do Navigator",
+      localized("Introdução ao Navigator", "Introduction to Navigator"),
+      localized("Fundamentos e interface do Navigator", "Navigator fundamentals and interface"),
       "Layout",
       [
         createLearningContent("lc-iam-nav-1", "Tour pelo Navigator", "Conheça a interface completa", "video", 15, 40),
@@ -528,8 +528,8 @@ const iamSubTracks: SubTrack[] = [
     ),
     createModule(
       "mod-iam-nav-2",
-      "Gestão de Usuários",
-      "Criação e gerenciamento de usuários",
+      localized("Gestão de Usuários", "User Management"),
+      localized("Criação e gerenciamento de usuários", "User creation and management"),
       "Users",
       [
         createLearningContent(
@@ -568,8 +568,8 @@ const iamSubTracks: SubTrack[] = [
   createSubTrack("subtrack-iam-maestro", localized("Maestro", "Maestro"), localized("Orquestração avançada de identidades", "Advanced identity orchestration"), "Wand2", [
     createModule(
       "mod-iam-maestro-1",
-      "Automação de Provisionamento",
-      "Workflows automáticos",
+      localized("Automação de Provisionamento", "Provisioning Automation"),
+      localized("Workflows automáticos", "Automated workflows"),
       "Workflow",
       [
         createLearningContent(
@@ -608,8 +608,8 @@ const iamSubTracks: SubTrack[] = [
   createSubTrack("subtrack-iam-agreement", localized("Agreement Desk", "Agreement Desk"), localized("Gestão de termos e consentimentos", "Terms and consent management"), "FileCheck", [
     createModule(
       "mod-iam-agreement-1",
-      "Termos de Uso",
-      "Configuração de termos",
+      localized("Termos de Uso", "Terms of Use"),
+      localized("Configuração de termos", "Terms configuration"),
       "FileText",
       [
         createLearningContent(
@@ -648,8 +648,8 @@ const iamSubTracks: SubTrack[] = [
   createSubTrack("subtrack-iam-workspaces", localized("Workspaces", "Workspaces"), localized("Ambientes isolados e multi-tenancy", "Isolated environments and multi-tenancy"), "Building2", [
     createModule(
       "mod-iam-workspaces-1",
-      "Arquitetura Multi-tenant",
-      "Conceitos de isolamento",
+      localized("Arquitetura Multi-tenant", "Multi-tenant Architecture"),
+      localized("Conceitos de isolamento", "Isolation concepts"),
       "Layers",
       [
         createLearningContent(
@@ -799,8 +799,8 @@ const esignatureSubTracks: SubTrack[] = [
     [
       createChallengeBasedModule(
         "mod-esig-basic-challenges",
-        "Desafios Práticos de eSignature",
-        "Complete os desafios para demonstrar domínio das features básicas. Submeta templates JSON para cada desafio.",
+        localized("Desafios Práticos de eSignature", "eSignature Practical Challenges"),
+        localized("Complete os desafios para demonstrar domínio das features básicas. Submeta templates JSON para cada desafio.", "Complete the challenges to demonstrate mastery of basic features. Submit JSON templates for each challenge."),
         "Target",
         esigBasicOptionalLearning,
         esigBasicChallenges,
@@ -815,8 +815,8 @@ const esignatureSubTracks: SubTrack[] = [
     [
       createModule(
         "mod-esig-adv-wf-1",
-        "Fluxos Sequenciais",
-        "Múltiplos signatários em ordem",
+        localized("Fluxos Sequenciais", "Sequential Flows"),
+        localized("Múltiplos signatários em ordem", "Multiple signers in order"),
         "ListOrdered",
         [
           createLearningContent("lc-esig-adv-1", "Sequential Signing", "Fluxos em cadeia explicados", "video", 20, 45),
@@ -848,8 +848,8 @@ const esignatureSubTracks: SubTrack[] = [
     [
     createChallengeBasedModule(
       "mod-esig-adv-feat-challenges",
-      "Desafios Práticos Avançados",
-      "Complete os desafios para demonstrar domínio das features avançadas do eSignature.",
+      localized("Desafios Práticos Avançados", "Advanced Practical Challenges"),
+      localized("Complete os desafios para demonstrar domínio das features avançadas do eSignature.", "Complete the challenges to demonstrate mastery of advanced eSignature features."),
       "Sparkles",
       [
         createOptionalLearning(
@@ -952,8 +952,8 @@ const esignatureSubTracks: SubTrack[] = [
     [
       createModule(
         "mod-esig-admin-1",
-        "Painel Administrativo",
-        "Configurações avançadas",
+        localized("Painel Administrativo", "Admin Panel"),
+        localized("Configurações avançadas", "Advanced settings"),
         "SlidersHorizontal",
         [
           createLearningContent(
@@ -999,8 +999,8 @@ const esignatureSubTracks: SubTrack[] = [
     [
       createModule(
         "mod-esig-sso-1",
-        "Configuração de SSO",
-        "Integração com identity providers",
+        localized("Configuração de SSO", "SSO Configuration"),
+        localized("Integração com identity providers", "Identity provider integration"),
         "Key",
         [
           createLearningContent("lc-esig-sso-1", "SSO Deep Dive", "Entenda SSO completamente", "video", 25, 55),
@@ -1017,8 +1017,8 @@ const esignatureSubTracks: SubTrack[] = [
       ),
       createModule(
         "mod-esig-sso-2",
-        "Organization Management",
-        "Gestão de organizações",
+        localized("Organization Management", "Organization Management"),
+        localized("Gestão de organizações", "Organization management"),
         "Building",
         [
           createLearningContent(

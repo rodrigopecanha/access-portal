@@ -145,8 +145,8 @@ export interface Lesson {
 
 export interface Module {
   id: string;
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
   icon: string;
   learningContent: LearningContent[];
   assessment: Assessment;
