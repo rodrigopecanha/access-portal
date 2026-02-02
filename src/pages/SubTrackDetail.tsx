@@ -8,7 +8,8 @@ import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, ChevronDown, ChevronRight, P
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { useTranslation } from '@/i18n';
+import { useTranslation, useLanguage } from '@/i18n';
+import { getLocalizedText } from '@/types/learning';
 
 const contentTypeIcons = {
   video: Play,
@@ -19,6 +20,7 @@ const contentTypeIcons = {
 export default function SubTrackDetail() {
   const { trailId, subTrackId } = useParams();
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const trail = trails.find(t => t.id === trailId);
   const subTrack = trail?.subTracks.find(st => st.id === subTrackId);
   const [openModules, setOpenModules] = useState<string[]>([]);
@@ -73,12 +75,12 @@ export default function SubTrackDetail() {
             trail.color
           )}>
             <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-2">
-              <span>{trail.title}</span>
+              <span>{getLocalizedText(trail.title, language)}</span>
               <ChevronRight className="w-4 h-4" />
-              <span className="text-primary-foreground font-medium">{subTrack.title}</span>
+              <span className="text-primary-foreground font-medium">{getLocalizedText(subTrack.title, language)}</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">{subTrack.title}</h1>
-            <p className="text-primary-foreground/80 mb-6">{subTrack.description}</p>
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">{getLocalizedText(subTrack.title, language)}</h1>
+            <p className="text-primary-foreground/80 mb-6">{getLocalizedText(subTrack.description, language)}</p>
             
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2">

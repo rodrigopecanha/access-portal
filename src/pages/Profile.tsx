@@ -7,8 +7,11 @@ import { ProgressRing } from '@/components/gamification/ProgressRing';
 import { currentUser, badges, trails, calculateTrailProgress, getOverallProgress } from '@/data/mockData';
 import { User, Calendar, Flame, Trophy } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { useLanguage } from '@/i18n';
+import { getLocalizedText } from '@/types/learning';
 
 export default function Profile() {
+  const { language } = useLanguage();
   const userBadges = badges.filter(b => currentUser.badges.includes(b.id));
   const overallProgress = getOverallProgress(currentUser);
 
@@ -95,7 +98,7 @@ export default function Profile() {
               return (
                 <div key={trail.id} className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="font-medium">{trail.title}</span>
+                    <span className="font-medium">{getLocalizedText(trail.title, language)}</span>
                     <span className="text-muted-foreground">{progress}%</span>
                   </div>
                   <Progress value={progress} className="h-2" />

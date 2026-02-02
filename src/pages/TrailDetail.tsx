@@ -5,12 +5,14 @@ import { SubTrackCard } from '@/components/trails/SubTrackCard';
 import { trails, currentUser, calculateTrailProgress, calculateSubTrackProgress } from '@/data/mockData';
 import { ArrowLeft, Clock, Zap, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useTranslation } from '@/i18n';
+import { useTranslation, useLanguage } from '@/i18n';
+import { getLocalizedText } from '@/types/learning';
 
 export default function TrailDetail() {
   const { trailId } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const trail = trails.find(t => t.id === trailId);
   
   if (!trail) {
@@ -43,8 +45,8 @@ export default function TrailDetail() {
             'rounded-2xl p-6 md:p-8 bg-gradient-to-br text-primary-foreground',
             trail.color
           )}>
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">{trail.title}</h1>
-            <p className="text-primary-foreground/80 mb-6">{trail.description}</p>
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">{getLocalizedText(trail.title, language)}</h1>
+            <p className="text-primary-foreground/80 mb-6">{getLocalizedText(trail.description, language)}</p>
             
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2">

@@ -7,11 +7,13 @@ import { ArrowLeft, Zap, CheckCircle2, ChevronRight, Play, Video, BookOpen } fro
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { PracticalChallengeCard } from '@/components/trails/PracticalChallengeCard';
-import { useTranslation } from '@/i18n';
+import { useTranslation, useLanguage } from '@/i18n';
+import { getLocalizedText } from '@/types/learning';
 
 export default function ChallengeBasedModule() {
   const { trailId, subTrackId, moduleId } = useParams();
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const trail = trails.find(t => t.id === trailId);
   const subTrack = trail?.subTracks.find(st => st.id === subTrackId);
   const module = subTrack?.modules.find(m => m.id === moduleId);
@@ -62,7 +64,7 @@ export default function ChallengeBasedModule() {
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
-            {t.challenges.backToSubTrack} {subTrack.title}
+            {t.challenges.backToSubTrack} {getLocalizedText(subTrack.title, language)}
           </Link>
           
           <div className={cn(
@@ -70,9 +72,9 @@ export default function ChallengeBasedModule() {
             trail.color
           )}>
             <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-2">
-              <span>{trail.title}</span>
+              <span>{getLocalizedText(trail.title, language)}</span>
               <ChevronRight className="w-4 h-4" />
-              <span>{subTrack.title}</span>
+              <span>{getLocalizedText(subTrack.title, language)}</span>
               <ChevronRight className="w-4 h-4" />
               <span className="text-primary-foreground font-medium">{module.title}</span>
             </div>

@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils';
-import { Trail } from '@/types/learning';
+import { Trail, getLocalizedText } from '@/types/learning';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Clock, Lock, ChevronRight, Zap, Building2, Layers, Briefcase, Presentation, Network, MessageCircle, BookOpen, Shield, PenTool } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from '@/i18n';
+import { useTranslation, useLanguage } from '@/i18n';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Building2, Layers, Briefcase, Presentation, Network, MessageCircle, BookOpen, Shield, PenTool
@@ -19,6 +19,7 @@ interface TrailCardProps {
 
 export function TrailCard({ trail, progress = 0, isLocked = false, className }: TrailCardProps) {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const IconComponent = iconMap[trail.icon] || BookOpen;
   
   const content = (
@@ -42,14 +43,14 @@ export function TrailCard({ trail, progress = 0, isLocked = false, className }: 
       
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-foreground">{trail.title}</h3>
+          <h3 className="font-semibold text-foreground">{getLocalizedText(trail.title, language)}</h3>
           {!isLocked && (
             <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
           )}
         </div>
         
         <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-          {trail.description}
+          {getLocalizedText(trail.description, language)}
         </p>
         
         <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
