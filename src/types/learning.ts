@@ -85,12 +85,26 @@ export interface BossChallenge {
   isLocked?: boolean;
 }
 
+// Localized text structure for i18n support
+export type SupportedLocale = 'pt-BR' | 'en-US';
+
+export interface LocalizedText {
+  'pt-BR': string;
+  'en-US'?: string;
+}
+
+// Helper function to get localized text with fallback
+export function getLocalizedText(text: LocalizedText | string, locale: SupportedLocale): string {
+  if (typeof text === 'string') return text;
+  return text[locale] || text['pt-BR'];
+}
+
 // New: Practical Challenge for challenge-based modules
 export interface PracticalChallenge {
   id: string;
-  title: string;
-  description: string;
-  instructions?: string;
+  title: LocalizedText;
+  description: LocalizedText;
+  instructions?: LocalizedText;
   medals: ChallengeMedal[];
   acceptedFormats: string[];
   xpReward: number;
@@ -103,8 +117,8 @@ export interface PracticalChallenge {
 export interface ChallengeMedal {
   id: string;
   icon: string;
-  name: string;
-  description?: string;
+  name: LocalizedText;
+  description?: LocalizedText;
   isEarned?: boolean;
 }
 

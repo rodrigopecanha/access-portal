@@ -11,6 +11,7 @@ import {
   PracticalChallenge,
   OptionalLearning,
   ChallengeMedal,
+  LocalizedText,
 } from "@/types/learning";
 
 // Current user mock - includes completed assessments and boss challenges
@@ -280,11 +281,17 @@ const createChallengeBasedModule = (
     practicalChallenges.reduce((sum, c) => sum + c.xpReward, 0),
 });
 
+// Helper to create localized text (pt-BR required, en-US optional fallback)
+const localized = (ptBR: string, enUS?: string): LocalizedText => ({
+  'pt-BR': ptBR,
+  'en-US': enUS,
+});
+
 const createPracticalChallenge = (
   id: string,
-  title: string,
-  description: string,
-  instructions: string,
+  title: LocalizedText,
+  description: LocalizedText,
+  instructions: LocalizedText,
   medals: ChallengeMedal[],
   xpReward: number,
   isFinal = false,
@@ -301,7 +308,7 @@ const createPracticalChallenge = (
   isSubmitted,
 });
 
-const createMedal = (id: string, icon: string, name: string, description?: string): ChallengeMedal => ({
+const createMedal = (id: string, icon: string, name: LocalizedText, description?: LocalizedText): ChallengeMedal => ({
   id,
   icon,
   name,
@@ -684,12 +691,21 @@ const iamSubTracks: SubTrack[] = [
 const esigBasicChallenges: PracticalChallenge[] = [
   createPracticalChallenge(
     "prac-esig-1",
-    "Crie um Modelo de envelope com multicanais e validação de identidade",
-    "Configure um envelope completo com entrega multicanal, autenticação reforçada e campos interativos para os signatários.",
-    "## 🎯 Objetivo\nModelo de Envelope com:\n- Entrega multicanal (Email + Whatsapp ou SMS)\n- Autenticação do signatário\n- Campos de interação\n\n## 📋 Requisitos\n\n### 1. Configuração de Entrega\n- Configure entrega por Email + SMS ou Whatsapp\n- Defina lembretes automáticos\n\n### 2. Segurança\n- Adicione pelo menos 2 camadas de autenticação\n- Configure verificação de identidade\n\n### 3. Campos Interativos\n- Inclua campos de texto editáveis\n- Adicione checkboxes ou radio buttons\n- Configure campos obrigatórios\n\n## 📁 Entrega\nExporte o template do envelope em formato JSON.",
+    localized(
+      "Crie um Modelo de envelope com multicanais e validação de identidade",
+      "Create an Envelope Template with multi-channel delivery and identity validation"
+    ),
+    localized(
+      "Configure um envelope completo com entrega multicanal, autenticação reforçada e campos interativos para os signatários.",
+      "Configure a complete envelope with multi-channel delivery, enhanced authentication, and interactive fields for signers."
+    ),
+    localized(
+      "## 🎯 Objetivo\nModelo de Envelope com:\n- Entrega multicanal (Email + Whatsapp ou SMS)\n- Autenticação do signatário\n- Campos de interação\n\n## 📋 Requisitos\n\n### 1. Configuração de Entrega\n- Configure entrega por Email + SMS ou Whatsapp\n- Defina lembretes automáticos\n\n### 2. Segurança\n- Adicione pelo menos 2 camadas de autenticação\n- Configure verificação de identidade\n\n### 3. Campos Interativos\n- Inclua campos de texto editáveis\n- Adicione checkboxes ou radio buttons\n- Configure campos obrigatórios\n\n## 📁 Entrega\nExporte o template do envelope em formato JSON.",
+      "## 🎯 Objective\nEnvelope Template with:\n- Multi-channel delivery (Email + WhatsApp or SMS)\n- Signer authentication\n- Interactive fields\n\n## 📋 Requirements\n\n### 1. Delivery Configuration\n- Configure delivery via Email + SMS or WhatsApp\n- Set up automatic reminders\n\n### 2. Security\n- Add at least 2 authentication layers\n- Configure identity verification\n\n### 3. Interactive Fields\n- Include editable text fields\n- Add checkboxes or radio buttons\n- Configure required fields\n\n## 📁 Delivery\nExport the envelope template in JSON format."
+    ),
     [
-      createMedal("medal-1", "🎖️", "Código de Acesso", "Usou código de acesso para autenticação"),
-      createMedal("medal-2", "🎖️", "Liveness", "Implementou verificação de liveness"),
+      createMedal("medal-1", "🎖️", localized("Código de Acesso", "Access Code"), localized("Usou código de acesso para autenticação", "Used access code for authentication")),
+      createMedal("medal-2", "🎖️", localized("Liveness", "Liveness"), localized("Implementou verificação de liveness", "Implemented liveness verification")),
     ],
     150,
     false,
@@ -697,34 +713,64 @@ const esigBasicChallenges: PracticalChallenge[] = [
   ),
   createPracticalChallenge(
     "prac-esig-2",
-    "Prepare um Modelo que valide a formatação dos dados do signatário",
-    "Crie um template com validações de formato para garantir que os dados inseridos pelo signatário estejam corretos.",
-    "## 🎯 Objetivo\nDefina validações de campo para seu destinatário\n\n## 📋 Requisitos de Validação\n\n### Campos Obrigatórios\n1. **CPF** - Validação de formato XXX.XXX.XXX-XX\n2. **CNPJ** - Validação de formato XX.XXX.XXX/XXXX-XX\n3. **Data de nascimento** - Formato DD/MM/AAAA\n4. **Uma Marca** criada de acordo com as cores do logotipo do cliente\n\n## 💡 Dicas\n- Use expressões regulares (regex) para validações\n- Configure mensagens de erro claras\n- Teste as validações antes de exportar\n\n## 📁 Entrega\nExporte o template com as validações configuradas em formato JSON.",
-    [createMedal("medal-3", "🎖️", "Regex correto", "Implementou regex personalizado funcionando"), createMedal("medal-3b", "🎖️", "Brand aplicada", "Aplicou a marca com as cores do cliente")],
+    localized(
+      "Prepare um Modelo que valide a formatação dos dados do signatário",
+      "Prepare a Template that validates signer data formatting"
+    ),
+    localized(
+      "Crie um template com validações de formato para garantir que os dados inseridos pelo signatário estejam corretos.",
+      "Create a template with format validations to ensure the data entered by the signer is correct."
+    ),
+    localized(
+      "## 🎯 Objetivo\nDefina validações de campo para seu destinatário\n\n## 📋 Requisitos de Validação\n\n### Campos Obrigatórios\n1. **CPF** - Validação de formato XXX.XXX.XXX-XX\n2. **CNPJ** - Validação de formato XX.XXX.XXX/XXXX-XX\n3. **Data de nascimento** - Formato DD/MM/AAAA\n4. **Uma Marca** criada de acordo com as cores do logotipo do cliente\n\n## 💡 Dicas\n- Use expressões regulares (regex) para validações\n- Configure mensagens de erro claras\n- Teste as validações antes de exportar\n\n## 📁 Entrega\nExporte o template com as validações configuradas em formato JSON.",
+      "## 🎯 Objective\nDefine field validations for your recipient\n\n## 📋 Validation Requirements\n\n### Required Fields\n1. **SSN/Tax ID** - Format validation XXX.XXX.XXX-XX\n2. **Company ID** - Format validation XX.XXX.XXX/XXXX-XX\n3. **Date of birth** - Format DD/MM/YYYY\n4. **A Brand** created according to the client's logo colors\n\n## 💡 Tips\n- Use regular expressions (regex) for validations\n- Configure clear error messages\n- Test validations before exporting\n\n## 📁 Delivery\nExport the template with configured validations in JSON format."
+    ),
+    [
+      createMedal("medal-3", "🎖️", localized("Regex correto", "Correct Regex"), localized("Implementou regex personalizado funcionando", "Implemented working custom regex")),
+      createMedal("medal-3b", "🎖️", localized("Brand aplicada", "Brand Applied"), localized("Aplicou a marca com as cores do cliente", "Applied brand with client colors"))
+    ],
     200,
   ),
   createPracticalChallenge(
     "prac-esig-3",
-    "Construa um Modelo populado por Webform",
-    "Crie um modelo e faça com que ele seja populado através de um formulário. Após, envie um envelope para um segundo destinatário validar os dados e assinar.",
-    "## 🎯 Objetivo\nModelo precisa conter pelo menos:\n- Nome e email do destinatário\n- Mostrar no 'Assunto' do envelope o nome do primeiro destinatário\n- Utilizar mais de uma página para simplificar a experiência do destinatário\n\n## 📋 Requisitos\n\n### 1. Dados do Destinatário\n- O modelo precisa conter pelo menos nome e email do destinatário\n\n### 2. Webform\n- Webform deve popular os dados do primeiro destinatário\n- Configure no mínimo 2 destinatários no fluxo\n\n### 3. Assunto Dinâmico\n- O 'Assunto' do envelope deve conter o nome do primeiro signatário (preenchedor do Webform)\n\n## 📁 Entrega\nExporte o template e o webform em formato JSON.",
+    localized(
+      "Construa um Modelo populado por Webform",
+      "Build a Template populated by Webform"
+    ),
+    localized(
+      "Crie um modelo e faça com que ele seja populado através de um formulário. Após, envie um envelope para um segundo destinatário validar os dados e assinar.",
+      "Create a template and have it populated through a form. Then, send an envelope to a second recipient to validate the data and sign."
+    ),
+    localized(
+      "## 🎯 Objetivo\nModelo precisa conter pelo menos:\n- Nome e email do destinatário\n- Mostrar no 'Assunto' do envelope o nome do primeiro destinatário\n- Utilizar mais de uma página para simplificar a experiência do destinatário\n\n## 📋 Requisitos\n\n### 1. Dados do Destinatário\n- O modelo precisa conter pelo menos nome e email do destinatário\n\n### 2. Webform\n- Webform deve popular os dados do primeiro destinatário\n- Configure no mínimo 2 destinatários no fluxo\n\n### 3. Assunto Dinâmico\n- O 'Assunto' do envelope deve conter o nome do primeiro signatário (preenchedor do Webform)\n\n## 📁 Entrega\nExporte o template e o webform em formato JSON.",
+      "## 🎯 Objective\nThe template must contain at least:\n- Recipient name and email\n- Show the first recipient's name in the envelope 'Subject'\n- Use more than one page to simplify the recipient's experience\n\n## 📋 Requirements\n\n### 1. Recipient Data\n- The template must contain at least recipient name and email\n\n### 2. Webform\n- Webform must populate the first recipient's data\n- Configure at least 2 recipients in the flow\n\n### 3. Dynamic Subject\n- The envelope 'Subject' must contain the first signer's name (Webform filler)\n\n## 📁 Delivery\nExport the template and webform in JSON format."
+    ),
     [
-      createMedal("medal-webform-1", "🎖️", "Webform Configurado", "Configurou o webform corretamente para popular o modelo"),
-      createMedal("medal-webform-2", "🎖️", "Assunto Dinâmico", "O assunto do envelope mostra o nome do primeiro destinatário"),
+      createMedal("medal-webform-1", "🎖️", localized("Webform Configurado", "Webform Configured"), localized("Configurou o webform corretamente para popular o modelo", "Configured webform correctly to populate the template")),
+      createMedal("medal-webform-2", "🎖️", localized("Assunto Dinâmico", "Dynamic Subject"), localized("O assunto do envelope mostra o nome do primeiro destinatário", "The envelope subject shows the first recipient's name")),
     ],
     175,
   ),
   createPracticalChallenge(
     "prac-esig-final",
-    "DESAFIO FINAL: Construa um modelo baseado no documento em anexo (use case de RH), onde o salário deverá mudar de acordo com o cargo",
-    "Este é o desafio final do módulo. Demonstre domínio completo criando um template de RH com campos condicionais e dinâmicos.",
-    "## 🏆 DESAFIO FINAL\n\n### Contexto\nVocê foi solicitado a criar um template de contrato de trabalho para o departamento de RH. O template deve ser inteligente o suficiente para adaptar o salário automaticamente baseado no cargo selecionado.\n\n## 📋 Requisitos\n\n### 1. Campos do Colaborador\n- Nome completo\n- CPF com validação\n- Data de admissão\n- Departamento\n\n### 2. Campo de Cargo (Obrigatório)\nCrie um campo dropdown com os seguintes cargos:\n- Analista Jr - R$ 4.000\n- Analista Pleno - R$ 6.500\n- Analista Sr - R$ 9.000\n- Coordenador - R$ 12.000\n- Gerente - R$ 18.000\n\n### 3. Campo de Salário Condicional\n- O valor do salário deve mudar automaticamente baseado no cargo selecionado\n- Use lógica condicional para mostrar/ocultar benefícios específicos por nível\n\n### 4. Campos Adicionais (para medalhas)\n- Campo de anexo para documentos do colaborador\n- Campo de Rúbrica posicionado automaticamente em todas as páginas\n- Campos de aprovação para RH e Gestor\n\n## 📁 Formato de Entrega\nEnvie um arquivo JSON contendo:\n- Template completo do contrato\n- Configurações de campos condicionais\n- Documentação das regras aplicadas\n\n## ✅ Critérios de Avaliação\n- Funcionamento correto da lógica condicional\n- Usabilidade do template\n- Qualidade da documentação",
+    localized(
+      "DESAFIO FINAL: Construa um modelo baseado no documento em anexo (use case de RH), onde o salário deverá mudar de acordo com o cargo",
+      "FINAL CHALLENGE: Build a template based on the attached document (HR use case), where the salary should change according to the position"
+    ),
+    localized(
+      "Este é o desafio final do módulo. Demonstre domínio completo criando um template de RH com campos condicionais e dinâmicos.",
+      "This is the module's final challenge. Demonstrate complete mastery by creating an HR template with conditional and dynamic fields."
+    ),
+    localized(
+      "## 🏆 DESAFIO FINAL\n\n### Contexto\nVocê foi solicitado a criar um template de contrato de trabalho para o departamento de RH. O template deve ser inteligente o suficiente para adaptar o salário automaticamente baseado no cargo selecionado.\n\n## 📋 Requisitos\n\n### 1. Campos do Colaborador\n- Nome completo\n- CPF com validação\n- Data de admissão\n- Departamento\n\n### 2. Campo de Cargo (Obrigatório)\nCrie um campo dropdown com os seguintes cargos:\n- Analista Jr - R$ 4.000\n- Analista Pleno - R$ 6.500\n- Analista Sr - R$ 9.000\n- Coordenador - R$ 12.000\n- Gerente - R$ 18.000\n\n### 3. Campo de Salário Condicional\n- O valor do salário deve mudar automaticamente baseado no cargo selecionado\n- Use lógica condicional para mostrar/ocultar benefícios específicos por nível\n\n### 4. Campos Adicionais (para medalhas)\n- Campo de anexo para documentos do colaborador\n- Campo de Rúbrica posicionado automaticamente em todas as páginas\n- Campos de aprovação para RH e Gestor\n\n## 📁 Formato de Entrega\nEnvie um arquivo JSON contendo:\n- Template completo do contrato\n- Configurações de campos condicionais\n- Documentação das regras aplicadas\n\n## ✅ Critérios de Avaliação\n- Funcionamento correto da lógica condicional\n- Usabilidade do template\n- Qualidade da documentação",
+      "## 🏆 FINAL CHALLENGE\n\n### Context\nYou have been asked to create an employment contract template for the HR department. The template must be smart enough to automatically adapt the salary based on the selected position.\n\n## 📋 Requirements\n\n### 1. Employee Fields\n- Full name\n- Tax ID with validation\n- Start date\n- Department\n\n### 2. Position Field (Required)\nCreate a dropdown field with the following positions:\n- Jr Analyst - $4,000\n- Mid Analyst - $6,500\n- Sr Analyst - $9,000\n- Coordinator - $12,000\n- Manager - $18,000\n\n### 3. Conditional Salary Field\n- The salary value must change automatically based on the selected position\n- Use conditional logic to show/hide level-specific benefits\n\n### 4. Additional Fields (for medals)\n- Attachment field for employee documents\n- Initial field automatically positioned on all pages\n- Approval fields for HR and Manager\n\n## 📁 Delivery Format\nSubmit a JSON file containing:\n- Complete contract template\n- Conditional field configurations\n- Documentation of applied rules\n\n## ✅ Evaluation Criteria\n- Correct functioning of conditional logic\n- Template usability\n- Documentation quality"
+    ),
     [
-      createMedal("medal-4", "🎖️", "Campo Anexo", "Incluiu campo para upload de documentos"),
-      createMedal("medal-5", "🎖️", "Rubrica", "Implementou campo de desenho/rubrica"),
-      createMedal("medal-6", "🎖️", "Campo Radio Button", "Usou radio buttons corretamente"),
-      createMedal("medal-7", "🎖️", "Campo Condicional", "Implementou lógica condicional funcionando"),
-      createMedal("medal-8", "🎖️", "Campo Aprovar", "Incluiu fluxo de aprovação"),
+      createMedal("medal-4", "🎖️", localized("Campo Anexo", "Attachment Field"), localized("Incluiu campo para upload de documentos", "Included field for document upload")),
+      createMedal("medal-5", "🎖️", localized("Rubrica", "Initial"), localized("Implementou campo de desenho/rubrica", "Implemented drawing/initial field")),
+      createMedal("medal-6", "🎖️", localized("Campo Radio Button", "Radio Button Field"), localized("Usou radio buttons corretamente", "Used radio buttons correctly")),
+      createMedal("medal-7", "🎖️", localized("Campo Condicional", "Conditional Field"), localized("Implementou lógica condicional funcionando", "Implemented working conditional logic")),
+      createMedal("medal-8", "🎖️", localized("Campo Aprovar", "Approve Field"), localized("Incluiu fluxo de aprovação", "Included approval flow")),
     ],
     350,
     true, // isFinalChallenge
@@ -814,47 +860,71 @@ const esignatureSubTracks: SubTrack[] = [
       [
         createPracticalChallenge(
           "prac-esig-adv-1",
-          "Bulk Send",
-          "Gere um modelo preparado para Envio em Massa (Bulk Send) com pelo menos 3 campos variáveis além de Nome e Email.",
-          "## 🎯 Objetivo\n- Envio em Massa configurado\n- CSV gerado e populado\n- **Bônus:** Configurar o DocGen for eSign\n\n## 📋 Requisitos\n\n### 1. Campos Variáveis\n- Ao menos 3 campos variáveis precisam ser populados\n- Popule Nome e Email de cada destinatário\n- Mostre no 'Assunto' do envelope o nome de cada destinatário\n\n### 2. CSV\n- Popule o CSV corretamente enviando para ao menos 3 destinatários\n- Ao final, anexe o CSV populado\n\n### 3. 🌟 BÔNUS – DocGen for eSign\n- Ao invés de utilizar tags de texto do eSignature, popule o documento utilizando DocGen for eSign\n\n## 📁 Entrega\n- Anexar o JSON do Template\n- Anexar o CSV devidamente populado",
+          localized("Bulk Send", "Bulk Send"),
+          localized(
+            "Gere um modelo preparado para Envio em Massa (Bulk Send) com pelo menos 3 campos variáveis além de Nome e Email.",
+            "Generate a template prepared for Bulk Send with at least 3 variable fields besides Name and Email."
+          ),
+          localized(
+            "## 🎯 Objetivo\n- Envio em Massa configurado\n- CSV gerado e populado\n- **Bônus:** Configurar o DocGen for eSign\n\n## 📋 Requisitos\n\n### 1. Campos Variáveis\n- Ao menos 3 campos variáveis precisam ser populados\n- Popule Nome e Email de cada destinatário\n- Mostre no 'Assunto' do envelope o nome de cada destinatário\n\n### 2. CSV\n- Popule o CSV corretamente enviando para ao menos 3 destinatários\n- Ao final, anexe o CSV populado\n\n### 3. 🌟 BÔNUS – DocGen for eSign\n- Ao invés de utilizar tags de texto do eSignature, popule o documento utilizando DocGen for eSign\n\n## 📁 Entrega\n- Anexar o JSON do Template\n- Anexar o CSV devidamente populado",
+            "## 🎯 Objective\n- Bulk Send configured\n- CSV generated and populated\n- **Bonus:** Configure DocGen for eSign\n\n## 📋 Requirements\n\n### 1. Variable Fields\n- At least 3 variable fields must be populated\n- Populate Name and Email for each recipient\n- Show each recipient's name in the envelope 'Subject'\n\n### 2. CSV\n- Populate the CSV correctly sending to at least 3 recipients\n- At the end, attach the populated CSV\n\n### 3. 🌟 BONUS – DocGen for eSign\n- Instead of using eSignature text tags, populate the document using DocGen for eSign\n\n## 📁 Delivery\n- Attach the Template JSON\n- Attach the properly populated CSV"
+          ),
           [
-            createMedal("medal-bulk-1", "🎖️", "Bulk Configurado", "Configurou o Bulk Send com campos variáveis"),
-            createMedal("medal-bulk-2", "🎖️", "CSV Válido", "CSV populado corretamente com 3+ destinatários"),
-            createMedal("medal-bulk-bonus", "⭐", "DocGen Master", "Utilizou DocGen for eSign para popular o documento"),
+            createMedal("medal-bulk-1", "🎖️", localized("Bulk Configurado", "Bulk Configured"), localized("Configurou o Bulk Send com campos variáveis", "Configured Bulk Send with variable fields")),
+            createMedal("medal-bulk-2", "🎖️", localized("CSV Válido", "Valid CSV"), localized("CSV populado corretamente com 3+ destinatários", "CSV correctly populated with 3+ recipients")),
+            createMedal("medal-bulk-bonus", "⭐", localized("DocGen Master", "DocGen Master"), localized("Utilizou DocGen for eSign para popular o documento", "Used DocGen for eSign to populate the document")),
           ],
           200,
         ),
         createPracticalChallenge(
           "prac-esig-adv-2",
-          "Advanced Workflows",
-          "Resolva um problema complexo do cliente usando fluxos avançados do eSign.",
-          "## 🏢 Cenário\n\n**Cliente:** Fontara Services\n**Contraparte:** ACME Inc.\n\n### Descrição do Problema\n\n- A Fontara Services possui um contrato de alta complexidade que precisa ser revisado por uma pessoa do time jurídico\n- O jurídico da Fontara possui 3 pessoas; o contrato deve ser enviado para todas, mas apenas uma deve revisar o documento\n- Após a revisão, o contrato deve ser enviado para o contato Comercial da ACME\n- O contato Comercial da ACME não é a pessoa que deve assinar esse documento\n- Esse contato precisa direcionar o contrato para o Diretor responsável, cujo nome e email não são conhecidos pela Fontara\n\n## 📋 Requisitos\n\nUtilize funcionalidades do módulo Advanced Workflows para resolver o cenário descrito.\n\nEstruture o fluxo de forma que:\n- Apenas **uma pessoa** do jurídico revise o contrato, mas todas recebam o convite\n- O contato comercial da ACME atue como **intermediário**\n- O Diretor da ACME seja definido **pelo contato comercial da ACME**\n\nPrepare um Template contendo todas as funções necessárias para esse fluxo.\n\n## 📁 Entrega\n\n- Enviar o JSON do Template\n- A submissão deve atender a todos os requisitos do cenário",
+          localized("Advanced Workflows", "Advanced Workflows"),
+          localized(
+            "Resolva um problema complexo do cliente usando fluxos avançados do eSign.",
+            "Solve a complex client problem using advanced eSign workflows."
+          ),
+          localized(
+            "## 🏢 Cenário\n\n**Cliente:** Fontara Services\n**Contraparte:** ACME Inc.\n\n### Descrição do Problema\n\n- A Fontara Services possui um contrato de alta complexidade que precisa ser revisado por uma pessoa do time jurídico\n- O jurídico da Fontara possui 3 pessoas; o contrato deve ser enviado para todas, mas apenas uma deve revisar o documento\n- Após a revisão, o contrato deve ser enviado para o contato Comercial da ACME\n- O contato Comercial da ACME não é a pessoa que deve assinar esse documento\n- Esse contato precisa direcionar o contrato para o Diretor responsável, cujo nome e email não são conhecidos pela Fontara\n\n## 📋 Requisitos\n\nUtilize funcionalidades do módulo Advanced Workflows para resolver o cenário descrito.\n\nEstruture o fluxo de forma que:\n- Apenas **uma pessoa** do jurídico revise o contrato, mas todas recebam o convite\n- O contato comercial da ACME atue como **intermediário**\n- O Diretor da ACME seja definido **pelo contato comercial da ACME**\n\nPrepare um Template contendo todas as funções necessárias para esse fluxo.\n\n## 📁 Entrega\n\n- Enviar o JSON do Template\n- A submissão deve atender a todos os requisitos do cenário",
+            "## 🏢 Scenario\n\n**Client:** Fontara Services\n**Counterparty:** ACME Inc.\n\n### Problem Description\n\n- Fontara Services has a highly complex contract that needs to be reviewed by someone from the legal team\n- Fontara's legal team has 3 people; the contract must be sent to all of them, but only one should review the document\n- After the review, the contract must be sent to ACME's Commercial contact\n- ACME's Commercial contact is not the person who should sign this document\n- This contact needs to forward the contract to the responsible Director, whose name and email are unknown to Fontara\n\n## 📋 Requirements\n\nUse Advanced Workflows module features to solve the described scenario.\n\nStructure the flow so that:\n- Only **one person** from legal reviews the contract, but all receive the invitation\n- ACME's commercial contact acts as an **intermediary**\n- ACME's Director is defined **by ACME's commercial contact**\n\nPrepare a Template containing all the necessary functions for this flow.\n\n## 📁 Delivery\n\n- Submit the Template JSON\n- The submission must meet all scenario requirements"
+          ),
           [
-            createMedal("medal-adv-wf-1", "🎖️", "Workflow Architect", "Estruturou o fluxo avançado corretamente"),
-            createMedal("medal-adv-wf-2", "🎖️", "Roteamento Dinâmico", "Configurou destinatário dinâmico no fluxo"),
+            createMedal("medal-adv-wf-1", "🎖️", localized("Workflow Architect", "Workflow Architect"), localized("Estruturou o fluxo avançado corretamente", "Structured the advanced workflow correctly")),
+            createMedal("medal-adv-wf-2", "🎖️", localized("Roteamento Dinâmico", "Dynamic Routing"), localized("Configurou destinatário dinâmico no fluxo", "Configured dynamic recipient in the flow")),
           ],
           225,
         ),
         createPracticalChallenge(
           "prac-esig-adv-3",
-          "Ações com Documentos",
-          "Resolva um problema complexo do cliente usando ações avançadas de documentos.",
-          "## 🏢 Cenário\n\n**Cliente:** Fontara Services\n**Contraparte:** ACME Inc.\n\n### Descrição do Problema\n\n- A Fontara Services possui um processo de Compras onde um contrato é enviado para assinatura com 2 documentos acessórios no mesmo envelope\n- Um desses documentos é uma \"Folha de Rosto\", de uso exclusivamente interno, que deve ser visualizada apenas pelo Diretor da Fontara (primeiro signatário)\n- O envelope também contém um NDA com mais de 30 páginas, que compromete a experiência de visualização\n\n## 📋 Requisitos\n\nUtilize funcionalidades presentes no módulo Advanced Workflows e ações de documentos.\n\n- O envelope deve conter ao menos 2 destinatários\n- O documento \"Folha de Rosto\" deve ser visível somente para o Diretor da Fontara (primeiro signatário)\n- O documento NDA não deve constar como documento \"aberto\" no envelope; ele deve ser configurado como complemento\n\n## 📁 Entrega\n\n- Enviar o JSON do Template\n- O template deve cumprir todas as necessidades do cliente descritas no cenário",
+          localized("Ações com Documentos", "Document Actions"),
+          localized(
+            "Resolva um problema complexo do cliente usando ações avançadas de documentos.",
+            "Solve a complex client problem using advanced document actions."
+          ),
+          localized(
+            "## 🏢 Cenário\n\n**Cliente:** Fontara Services\n**Contraparte:** ACME Inc.\n\n### Descrição do Problema\n\n- A Fontara Services possui um processo de Compras onde um contrato é enviado para assinatura com 2 documentos acessórios no mesmo envelope\n- Um desses documentos é uma \"Folha de Rosto\", de uso exclusivamente interno, que deve ser visualizada apenas pelo Diretor da Fontara (primeiro signatário)\n- O envelope também contém um NDA com mais de 30 páginas, que compromete a experiência de visualização\n\n## 📋 Requisitos\n\nUtilize funcionalidades presentes no módulo Advanced Workflows e ações de documentos.\n\n- O envelope deve conter ao menos 2 destinatários\n- O documento \"Folha de Rosto\" deve ser visível somente para o Diretor da Fontara (primeiro signatário)\n- O documento NDA não deve constar como documento \"aberto\" no envelope; ele deve ser configurado como complemento\n\n## 📁 Entrega\n\n- Enviar o JSON do Template\n- O template deve cumprir todas as necessidades do cliente descritas no cenário",
+            "## 🏢 Scenario\n\n**Client:** Fontara Services\n**Counterparty:** ACME Inc.\n\n### Problem Description\n\n- Fontara Services has a Procurement process where a contract is sent for signature with 2 accessory documents in the same envelope\n- One of these documents is a \"Cover Page\", for internal use only, which should only be viewed by Fontara's Director (first signer)\n- The envelope also contains an NDA with more than 30 pages, which compromises the viewing experience\n\n## 📋 Requirements\n\nUse features present in the Advanced Workflows module and document actions.\n\n- The envelope must contain at least 2 recipients\n- The \"Cover Page\" document must be visible only to Fontara's Director (first signer)\n- The NDA document must not appear as an \"open\" document in the envelope; it must be configured as a supplement\n\n## 📁 Delivery\n\n- Submit the Template JSON\n- The template must meet all client needs described in the scenario"
+          ),
           [
-            createMedal("medal-doc-actions-1", "🎖️", "Document Visibility", "Configurou visibilidade de documento corretamente"),
-            createMedal("medal-doc-actions-2", "🎖️", "Attachment Master", "Configurou documento como anexo/complemento"),
+            createMedal("medal-doc-actions-1", "🎖️", localized("Document Visibility", "Document Visibility"), localized("Configurou visibilidade de documento corretamente", "Configured document visibility correctly")),
+            createMedal("medal-doc-actions-2", "🎖️", localized("Attachment Master", "Attachment Master"), localized("Configurou documento como anexo/complemento", "Configured document as attachment/supplement")),
           ],
           200,
         ),
         createPracticalChallenge(
           "prac-esig-adv-final",
-          "DESAFIO FINAL: Fórmulas e Flags",
-          "Solucione uma demanda complexa utilizando Fórmulas e Condições avançadas.",
-          "## 🏢 Cenário\n\n**Cliente:** Fontara Pharma\n\n### Descrição do Problema\n\n- A Fontara Pharma possui um formulário onde o paciente deve declarar se já sofreu de determinada condição de saúde\n- Caso a resposta seja positiva, o paciente deverá escrever em uma caixa de texto livre qual o status atual da condição e se está tomando medicações\n- Se o paciente marcar qualquer condição médica, a caixa de texto deverá aparecer como campo obrigatório\n- Se nenhuma condição for marcada, nenhuma caixa de texto deve ser exibida\n\n## 📋 Requisitos\n\nUtilize a função **Formula** para resolver o problema descrito.\n\n- A função Formula deve ser obrigatoriamente utilizada\n- Caso o paciente marque qualquer um dos checkboxes de condição médica:\n  - A caixa de texto deve ser exibida\n  - A caixa de texto deve ser configurada como **Campo Obrigatório**\n- Caso o paciente não marque nenhum checkbox:\n  - Nenhuma caixa de texto deve ser exibida\n\n## 📁 Entrega\n\n- Enviar o JSON do Template\n- O template deve cumprir integralmente as necessidades do cliente descritas no cenário",
+          localized("DESAFIO FINAL: Fórmulas e Flags", "FINAL CHALLENGE: Formulas and Flags"),
+          localized(
+            "Solucione uma demanda complexa utilizando Fórmulas e Condições avançadas.",
+            "Solve a complex demand using Formulas and advanced Conditions."
+          ),
+          localized(
+            "## 🏢 Cenário\n\n**Cliente:** Fontara Pharma\n\n### Descrição do Problema\n\n- A Fontara Pharma possui um formulário onde o paciente deve declarar se já sofreu de determinada condição de saúde\n- Caso a resposta seja positiva, o paciente deverá escrever em uma caixa de texto livre qual o status atual da condição e se está tomando medicações\n- Se o paciente marcar qualquer condição médica, a caixa de texto deverá aparecer como campo obrigatório\n- Se nenhuma condição for marcada, nenhuma caixa de texto deve ser exibida\n\n## 📋 Requisitos\n\nUtilize a função **Formula** para resolver o problema descrito.\n\n- A função Formula deve ser obrigatoriamente utilizada\n- Caso o paciente marque qualquer um dos checkboxes de condição médica:\n  - A caixa de texto deve ser exibida\n  - A caixa de texto deve ser configurada como **Campo Obrigatório**\n- Caso o paciente não marque nenhum checkbox:\n  - Nenhuma caixa de texto deve ser exibida\n\n## 📁 Entrega\n\n- Enviar o JSON do Template\n- O template deve cumprir integralmente as necessidades do cliente descritas no cenário",
+            "## 🏢 Scenario\n\n**Client:** Fontara Pharma\n\n### Problem Description\n\n- Fontara Pharma has a form where the patient must declare whether they have suffered from a certain health condition\n- If the answer is positive, the patient must write in a free text box the current status of the condition and whether they are taking medications\n- If the patient marks any medical condition, the text box must appear as a required field\n- If no condition is marked, no text box should be displayed\n\n## 📋 Requirements\n\nUse the **Formula** function to solve the described problem.\n\n- The Formula function must be mandatorily used\n- If the patient checks any of the medical condition checkboxes:\n  - The text box must be displayed\n  - The text box must be configured as a **Required Field**\n- If the patient does not check any checkbox:\n  - No text box should be displayed\n\n## 📁 Delivery\n\n- Submit the Template JSON\n- The template must fully meet the client needs described in the scenario"
+          ),
           [
-            createMedal("medal-formula-1", "🏆", "Formula Master", "Utilizou a função Formula corretamente"),
-            createMedal("medal-formula-2", "🏆", "Conditional Logic", "Implementou lógica condicional de visibilidade"),
-            createMedal("medal-formula-3", "🏆", "Required Field Logic", "Configurou campo obrigatório condicionalmente"),
+            createMedal("medal-formula-1", "🏆", localized("Formula Master", "Formula Master"), localized("Utilizou a função Formula corretamente", "Used the Formula function correctly")),
+            createMedal("medal-formula-2", "🏆", localized("Conditional Logic", "Conditional Logic"), localized("Implementou lógica condicional de visibilidade", "Implemented conditional visibility logic")),
+            createMedal("medal-formula-3", "🏆", localized("Required Field Logic", "Required Field Logic"), localized("Configurou campo obrigatório condicionalmente", "Configured required field conditionally")),
           ],
           400,
           true, // isFinalChallenge
