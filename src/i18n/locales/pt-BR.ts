@@ -53,6 +53,7 @@ export const ptBR: TranslationDictionary = {
     yourAchievements: 'Suas Conquistas',
     featuredTracks: 'Trilhas em Destaque',
     progress: 'Progresso',
+    continueChallenge: 'Continuar Desafio',
   },
   
   // Tracks
@@ -142,6 +143,10 @@ export const ptBR: TranslationDictionary = {
     unlocked: 'Desbloqueado',
     locked: 'Bloqueado',
     earned: 'Conquistado',
+    levelLabel: 'Nível',
+    progressToNext: 'para próximo nível',
+    maxLevelReached: 'Nível máximo',
+    days: 'dias',
   },
   
   // Profile
@@ -168,6 +173,11 @@ export const ptBR: TranslationDictionary = {
     analytics: 'Análises',
     content: 'Conteúdo',
     settings: 'Configurações',
+    teamManagement: 'Gestão do Time',
+    trackTeamProgress: 'Acompanhe o progresso de todos os Solution Consultants',
+    userProgress: 'Progresso dos Usuários',
+    user: 'Usuário',
+    streak: 'Streak',
   },
   
   // Errors & Empty States

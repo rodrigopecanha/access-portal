@@ -191,6 +191,7 @@ export interface Trail {
 
 export interface LevelConfig {
   name: UserLevel;
+  localizedName: LocalizedText;
   minXp: number;
   maxXp: number;
   color: string;
@@ -198,14 +199,14 @@ export interface LevelConfig {
 }
 
 export const LEVELS: LevelConfig[] = [
-  { name: 'Recruta', minXp: 0, maxXp: 500, color: 'bronze', icon: '🗡️' },
-  { name: 'Escudeiro', minXp: 500, maxXp: 1200, color: 'iron', icon: '🛡️' },
-  { name: 'Legionário', minXp: 1200, maxXp: 2500, color: 'silver', icon: '⚔️' },
-  { name: 'Gladiador', minXp: 2500, maxXp: 4000, color: 'gold', icon: '🏟️' },
-  { name: 'Centurião', minXp: 4000, maxXp: 6000, color: 'ruby', icon: '🦅' },
-  { name: 'Templário', minXp: 6000, maxXp: 9000, color: 'emerald', icon: '⚜️' },
-  { name: 'General', minXp: 9000, maxXp: 12000, color: 'platinum', icon: '🏛️' },
-  { name: 'Imperator', minXp: 12000, maxXp: 15000, color: 'diamond', icon: '👑' },
+  { name: 'Recruta', localizedName: { 'pt-BR': 'Recruta', 'en-US': 'Recruit' }, minXp: 0, maxXp: 500, color: 'bronze', icon: '🗡️' },
+  { name: 'Escudeiro', localizedName: { 'pt-BR': 'Escudeiro', 'en-US': 'Squire' }, minXp: 500, maxXp: 1200, color: 'iron', icon: '🛡️' },
+  { name: 'Legionário', localizedName: { 'pt-BR': 'Legionário', 'en-US': 'Legionary' }, minXp: 1200, maxXp: 2500, color: 'silver', icon: '⚔️' },
+  { name: 'Gladiador', localizedName: { 'pt-BR': 'Gladiador', 'en-US': 'Gladiator' }, minXp: 2500, maxXp: 4000, color: 'gold', icon: '🏟️' },
+  { name: 'Centurião', localizedName: { 'pt-BR': 'Centurião', 'en-US': 'Centurion' }, minXp: 4000, maxXp: 6000, color: 'ruby', icon: '🦅' },
+  { name: 'Templário', localizedName: { 'pt-BR': 'Templário', 'en-US': 'Templar' }, minXp: 6000, maxXp: 9000, color: 'emerald', icon: '⚜️' },
+  { name: 'General', localizedName: { 'pt-BR': 'General', 'en-US': 'General' }, minXp: 9000, maxXp: 12000, color: 'platinum', icon: '🏛️' },
+  { name: 'Imperator', localizedName: { 'pt-BR': 'Imperator', 'en-US': 'Imperator' }, minXp: 12000, maxXp: 15000, color: 'diamond', icon: '👑' },
 ];
 
 export function getLevelFromXp(xp: number): LevelConfig {

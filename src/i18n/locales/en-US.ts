@@ -53,6 +53,7 @@ export const enUS: TranslationDictionary = {
     yourAchievements: 'Your Achievements',
     featuredTracks: 'Featured Tracks',
     progress: 'Progress',
+    continueChallenge: 'Continue Challenge',
   },
   
   // Tracks
@@ -142,6 +143,10 @@ export const enUS: TranslationDictionary = {
     unlocked: 'Unlocked',
     locked: 'Locked',
     earned: 'Earned',
+    levelLabel: 'Level',
+    progressToNext: 'to next level',
+    maxLevelReached: 'Max level',
+    days: 'days',
   },
   
   // Profile
@@ -168,6 +173,11 @@ export const enUS: TranslationDictionary = {
     analytics: 'Analytics',
     content: 'Content',
     settings: 'Settings',
+    teamManagement: 'Team Management',
+    trackTeamProgress: 'Track the progress of all Solution Consultants',
+    userProgress: 'User Progress',
+    user: 'User',
+    streak: 'Streak',
   },
   
   // Errors & Empty States
