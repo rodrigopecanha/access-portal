@@ -28,7 +28,7 @@ export const currentUser: User & {
   xp: 2800,
   xpToNextLevel: 4000,
   badges: ["badge-1", "badge-2", "badge-3", "badge-4"],
-  completedChallenges: ["lc-iam-nav-1", "lc-iam-nav-2", "lc-iam-nav-3", "lc-iam-nav-4", "lc-iam-nav-5", "lc-iam-maestro-1", "lc-iam-maestro-2", "prac-esig-1", "prac-esig-2", "prac-api-basic-1"],
+  completedChallenges: ["lc-iam-nav-1", "lc-iam-nav-2", "lc-iam-nav-3", "lc-iam-nav-4", "lc-iam-nav-5", "lc-iam-maestro-1", "lc-iam-maestro-2", "prac-api-basic-1"],
   completedLessons: [],
   completedModules: ["mod-iam-nav-1", "mod-iam-nav-2"],
   completedTrails: [],
