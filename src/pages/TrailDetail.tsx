@@ -79,10 +79,11 @@ export default function TrailDetail() {
             {trail.id === 'trail-api' && (
               <Button
                 onClick={() => navigate('/api-environment')}
-                className="mt-4 gap-2 bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground border border-primary-foreground/30"
+                size="lg"
+                className="mt-6 gap-2.5 bg-primary-foreground text-foreground font-semibold text-base px-6 py-3 shadow-lg hover:bg-primary-foreground/90 hover:shadow-xl hover:scale-[1.02] transition-all duration-200 animate-pulse-subtle"
               >
-                <Terminal className="w-4 h-4" />
-                My API Environment
+                <Terminal className="w-5 h-5" />
+                🚀 My API Environment
               </Button>
             )}
           </div>
