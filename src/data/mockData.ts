@@ -1134,6 +1134,148 @@ const esignatureSubTracks: SubTrack[] = [
   ),
 ];
 
+// API Track Sub-Tracks
+const apiSubTracks: SubTrack[] = [
+  createSubTrack(
+    "subtrack-api-basic",
+    localized("eSign Basic API", "eSign Basic API"),
+    localized("Fundamentos da API de eSignature", "eSignature API fundamentals"),
+    "Code",
+    [
+      createChallengeBasedModule(
+        "mod-api-basic-1",
+        localized("Authentication & Setup", "Authentication & Setup"),
+        localized("Configure autenticação e primeiras chamadas", "Configure authentication and first API calls"),
+        "Key",
+        [
+          createOptionalLearning(
+            "opt-api-basic-1",
+            localized("API Authentication 101", "API Authentication 101"),
+            localized("Conceitos de autenticação OAuth e JWT", "OAuth and JWT authentication concepts"),
+            "video",
+            15,
+            10,
+          ),
+          createOptionalLearning(
+            "opt-api-basic-2",
+            localized("REST API Fundamentals", "REST API Fundamentals"),
+            localized("Princípios de APIs RESTful", "RESTful API principles"),
+            "course",
+            20,
+            10,
+          ),
+        ],
+        [
+          createPracticalChallenge(
+            "prac-api-basic-1",
+            localized(
+              "Configure autenticação JWT para a API",
+              "Configure JWT Authentication for the API"
+            ),
+            localized(
+              "Implemente o fluxo de autenticação JWT para acessar a API de eSignature.",
+              "Implement the JWT authentication flow to access the eSignature API."
+            ),
+            localized(
+              "## 🎯 Objective\nConfigure JWT authentication to obtain an access token.\n\n## 📋 Requirements\n\n### 1. JWT Token Generation\n- Use Integration Key, User ID, and Account ID\n- Generate a valid JWT assertion\n- Exchange for access token\n\n### 2. Token Usage\n- Include Bearer token in API calls\n- Handle token expiration\n\n## 📁 Delivery\nExport your authentication configuration in JSON format.",
+              "## 🎯 Objective\nConfigure JWT authentication to obtain an access token.\n\n## 📋 Requirements\n\n### 1. JWT Token Generation\n- Use Integration Key, User ID, and Account ID\n- Generate a valid JWT assertion\n- Exchange for access token\n\n### 2. Token Usage\n- Include Bearer token in API calls\n- Handle token expiration\n\n## 📁 Delivery\nExport your authentication configuration in JSON format."
+            ),
+            [
+              createMedal("medal-api-1", "🔑", localized("JWT Master", "JWT Master"), localized("Configurou autenticação JWT corretamente", "Correctly configured JWT authentication")),
+            ],
+            150,
+          ),
+          createPracticalChallenge(
+            "prac-api-basic-2",
+            localized(
+              "Envie um envelope via API",
+              "Send an Envelope via API"
+            ),
+            localized(
+              "Use a API para criar e enviar um envelope com um documento e signatário.",
+              "Use the API to create and send an envelope with a document and signer."
+            ),
+            localized(
+              "## 🎯 Objective\nCreate and send an envelope using the eSignature REST API.\n\n## 📋 Requirements\n\n### 1. Envelope Creation\n- Create envelope with at least one document\n- Add one or more recipients\n- Configure signing tabs\n\n### 2. Send & Track\n- Send the envelope\n- Retrieve envelope status\n\n## 📁 Delivery\nExport the API request/response payloads in JSON format.",
+              "## 🎯 Objective\nCreate and send an envelope using the eSignature REST API.\n\n## 📋 Requirements\n\n### 1. Envelope Creation\n- Create envelope with at least one document\n- Add one or more recipients\n- Configure signing tabs\n\n### 2. Send & Track\n- Send the envelope\n- Retrieve envelope status\n\n## 📁 Delivery\nExport the API request/response payloads in JSON format."
+            ),
+            [
+              createMedal("medal-api-2", "📨", localized("First Envelope", "First Envelope"), localized("Enviou primeiro envelope via API", "Sent first envelope via API")),
+            ],
+            200,
+            true,
+          ),
+        ],
+      ),
+    ],
+  ),
+  createSubTrack(
+    "subtrack-api-advanced",
+    localized("eSign Advanced API", "eSign Advanced API"),
+    localized("Integrações avançadas e webhooks", "Advanced integrations and webhooks"),
+    "Webhook",
+    [
+      createChallengeBasedModule(
+        "mod-api-advanced-1",
+        localized("Webhooks & Connect", "Webhooks & Connect"),
+        localized("Eventos em tempo real e integrações Connect", "Real-time events and Connect integrations"),
+        "Radio",
+        [
+          createOptionalLearning(
+            "opt-api-adv-1",
+            localized("Webhook Architecture", "Webhook Architecture"),
+            localized("Padrões de arquitetura para webhooks", "Architecture patterns for webhooks"),
+            "video",
+            12,
+            10,
+          ),
+        ],
+        [
+          createPracticalChallenge(
+            "prac-api-adv-1",
+            localized(
+              "Configure um Webhook Listener",
+              "Configure a Webhook Listener"
+            ),
+            localized(
+              "Implemente um listener para receber eventos de envelope em tempo real.",
+              "Implement a listener to receive real-time envelope events."
+            ),
+            localized(
+              "## 🎯 Objective\nSet up a webhook listener for envelope events.\n\n## 📋 Requirements\n\n### 1. Listener Setup\n- Configure endpoint URL\n- Handle envelope-completed events\n- Parse webhook payload\n\n### 2. Event Processing\n- Log received events\n- Extract envelope data\n- Handle error scenarios\n\n## 📁 Delivery\nExport your webhook configuration and sample payloads in JSON format.",
+              "## 🎯 Objective\nSet up a webhook listener for envelope events.\n\n## 📋 Requirements\n\n### 1. Listener Setup\n- Configure endpoint URL\n- Handle envelope-completed events\n- Parse webhook payload\n\n### 2. Event Processing\n- Log received events\n- Extract envelope data\n- Handle error scenarios\n\n## 📁 Delivery\nExport your webhook configuration and sample payloads in JSON format."
+            ),
+            [
+              createMedal("medal-api-3", "📡", localized("Event Listener", "Event Listener"), localized("Configurou webhook listener funcional", "Configured functional webhook listener")),
+            ],
+            200,
+          ),
+          createPracticalChallenge(
+            "prac-api-adv-2",
+            localized(
+              "Integração end-to-end com API",
+              "End-to-End API Integration"
+            ),
+            localized(
+              "Construa uma integração completa: autenticação, envio de envelope e recebimento de webhook.",
+              "Build a complete integration: authentication, envelope sending, and webhook reception."
+            ),
+            localized(
+              "## 🎯 Objective\nBuild a complete end-to-end integration.\n\n## 📋 Requirements\n\n### 1. Full Flow\n- Authenticate via JWT\n- Create and send envelope\n- Receive completion webhook\n\n### 2. Error Handling\n- Handle authentication failures\n- Manage API rate limits\n- Retry failed webhooks\n\n## 📁 Delivery\nExport the complete integration flow documentation in JSON format.",
+              "## 🎯 Objective\nBuild a complete end-to-end integration.\n\n## 📋 Requirements\n\n### 1. Full Flow\n- Authenticate via JWT\n- Create and send envelope\n- Receive completion webhook\n\n### 2. Error Handling\n- Handle authentication failures\n- Manage API rate limits\n- Retry failed webhooks\n\n## 📁 Delivery\nExport the complete integration flow documentation in JSON format."
+            ),
+            [
+              createMedal("medal-api-4", "🏆", localized("Full Stack API", "Full Stack API"), localized("Completou integração end-to-end", "Completed end-to-end integration")),
+            ],
+            300,
+            true,
+          ),
+        ],
+      ),
+    ],
+  ),
+];
+
 // Trails data
 export const trails: Trail[] = [
   {
@@ -1163,6 +1305,20 @@ export const trails: Trail[] = [
     estimatedHours: 18,
     xpReward: esignatureSubTracks.reduce((sum, st) => sum + st.xpReward, 0),
     subTracks: esignatureSubTracks,
+  },
+  {
+    id: "trail-api",
+    title: localized("API", "API"),
+    description: localized(
+      "Domine os fundamentos técnicos das integrações eSignature através de desafios práticos de API.",
+      "Master the technical foundations of eSignature integrations through hands-on API challenges."
+    ),
+    icon: "Code",
+    color: "from-orange-500 to-amber-600",
+    prerequisites: [],
+    estimatedHours: 12,
+    xpReward: apiSubTracks.reduce((sum, st) => sum + st.xpReward, 0),
+    subTracks: apiSubTracks,
   },
 ];
 

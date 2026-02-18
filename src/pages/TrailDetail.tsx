@@ -3,7 +3,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { SubTrackCard } from '@/components/trails/SubTrackCard';
 import { trails, currentUser, calculateTrailProgress, calculateSubTrackProgress } from '@/data/mockData';
-import { ArrowLeft, Clock, Zap, Layers } from 'lucide-react';
+import { ArrowLeft, Clock, Zap, Layers, Terminal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation, useLanguage } from '@/i18n';
 import { getLocalizedText } from '@/types/learning';
@@ -75,7 +75,17 @@ export default function TrailDetail() {
                 />
               </div>
             </div>
-          </div>
+            </div>
+
+            {trail.id === 'trail-api' && (
+              <Button
+                onClick={() => navigate('/api-environment')}
+                className="mt-4 gap-2 bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground border border-primary-foreground/30"
+              >
+                <Terminal className="w-4 h-4" />
+                My API Environment
+              </Button>
+            )}
         </div>
 
         {/* Sub-Tracks */}
