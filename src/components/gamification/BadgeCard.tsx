@@ -1,6 +1,10 @@
 import { cn } from '@/lib/utils';
 import { Badge as BadgeType } from '@/types/learning';
-import { Lock } from 'lucide-react';
+import { Lock, Workflow } from 'lucide-react';
+
+const lucideIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  workflow: Workflow,
+};
 
 interface BadgeCardProps {
   badge: BadgeType;
@@ -15,6 +19,14 @@ export function BadgeCard({ badge, isUnlocked = false, size = 'md', className }:
     md: 'w-16 h-16 text-2xl',
     lg: 'w-20 h-20 text-3xl',
   };
+
+  const iconSizeClasses = {
+    sm: 'w-5 h-5',
+    md: 'w-7 h-7',
+    lg: 'w-9 h-9',
+  };
+
+  const LucideIcon = lucideIconMap[badge.icon];
   
   return (
     <div className={cn('flex flex-col items-center gap-2', className)}>
@@ -26,7 +38,11 @@ export function BadgeCard({ badge, isUnlocked = false, size = 'md', className }:
           : 'bg-muted'
       )}>
         {isUnlocked ? (
-          <span className="animate-float">{badge.icon}</span>
+          LucideIcon ? (
+            <LucideIcon className={cn(iconSizeClasses[size], 'text-primary-foreground animate-float')} />
+          ) : (
+            <span className="animate-float">{badge.icon}</span>
+          )
         ) : (
           <Lock className="w-5 h-5 text-muted-foreground" />
         )}
