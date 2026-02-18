@@ -83,7 +83,7 @@ export default function TrailDetail() {
                 className="mt-6 gap-2.5 bg-primary-foreground text-foreground font-semibold text-base px-6 py-3 shadow-lg hover:bg-primary-foreground/90 hover:shadow-xl hover:scale-[1.02] transition-all duration-200 animate-pulse-subtle"
               >
                 <Settings className="w-5 h-5" />
-                🚀 My API Environment
+                My API Environment
               </Button>
             )}
           </div>
