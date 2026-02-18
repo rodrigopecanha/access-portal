@@ -54,6 +54,7 @@ export interface TranslationDictionary {
     featuredTracks: string;
     progress: string;
     continueChallenge: string;
+    announcements: string;
   };
   
   // Tracks
