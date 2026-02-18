@@ -1,4 +1,4 @@
-export type UserLevel = 'Explorer' | 'Builder' | 'Architect' | 'Master';
+export type UserLevel = 'Recruta' | 'Escudeiro' | 'Legionário' | 'Gladiador' | 'Centurião' | 'Templário' | 'General' | 'Imperator';
 
 export type ChallengeType = 'video' | 'quiz' | 'case-study' | 'practical';
 
@@ -198,10 +198,14 @@ export interface LevelConfig {
 }
 
 export const LEVELS: LevelConfig[] = [
-  { name: 'Explorer', minXp: 0, maxXp: 1000, color: 'bronze', icon: '🧭' },
-  { name: 'Builder', minXp: 1000, maxXp: 3000, color: 'silver', icon: '🔧' },
-  { name: 'Architect', minXp: 3000, maxXp: 7000, color: 'gold', icon: '📐' },
-  { name: 'Master', minXp: 7000, maxXp: 15000, color: 'diamond', icon: '👑' },
+  { name: 'Recruta', minXp: 0, maxXp: 500, color: 'bronze', icon: '🗡️' },
+  { name: 'Escudeiro', minXp: 500, maxXp: 1200, color: 'iron', icon: '🛡️' },
+  { name: 'Legionário', minXp: 1200, maxXp: 2500, color: 'silver', icon: '⚔️' },
+  { name: 'Gladiador', minXp: 2500, maxXp: 4000, color: 'gold', icon: '🏟️' },
+  { name: 'Centurião', minXp: 4000, maxXp: 6000, color: 'ruby', icon: '🦅' },
+  { name: 'Templário', minXp: 6000, maxXp: 9000, color: 'emerald', icon: '⚜️' },
+  { name: 'General', minXp: 9000, maxXp: 12000, color: 'platinum', icon: '🏛️' },
+  { name: 'Imperator', minXp: 12000, maxXp: 15000, color: 'diamond', icon: '👑' },
 ];
 
 export function getLevelFromXp(xp: number): LevelConfig {

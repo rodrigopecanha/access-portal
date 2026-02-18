@@ -11,16 +11,22 @@ interface LevelBadgeProps {
 
 const levelColors: Record<string, string> = {
   bronze: 'bg-level-bronze',
+  iron: 'bg-level-iron',
   silver: 'bg-level-silver',
   gold: 'bg-level-gold',
+  ruby: 'bg-level-ruby',
+  emerald: 'bg-level-emerald',
   platinum: 'bg-level-platinum',
   diamond: 'bg-level-diamond',
 };
 
 const levelBorderColors: Record<string, string> = {
   bronze: 'ring-level-bronze/30',
+  iron: 'ring-level-iron/30',
   silver: 'ring-level-silver/30',
   gold: 'ring-level-gold/30',
+  ruby: 'ring-level-ruby/30',
+  emerald: 'ring-level-emerald/30',
   platinum: 'ring-level-platinum/30',
   diamond: 'ring-level-diamond/30',
 };
