@@ -147,7 +147,7 @@ export const badges: Badge[] = [
     id: "badge-3",
     name: "Maestro",
     description: "Domine o Maestro completamente",
-    icon: "🎼",
+    icon: "workflow",
     category: "skill",
     xpReward: 200,
   },
