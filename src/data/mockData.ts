@@ -129,8 +129,8 @@ export const allUsers: (User & {
 export const badges: Badge[] = [
   {
     id: "badge-1",
-    name: "Primeiro Passo",
-    description: "Complete seu primeiro desafio",
+    name: "First Step",
+    description: "Complete your first challenge",
     icon: "🚀",
     category: "achievement",
     xpReward: 50,
@@ -169,8 +169,8 @@ export const badges: Badge[] = [
   },
   {
     id: "badge-6",
-    name: "Streak Master",
-    description: "Mantenha uma sequência de 14 dias",
+    name: "API Master",
+    description: "Master the API track",
     icon: "🔥",
     category: "achievement",
     xpReward: 100,
