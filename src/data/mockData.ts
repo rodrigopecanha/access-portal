@@ -22,7 +22,7 @@ export const currentUser: User & {
 } = {
   id: "user-1",
   name: "Rodrigo Pecanha",
-  email: "carolina.santos@empresa.com",
+  email: "rodrigo.pecanha@docusign.com",
   role: "sc",
   level: "Legionário",
   xp: 1850,
