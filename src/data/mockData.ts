@@ -506,6 +506,51 @@ const genericQuestions = (prefix: string) => [
   ),
 ];
 
+// IAM optional learning for support content
+const iamNavigatorOptionalLearning: OptionalLearning[] = [
+  createOptionalLearning(
+    "opt-iam-nav-1",
+    localized("Introdução ao IAM", "Introduction to IAM"),
+    localized("Conceitos fundamentais de gestão de identidades", "Fundamental identity management concepts"),
+    "video",
+    10,
+    10,
+  ),
+];
+
+const iamMaestroOptionalLearning: OptionalLearning[] = [
+  createOptionalLearning(
+    "opt-iam-maestro-1",
+    localized("Orquestração 101", "Orchestration 101"),
+    localized("Conceitos básicos de orquestração de identidades", "Basic identity orchestration concepts"),
+    "video",
+    12,
+    10,
+  ),
+];
+
+const iamAgreementOptionalLearning: OptionalLearning[] = [
+  createOptionalLearning(
+    "opt-iam-agree-1",
+    localized("Compliance Overview", "Compliance Overview"),
+    localized("Visão geral de conformidade e termos", "Overview of compliance and terms"),
+    "video",
+    10,
+    10,
+  ),
+];
+
+const iamWorkspacesOptionalLearning: OptionalLearning[] = [
+  createOptionalLearning(
+    "opt-iam-ws-1",
+    localized("Multi-tenancy Basics", "Multi-tenancy Basics"),
+    localized("Conceitos de multi-tenancy e isolamento", "Multi-tenancy and isolation concepts"),
+    "video",
+    10,
+    10,
+  ),
+];
+
 // IAM Trail Modules
 const iamSubTracks: SubTrack[] = [
   createSubTrack("subtrack-iam-navigator", localized("Navigator", "Navigator"), localized("Domine o Navigator para gestão de identidades", "Master Navigator for identity management"), "Compass", [
@@ -695,6 +740,13 @@ const iamSubTracks: SubTrack[] = [
   ]),
 ];
 
+// Attach optional learning to IAM modules for Support Content sections
+iamSubTracks[0].modules[0].optionalLearning = iamNavigatorOptionalLearning;
+iamSubTracks[0].modules[1].optionalLearning = iamNavigatorOptionalLearning;
+iamSubTracks[1].modules[0].optionalLearning = iamMaestroOptionalLearning;
+iamSubTracks[2].modules[0].optionalLearning = iamAgreementOptionalLearning;
+iamSubTracks[3].modules[0].optionalLearning = iamWorkspacesOptionalLearning;
+
 // eSignature Trail with new structure - Features Básicas is now challenge-based
 const esigBasicChallenges: PracticalChallenge[] = [
   createPracticalChallenge(
@@ -786,6 +838,15 @@ const esigBasicChallenges: PracticalChallenge[] = [
 ];
 
 const esigBasicOptionalLearning: OptionalLearning[] = [
+  {
+    id: "opt-esig-course-1",
+    title: localized("Curso DSU – Send Agreements", "DSU Course – Send Agreements"),
+    description: localized("Curso oficial sobre envio de contratos na plataforma", "Official course on sending agreements on the platform"),
+    type: "course",
+    duration: 60,
+    xpReward: 30,
+    url: "https://dsucustomers.docusign.com/path/send-agreements",
+  },
   createOptionalLearning(
     "opt-esig-1",
     localized("Visão Geral das Features", "Features Overview"),

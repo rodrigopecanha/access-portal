@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { trails, currentUser, calculateSubTrackProgress, calculateModuleProgress, isLearningComplete, isAssessmentUnlocked, isBossChallengeUnlocked, isModuleComplete } from '@/data/mockData';
-import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, ChevronDown, ChevronRight, Play, FileText, Presentation, ClipboardCheck, Swords, Upload, Target, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Clock, Zap, CheckCircle2, Lock, ChevronDown, ChevronRight, Play, FileText, Presentation, ClipboardCheck, Swords, Upload, Target, ArrowRight, Video, GraduationCap, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -111,6 +111,64 @@ export default function SubTrackDetail() {
             </div>
           </div>
         </div>
+
+        {/* Support Content Section */}
+        {(() => {
+          const allOptionalLearning = subTrack.modules.flatMap(m => m.optionalLearning || []);
+          if (allOptionalLearning.length === 0) return null;
+          return (
+            <Card className="animate-fade-in border-dashed">
+              <CardContent className="p-5">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+                    <Video className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-medium text-foreground">{t.challenges.supportContent}</h3>
+                      <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded-full">{t.common.optional}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {t.challenges.watchVideos}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {allOptionalLearning.map((item) => {
+                        const isCourse = item.type === 'course';
+                        const hasUrl = !!item.url;
+                        const ItemIcon = isCourse ? GraduationCap : Play;
+                        
+                        const buttonContent = (
+                          <>
+                            <ItemIcon className="w-3.5 h-3.5" />
+                            {getLocalizedText(item.title, language)}
+                            {isCourse && hasUrl && <ExternalLink className="w-3 h-3" />}
+                            {!isCourse && <span className="text-xs text-muted-foreground">({item.duration}min)</span>}
+                          </>
+                        );
+
+                        if (hasUrl) {
+                          return (
+                            <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer">
+                              <Button variant="secondary" size="sm" className="gap-2">
+                                {buttonContent}
+                              </Button>
+                            </a>
+                          );
+                        }
+
+                        return (
+                          <Button key={item.id} variant="secondary" size="sm" className="gap-2">
+                            {buttonContent}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
 
         {/* Modules */}
         <div className="space-y-4">
