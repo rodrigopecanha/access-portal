@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -11,6 +12,7 @@ import { getLocalizedText } from '@/types/learning';
 export default function Admin() {
   const { language } = useLanguage();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   
   return (
     <MainLayout>
@@ -40,7 +42,7 @@ export default function Admin() {
                 </TableHeader>
                 <TableBody>
                   {allUsers.map(user => (
-                    <TableRow key={user.id}>
+                    <TableRow key={user.id} className="cursor-pointer hover:bg-muted/50" onClick={() => navigate(`/admin/user/${user.id}`)}>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center text-sm text-primary-foreground">
