@@ -3,7 +3,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { SubTrackCard } from '@/components/trails/SubTrackCard';
 import { trails, currentUser, calculateTrailProgress, calculateSubTrackProgress } from '@/data/mockData';
-import { ArrowLeft, Clock, Zap, Layers, Terminal } from 'lucide-react';
+import { ArrowLeft, Clock, Zap, Layers, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation, useLanguage } from '@/i18n';
 import { getLocalizedText } from '@/types/learning';
@@ -82,7 +82,7 @@ export default function TrailDetail() {
                 size="lg"
                 className="mt-6 gap-2.5 bg-primary-foreground text-foreground font-semibold text-base px-6 py-3 shadow-lg hover:bg-primary-foreground/90 hover:shadow-xl hover:scale-[1.02] transition-all duration-200 animate-pulse-subtle"
               >
-                <Terminal className="w-5 h-5" />
+                <Settings className="w-5 h-5" />
                 🚀 My API Environment
               </Button>
             )}
