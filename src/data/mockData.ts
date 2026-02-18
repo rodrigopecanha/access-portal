@@ -1247,7 +1247,14 @@ export function getRecommendedChallenge(user: ExtendedUser): LearningContent | n
 }
 
 export function getRecommendedChallengeWithContext(user: ExtendedUser): RecommendedContent | null {
-  for (const trail of trails) {
+  // Priority order: eSignature first, then remaining tracks
+  const prioritized = [...trails].sort((a, b) => {
+    if (a.id === 'trail-esignature') return -1;
+    if (b.id === 'trail-esignature') return 1;
+    return 0;
+  });
+
+  for (const trail of prioritized) {
     for (const subTrack of trail.subTracks) {
       if (subTrack.status === 'coming-soon' || subTrack.status === 'hidden') continue;
       for (const module of subTrack.modules) {
