@@ -53,6 +53,7 @@ export interface TranslationDictionary {
     yourAchievements: string;
     featuredTracks: string;
     progress: string;
+    continueChallenge: string;
   };
   
   // Tracks
@@ -142,6 +143,10 @@ export interface TranslationDictionary {
     unlocked: string;
     locked: string;
     earned: string;
+    levelLabel: string;
+    progressToNext: string;
+    maxLevelReached: string;
+    days: string;
   };
   
   // Profile
@@ -168,6 +173,11 @@ export interface TranslationDictionary {
     analytics: string;
     content: string;
     settings: string;
+    teamManagement: string;
+    trackTeamProgress: string;
+    userProgress: string;
+    user: string;
+    streak: string;
   };
   
   // Errors & Empty States

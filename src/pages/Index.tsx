@@ -135,7 +135,7 @@ export default function Index() {
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="text-sm font-medium text-xp-gold">+{recommended.content.xpReward} XP</span>
                   <Button size="sm" onClick={handleContinueChallenge} className="gap-1.5">
-                    {language === 'pt-BR' ? 'Continuar Desafio' : 'Continue Challenge'}
+                    {t.dashboard.continueChallenge}
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>

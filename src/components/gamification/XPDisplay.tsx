@@ -1,6 +1,8 @@
 import { cn } from '@/lib/utils';
 import { getLevelFromXp, getXpProgress } from '@/types/learning';
+import { getLocalizedText } from '@/types/learning';
 import { Zap } from 'lucide-react';
+import { useLanguage, useTranslation } from '@/i18n';
 
 interface XPDisplayProps {
   xp: number;
@@ -12,12 +14,16 @@ interface XPDisplayProps {
 export function XPDisplay({ xp, showProgress = false, size = 'md', className }: XPDisplayProps) {
   const level = getLevelFromXp(xp);
   const progress = getXpProgress(xp);
+  const { language } = useLanguage();
+  const { t } = useTranslation();
   
   const sizeClasses = {
     sm: 'text-sm',
     md: 'text-base',
     lg: 'text-lg',
   };
+  
+  const isMaxLevel = level.name === 'Imperator';
   
   return (
     <div className={cn('flex items-center gap-2', className)}>
@@ -38,7 +44,10 @@ export function XPDisplay({ xp, showProgress = false, size = 'md', className }: 
             />
           </div>
           <span className="text-xs text-muted-foreground">
-            {progress.current} / {progress.max} para {level.name === 'Imperator' ? 'Imperator' : 'próximo nível'}
+            {isMaxLevel 
+              ? t.gamification.maxLevelReached
+              : `${progress.current} / ${progress.max} ${t.gamification.progressToNext}`
+            }
           </span>
         </div>
       )}

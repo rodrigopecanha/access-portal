@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
-import { getLevelFromXp, LEVELS, UserLevel } from '@/types/learning';
+import { getLevelFromXp, LEVELS, UserLevel, getLocalizedText } from '@/types/learning';
+import { useLanguage, useTranslation } from '@/i18n';
 
 interface LevelBadgeProps {
   level?: UserLevel;
@@ -33,6 +34,8 @@ const levelBorderColors: Record<string, string> = {
 
 export function LevelBadge({ level, xp, size = 'md', showName = true, className }: LevelBadgeProps) {
   const levelConfig = xp !== undefined ? getLevelFromXp(xp) : LEVELS.find(l => l.name === level) || LEVELS[0];
+  const { language } = useLanguage();
+  const { t } = useTranslation();
   
   const sizeClasses = {
     sm: 'w-8 h-8 text-lg',
@@ -60,10 +63,10 @@ export function LevelBadge({ level, xp, size = 'md', showName = true, className 
       {showName && (
         <div className="flex flex-col">
           <span className={cn('font-bold text-foreground', textSizeClasses[size])}>
-            {levelConfig.name}
+            {getLocalizedText(levelConfig.localizedName, language)}
           </span>
           <span className="text-xs text-muted-foreground">
-            Nível {LEVELS.findIndex(l => l.name === levelConfig.name) + 1}
+            {t.gamification.levelLabel} {LEVELS.findIndex(l => l.name === levelConfig.name) + 1}
           </span>
         </div>
       )}
