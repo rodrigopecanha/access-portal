@@ -38,7 +38,7 @@ export function XPDisplay({ xp, showProgress = false, size = 'md', className }: 
             />
           </div>
           <span className="text-xs text-muted-foreground">
-            {progress.current} / {progress.max} para {level.name === 'Master' ? 'Master' : 'próximo nível'}
+            {progress.current} / {progress.max} para {level.name === 'Imperator' ? 'Imperator' : 'próximo nível'}
           </span>
         </div>
       )}

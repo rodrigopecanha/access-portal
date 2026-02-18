@@ -79,8 +79,11 @@ export default {
         },
         level: {
           bronze: "hsl(var(--level-bronze))",
+          iron: "hsl(var(--level-iron))",
           silver: "hsl(var(--level-silver))",
           gold: "hsl(var(--level-gold))",
+          ruby: "hsl(var(--level-ruby))",
+          emerald: "hsl(var(--level-emerald))",
           platinum: "hsl(var(--level-platinum))",
           diamond: "hsl(var(--level-diamond))",
         },
