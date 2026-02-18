@@ -11,6 +11,7 @@ import Trails from "./pages/Trails";
 import TrailDetail from "./pages/TrailDetail";
 import SubTrackDetail from "./pages/SubTrackDetail";
 import ChallengeBasedModule from "./pages/ChallengeBasedModule";
+import ApiEnvironment from "./pages/ApiEnvironment";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -34,6 +35,7 @@ function AppRoutes() {
       <Route path="/trails/:trailId" element={<ProtectedRoute><TrailDetail /></ProtectedRoute>} />
       <Route path="/trails/:trailId/subtrack/:subTrackId" element={<ProtectedRoute><SubTrackDetail /></ProtectedRoute>} />
       <Route path="/trails/:trailId/subtrack/:subTrackId/module/:moduleId" element={<ProtectedRoute><ChallengeBasedModule /></ProtectedRoute>} />
+      <Route path="/api-environment" element={<ProtectedRoute><ApiEnvironment /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
