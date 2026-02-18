@@ -1140,8 +1140,8 @@ export const trails: Trail[] = [
     id: "trail-iam",
     title: localized("IAM", "IAM"),
     description: localized(
-      "Identity and Access Management - Domine a gestão de identidades, acessos e provisionamento.",
-      "Identity and Access Management - Master identity, access, and provisioning management."
+      "Intelligent Agreement Management - Domine Maestro, Agreement Desk e Navigator",
+      "Intelligent Agreement Management - Master Maestro, Agreement Desk, and Navigator"
     ),
     icon: "Shield",
     color: "from-blue-500 to-indigo-600",
