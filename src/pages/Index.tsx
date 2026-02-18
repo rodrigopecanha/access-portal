@@ -53,18 +53,8 @@ export default function Index() {
     }
   };
 
-  const mockAnnouncements = [
-    {
-      id: 1,
-      message: 'Important: New Product Release Upcoming 02/26',
-      type: 'highlight' as const,
-    },
-    {
-      id: 2,
-      message: 'Q1 certification deadline extended to March 15',
-      type: 'info' as const,
-    },
-  ];
+
+
 
   return (
     <MainLayout>
@@ -139,36 +129,23 @@ export default function Index() {
                   </div>
                 </div>
               </div>
+
+              {/* Announcements — inside the stats panel */}
+              <div className="mt-5 pt-5 border-t border-border">
+                <h4 className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5 mb-3">
+                  <Megaphone className="w-4 h-4 text-warning" />
+                  {t.dashboard.announcements}
+                </h4>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-warning/5 border border-warning/20">
+                  <span className="text-sm mt-0.5">📢</span>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    Important: New Product Release Upcoming 02/26
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
-
-        {/* Announcements */}
-        <Card className="animate-fade-in border-l-4 border-l-warning" style={{ animationDelay: '0.15s' }}>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Megaphone className="w-5 h-5 text-warning" />
-              {t.dashboard.announcements}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0 space-y-3">
-            {mockAnnouncements.map((item) => (
-              <div
-                key={item.id}
-                className={`flex items-start gap-3 p-3 rounded-lg border ${
-                  item.type === 'highlight'
-                    ? 'bg-warning/5 border-warning/20'
-                    : 'bg-muted/50 border-border'
-                }`}
-              >
-                <span className="text-base mt-0.5">
-                  {item.type === 'highlight' ? '📢' : 'ℹ️'}
-                </span>
-                <p className="text-sm text-foreground leading-relaxed">{item.message}</p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
 
         {/* Next Learning Content */}
         {recommended && (
