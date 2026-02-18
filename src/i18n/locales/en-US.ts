@@ -54,6 +54,7 @@ export const enUS: TranslationDictionary = {
     featuredTracks: 'Featured Tracks',
     progress: 'Progress',
     continueChallenge: 'Continue Challenge',
+    announcements: 'Announcements',
   },
   
   // Tracks

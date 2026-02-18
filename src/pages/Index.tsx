@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { XPDisplay } from '@/components/gamification/XPDisplay';
@@ -8,18 +9,35 @@ import { TrailCard } from '@/components/trails/TrailCard';
 import { Button } from '@/components/ui/button';
 import { currentUser, trails, badges, calculateTrailProgress, getRecommendedChallengeWithContext, getOverallProgress } from '@/data/mockData';
 import { getLocalizedText } from '@/types/learning';
-import { Flame, Trophy, Target, ArrowRight } from 'lucide-react';
+import { Flame, Trophy, Target, ArrowRight, Megaphone } from 'lucide-react';
 import { useTranslation, useLanguage } from '@/i18n';
 import { useNavigate } from 'react-router-dom';
+import { useMockAuth } from '@/contexts/MockAuthContext';
+import { useAnimatedNumber } from '@/hooks/useAnimatedNumber';
 
 export default function Index() {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const { justLoggedIn, clearJustLoggedIn } = useMockAuth();
+  
   const overallProgress = getOverallProgress(currentUser);
   const recommended = getRecommendedChallengeWithContext(currentUser);
   const userBadges = badges.filter(b => currentUser.badges.includes(b.id));
   
+  const animatedXP = useAnimatedNumber(currentUser.xp, 1200, justLoggedIn);
+  const animatedProgress = useAnimatedNumber(overallProgress, 1000, justLoggedIn);
+  const animatedStreak = useAnimatedNumber(currentUser.currentStreak, 800, justLoggedIn);
+  const animatedBadges = useAnimatedNumber(userBadges.length, 800, justLoggedIn);
+  const animatedChallenges = useAnimatedNumber(currentUser.completedChallenges.length, 800, justLoggedIn);
+
+  useEffect(() => {
+    if (justLoggedIn) {
+      const timer = setTimeout(() => clearJustLoggedIn(), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [justLoggedIn, clearJustLoggedIn]);
+
   const trailsWithProgress = trails.slice(0, 3).map(trail => ({
     ...trail,
     progress: calculateTrailProgress(trail, currentUser),
@@ -35,6 +53,19 @@ export default function Index() {
     }
   };
 
+  const mockAnnouncements = [
+    {
+      id: 1,
+      message: 'Important: New Product Release Upcoming 02/26',
+      type: 'highlight' as const,
+    },
+    {
+      id: 2,
+      message: 'Q1 certification deadline extended to March 15',
+      type: 'info' as const,
+    },
+  ];
+
   return (
     <MainLayout>
       <div className="space-y-8">
@@ -46,7 +77,7 @@ export default function Index() {
             </h1>
             <p className="text-muted-foreground">{t.dashboard.continueJourney}</p>
           </div>
-          <XPDisplay xp={currentUser.xp} showProgress size="lg" />
+          <XPDisplay xp={justLoggedIn ? animatedXP : currentUser.xp} showProgress size="lg" />
         </div>
 
         {/* Stats Grid */}
@@ -54,9 +85,11 @@ export default function Index() {
           {/* Overall Progress */}
           <Card className="md:col-span-1 animate-scale-in">
             <CardContent className="p-6 flex flex-col items-center">
-              <ProgressRing progress={overallProgress} size={140}>
+              <ProgressRing progress={justLoggedIn ? animatedProgress : overallProgress} size={140}>
                 <div className="text-center">
-                  <span className="text-3xl font-bold text-foreground">{overallProgress}%</span>
+                  <span className="text-3xl font-bold text-foreground">
+                    {justLoggedIn ? animatedProgress : overallProgress}%
+                  </span>
                   <p className="text-xs text-muted-foreground">{t.dashboard.complete}</p>
                 </div>
               </ProgressRing>
@@ -75,7 +108,9 @@ export default function Index() {
                     <Flame className="w-6 h-6 text-orange-500" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-foreground">{currentUser.currentStreak}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {justLoggedIn ? animatedStreak : currentUser.currentStreak}
+                    </p>
                     <p className="text-sm text-muted-foreground">{t.dashboard.consecutiveDays}</p>
                   </div>
                 </div>
@@ -85,7 +120,9 @@ export default function Index() {
                     <Trophy className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-foreground">{userBadges.length}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {justLoggedIn ? animatedBadges : userBadges.length}
+                    </p>
                     <p className="text-sm text-muted-foreground">{t.dashboard.badges}</p>
                   </div>
                 </div>
@@ -95,7 +132,9 @@ export default function Index() {
                     <Target className="w-6 h-6 text-accent" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-foreground">{currentUser.completedChallenges.length}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {justLoggedIn ? animatedChallenges : currentUser.completedChallenges.length}
+                    </p>
                     <p className="text-sm text-muted-foreground">{t.dashboard.challenges}</p>
                   </div>
                 </div>
@@ -104,7 +143,34 @@ export default function Index() {
           </Card>
         </div>
 
-        {/* Next Learning Content — Enhanced */}
+        {/* Announcements */}
+        <Card className="animate-fade-in border-l-4 border-l-warning" style={{ animationDelay: '0.15s' }}>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Megaphone className="w-5 h-5 text-warning" />
+              {t.dashboard.announcements}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0 space-y-3">
+            {mockAnnouncements.map((item) => (
+              <div
+                key={item.id}
+                className={`flex items-start gap-3 p-3 rounded-lg border ${
+                  item.type === 'highlight'
+                    ? 'bg-warning/5 border-warning/20'
+                    : 'bg-muted/50 border-border'
+                }`}
+              >
+                <span className="text-base mt-0.5">
+                  {item.type === 'highlight' ? '📢' : 'ℹ️'}
+                </span>
+                <p className="text-sm text-foreground leading-relaxed">{item.message}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Next Learning Content */}
         {recommended && (
           <Card className="animate-fade-in border-primary/30 shadow-md" style={{ animationDelay: '0.2s' }}>
             <CardHeader className="pb-3">
@@ -144,7 +210,7 @@ export default function Index() {
           </Card>
         )}
 
-        {/* Badges — All 8 in order */}
+        {/* Badges */}
         <Card className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">

@@ -2,20 +2,32 @@ import { createContext, useContext, useState, useCallback, ReactNode } from 'rea
 
 interface MockAuthContextType {
   isAuthenticated: boolean;
+  justLoggedIn: boolean;
   login: () => void;
   logout: () => void;
+  clearJustLoggedIn: () => void;
 }
 
 const MockAuthContext = createContext<MockAuthContextType | null>(null);
 
 export function MockAuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
 
-  const login = useCallback(() => setIsAuthenticated(true), []);
-  const logout = useCallback(() => setIsAuthenticated(false), []);
+  const login = useCallback(() => {
+    setIsAuthenticated(true);
+    setJustLoggedIn(true);
+  }, []);
+
+  const logout = useCallback(() => {
+    setIsAuthenticated(false);
+    setJustLoggedIn(false);
+  }, []);
+
+  const clearJustLoggedIn = useCallback(() => setJustLoggedIn(false), []);
 
   return (
-    <MockAuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <MockAuthContext.Provider value={{ isAuthenticated, justLoggedIn, login, logout, clearJustLoggedIn }}>
       {children}
     </MockAuthContext.Provider>
   );

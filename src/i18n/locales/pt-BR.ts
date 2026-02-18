@@ -54,6 +54,7 @@ export const ptBR: TranslationDictionary = {
     featuredTracks: 'Trilhas em Destaque',
     progress: 'Progresso',
     continueChallenge: 'Continuar Desafio',
+    announcements: 'Comunicados',
   },
   
   // Tracks
