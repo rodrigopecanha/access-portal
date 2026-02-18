@@ -5,14 +5,19 @@ import { LevelBadge } from '@/components/gamification/LevelBadge';
 import { ProgressRing } from '@/components/gamification/ProgressRing';
 import { BadgeCard } from '@/components/gamification/BadgeCard';
 import { TrailCard } from '@/components/trails/TrailCard';
-import { currentUser, trails, badges, calculateTrailProgress, getRecommendedChallenge, getOverallProgress } from '@/data/mockData';
-import { Flame, Trophy, Target } from 'lucide-react';
-import { useTranslation } from '@/i18n';
+import { Button } from '@/components/ui/button';
+import { currentUser, trails, badges, calculateTrailProgress, getRecommendedChallengeWithContext, getOverallProgress } from '@/data/mockData';
+import { getLocalizedText } from '@/types/learning';
+import { Flame, Trophy, Target, ArrowRight } from 'lucide-react';
+import { useTranslation, useLanguage } from '@/i18n';
+import { useNavigate } from 'react-router-dom';
 
 export default function Index() {
   const { t } = useTranslation();
+  const { language } = useLanguage();
+  const navigate = useNavigate();
   const overallProgress = getOverallProgress(currentUser);
-  const recommendedChallenge = getRecommendedChallenge(currentUser);
+  const recommended = getRecommendedChallengeWithContext(currentUser);
   const userBadges = badges.filter(b => currentUser.badges.includes(b.id));
   
   const trailsWithProgress = trails.slice(0, 3).map(trail => ({
@@ -20,6 +25,15 @@ export default function Index() {
     progress: calculateTrailProgress(trail, currentUser),
     isLocked: trail.prerequisites.some(p => !currentUser.completedTrails.includes(p))
   }));
+
+  const handleContinueChallenge = () => {
+    if (!recommended) return;
+    if (recommended.isChallengeBased) {
+      navigate(`/trails/${recommended.trailId}/subtrack/${recommended.subTrackId}/module/${recommended.moduleId}`);
+    } else {
+      navigate(`/trails/${recommended.trailId}/subtrack/${recommended.subTrackId}`);
+    }
+  };
 
   return (
     <MainLayout>
@@ -90,9 +104,9 @@ export default function Index() {
           </Card>
         </div>
 
-        {/* Next Learning Content */}
-        {recommendedChallenge && (
-          <Card className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        {/* Next Learning Content — Enhanced */}
+        {recommended && (
+          <Card className="animate-fade-in border-primary/30 shadow-md" style={{ animationDelay: '0.2s' }}>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Target className="w-5 h-5 text-primary" />
@@ -100,21 +114,37 @@ export default function Index() {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="flex items-center gap-4 p-4 rounded-lg bg-secondary">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-lg bg-primary/5 border border-primary/10">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                   <Target className="w-5 h-5 text-primary" />
                 </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-foreground">{recommendedChallenge.title}</h4>
-                  <p className="text-sm text-muted-foreground">{recommendedChallenge.description}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-muted-foreground mb-0.5">
+                    {getLocalizedText(recommended.subTrackTitle, language)} • {getLocalizedText(recommended.moduleTitle, language)}
+                  </p>
+                  <h4 className="font-semibold text-foreground truncate">
+                    {recommended.isChallengeBased 
+                      ? getLocalizedText((recommended.content as any).title, language)
+                      : (recommended.content as any).title
+                    }
+                  </h4>
+                  {!recommended.isChallengeBased && (recommended.content as any).description && (
+                    <p className="text-sm text-muted-foreground line-clamp-1">{(recommended.content as any).description}</p>
+                  )}
                 </div>
-                <span className="text-sm font-medium text-xp-gold">+{recommendedChallenge.xpReward} XP</span>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="text-sm font-medium text-xp-gold">+{recommended.content.xpReward} XP</span>
+                  <Button size="sm" onClick={handleContinueChallenge} className="gap-1.5">
+                    {language === 'pt-BR' ? 'Continuar Desafio' : 'Continue Challenge'}
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Badges */}
+        {/* Badges — All 8 in order */}
         <Card className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
@@ -124,7 +154,7 @@ export default function Index() {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="flex flex-wrap gap-6">
-              {badges.slice(0, 6).map(badge => (
+              {badges.map(badge => (
                 <BadgeCard 
                   key={badge.id} 
                   badge={badge} 
