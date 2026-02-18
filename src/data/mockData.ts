@@ -28,7 +28,7 @@ export const currentUser: User & {
   xp: 2800,
   xpToNextLevel: 4000,
   badges: ["badge-1", "badge-2", "badge-3", "badge-4"],
-  completedChallenges: ["lc-iam-nav-1", "lc-iam-nav-2", "lc-iam-nav-3", "lc-iam-nav-4", "lc-iam-nav-5", "lc-iam-maestro-1", "lc-iam-maestro-2", "prac-esig-1", "prac-esig-2"],
+  completedChallenges: ["lc-iam-nav-1", "lc-iam-nav-2", "lc-iam-nav-3", "lc-iam-nav-4", "lc-iam-nav-5", "lc-iam-maestro-1", "lc-iam-maestro-2", "prac-esig-1", "prac-esig-2", "prac-api-basic-1"],
   completedLessons: [],
   completedModules: ["mod-iam-nav-1", "mod-iam-nav-2"],
   completedTrails: [],
@@ -1356,22 +1356,57 @@ export function isBossChallengeUnlocked(module: Module, user: ExtendedUser): boo
 }
 
 export function isModuleComplete(module: Module, user: ExtendedUser): boolean {
+  if (module.isChallengeBased && module.practicalChallenges) {
+    return module.practicalChallenges.every(
+      (pc) => user.completedChallenges.includes(pc.id) || pc.isSubmitted || pc.isCompleted
+    );
+  }
   return user.completedBossChallenges?.includes(module.bossChallenge.id) || false;
 }
 
 export function calculateSubTrackProgress(subTrack: SubTrack, user: ExtendedUser): number {
-  const totalModules = subTrack.modules.length;
-  const completedModules = subTrack.modules.filter((mod) => isModuleComplete(mod, user)).length;
-  return totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0;
+  let totalItems = 0;
+  let completedItems = 0;
+
+  for (const mod of subTrack.modules) {
+    if (mod.isChallengeBased && mod.practicalChallenges) {
+      totalItems += mod.practicalChallenges.length;
+      completedItems += mod.practicalChallenges.filter(
+        (pc) => user.completedChallenges.includes(pc.id) || pc.isSubmitted || pc.isCompleted
+      ).length;
+    } else {
+      totalItems += mod.learningContent.length + 2;
+      completedItems += mod.learningContent.filter((lc) => user.completedChallenges.includes(lc.id)).length;
+      if (user.completedAssessments?.includes(mod.assessment.id)) completedItems++;
+      if (user.completedBossChallenges?.includes(mod.bossChallenge.id)) completedItems++;
+    }
+  }
+
+  return totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 }
 
 export function calculateTrailProgress(trail: Trail, user: ExtendedUser): number {
-  const totalModules = trail.subTracks.reduce((sum, st) => sum + st.modules.length, 0);
-  const completedModules = trail.subTracks.reduce(
-    (sum, st) => sum + st.modules.filter((mod) => isModuleComplete(mod, user)).length,
-    0,
-  );
-  return totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0;
+  let totalItems = 0;
+  let completedItems = 0;
+
+  for (const st of trail.subTracks) {
+    for (const mod of st.modules) {
+      if (mod.isChallengeBased && mod.practicalChallenges) {
+        totalItems += mod.practicalChallenges.length;
+        completedItems += mod.practicalChallenges.filter(
+          (pc) => user.completedChallenges.includes(pc.id) || pc.isSubmitted || pc.isCompleted
+        ).length;
+      } else {
+        // Count learning content + assessment + boss as items
+        totalItems += mod.learningContent.length + 2;
+        completedItems += mod.learningContent.filter((lc) => user.completedChallenges.includes(lc.id)).length;
+        if (user.completedAssessments?.includes(mod.assessment.id)) completedItems++;
+        if (user.completedBossChallenges?.includes(mod.bossChallenge.id)) completedItems++;
+      }
+    }
+  }
+
+  return totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 }
 
 export interface RecommendedContent {
