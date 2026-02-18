@@ -6,13 +6,15 @@ import {
   User, 
   Users,
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 import { currentUser } from '@/data/mockData';
 import { LevelBadge } from '@/components/gamification/LevelBadge';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useTranslation } from '@/i18n';
+import { useMockAuth } from '@/contexts/MockAuthContext';
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -27,6 +29,7 @@ const adminItems = [
 export function MainNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useTranslation();
+  const { logout } = useMockAuth();
   const isAdmin = currentUser.role === 'manager' || currentUser.role === 'admin';
   
   const navItems = [
@@ -68,8 +71,15 @@ export function MainNav() {
           ))}
         </nav>
         
-        <div className="pt-4 border-t border-border">
+        <div className="pt-4 border-t border-border space-y-3">
           <LevelBadge xp={currentUser.xp} size="sm" />
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors w-full"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
         </div>
       </aside>
       
