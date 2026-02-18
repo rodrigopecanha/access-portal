@@ -1358,7 +1358,7 @@ export function isBossChallengeUnlocked(module: Module, user: ExtendedUser): boo
 export function isModuleComplete(module: Module, user: ExtendedUser): boolean {
   if (module.isChallengeBased && module.practicalChallenges) {
     return module.practicalChallenges.every(
-      (pc) => user.completedChallenges.includes(pc.id) || pc.isSubmitted || pc.isCompleted
+      (pc) => user.completedChallenges.includes(pc.id)
     );
   }
   return user.completedBossChallenges?.includes(module.bossChallenge.id) || false;
@@ -1372,7 +1372,7 @@ export function calculateSubTrackProgress(subTrack: SubTrack, user: ExtendedUser
     if (mod.isChallengeBased && mod.practicalChallenges) {
       totalItems += mod.practicalChallenges.length;
       completedItems += mod.practicalChallenges.filter(
-        (pc) => user.completedChallenges.includes(pc.id) || pc.isSubmitted || pc.isCompleted
+        (pc) => user.completedChallenges.includes(pc.id)
       ).length;
     } else {
       totalItems += mod.learningContent.length + 2;
@@ -1394,7 +1394,7 @@ export function calculateTrailProgress(trail: Trail, user: ExtendedUser): number
       if (mod.isChallengeBased && mod.practicalChallenges) {
         totalItems += mod.practicalChallenges.length;
         completedItems += mod.practicalChallenges.filter(
-          (pc) => user.completedChallenges.includes(pc.id) || pc.isSubmitted || pc.isCompleted
+          (pc) => user.completedChallenges.includes(pc.id)
         ).length;
       } else {
         // Count learning content + assessment + boss as items

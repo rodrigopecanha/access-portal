@@ -79,7 +79,7 @@ function getCompletedItems(userId: string, language: SupportedLocale): Completed
         // Practical challenges
         if (mod.isChallengeBased && mod.practicalChallenges) {
           for (const pc of mod.practicalChallenges) {
-            if (user.completedChallenges.includes(pc.id) || pc.isSubmitted || pc.isCompleted) {
+            if (user.completedChallenges.includes(pc.id)) {
               items.push({
                 id: pc.id,
                 title: getLocalizedText(pc.title, language),
