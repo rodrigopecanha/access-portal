@@ -75,7 +75,6 @@ export default function TrailDetail() {
                 />
               </div>
             </div>
-            </div>
 
             {trail.id === 'trail-api' && (
               <Button
@@ -86,6 +85,7 @@ export default function TrailDetail() {
                 My API Environment
               </Button>
             )}
+          </div>
         </div>
 
         {/* Sub-Tracks */}
