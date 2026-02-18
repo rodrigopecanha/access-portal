@@ -137,30 +137,38 @@ export const badges: Badge[] = [
   },
   {
     id: "badge-2",
-    name: "IAM Expert",
-    description: "Complete a trilha IAM",
-    icon: "🔐",
-    category: "completion",
-    xpReward: 200,
-  },
-  {
-    id: "badge-3",
-    name: "eSignature Pro",
+    name: "eSign",
     description: "Complete a trilha eSignature",
     icon: "✍️",
     category: "completion",
     xpReward: 250,
   },
   {
-    id: "badge-4",
-    name: "Navigator Master",
-    description: "Domine o Navigator completamente",
-    icon: "🧭",
+    id: "badge-3",
+    name: "Maestro",
+    description: "Domine o Maestro completamente",
+    icon: "🎼",
     category: "skill",
-    xpReward: 150,
+    xpReward: 200,
+  },
+  {
+    id: "badge-4",
+    name: "Agreement Desk",
+    description: "Complete os desafios de Agreement Desk",
+    icon: "📋",
+    category: "completion",
+    xpReward: 200,
   },
   {
     id: "badge-5",
+    name: "CLM",
+    description: "Domine o Contract Lifecycle Management",
+    icon: "📄",
+    category: "completion",
+    xpReward: 250,
+  },
+  {
+    id: "badge-6",
     name: "Streak Master",
     description: "Mantenha uma sequência de 14 dias",
     icon: "🔥",
@@ -168,20 +176,20 @@ export const badges: Badge[] = [
     xpReward: 100,
   },
   {
-    id: "badge-6",
+    id: "badge-7",
+    name: "Challenge Gladiator",
+    description: "Complete 10 desafios práticos",
+    icon: "⚔️",
+    category: "achievement",
+    xpReward: 300,
+  },
+  {
+    id: "badge-8",
     name: "SC Elite",
     description: "Alcance o nível Master",
     icon: "👑",
     category: "special",
     xpReward: 500,
-  },
-  {
-    id: "badge-7",
-    name: "Boss Slayer",
-    description: "Complete 5 Boss Challenges",
-    icon: "⚔️",
-    category: "achievement",
-    xpReward: 300,
   },
 ];
 
@@ -1149,13 +1157,66 @@ export function calculateTrailProgress(trail: Trail, user: ExtendedUser): number
   return totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0;
 }
 
+export interface RecommendedContent {
+  content: LearningContent | PracticalChallenge;
+  trailId: string;
+  subTrackId: string;
+  subTrackTitle: LocalizedText;
+  moduleId: string;
+  moduleTitle: LocalizedText;
+  isChallengeBased: boolean;
+}
+
 export function getRecommendedChallenge(user: ExtendedUser): LearningContent | null {
+  const result = getRecommendedChallengeWithContext(user);
+  if (!result) return null;
+  if (result.isChallengeBased) {
+    // Return a compatible LearningContent shape for backward compat
+    const pc = result.content as PracticalChallenge;
+    return {
+      id: pc.id,
+      title: typeof pc.title === 'string' ? pc.title : pc.title['pt-BR'],
+      description: typeof pc.description === 'string' ? pc.description : pc.description['pt-BR'],
+      type: 'article',
+      duration: 0,
+      xpReward: pc.xpReward,
+    };
+  }
+  return result.content as LearningContent;
+}
+
+export function getRecommendedChallengeWithContext(user: ExtendedUser): RecommendedContent | null {
   for (const trail of trails) {
     for (const subTrack of trail.subTracks) {
+      if (subTrack.status === 'coming-soon' || subTrack.status === 'hidden') continue;
       for (const module of subTrack.modules) {
-        for (const content of module.learningContent) {
-          if (!user.completedChallenges.includes(content.id)) {
-            return content;
+        if (module.isChallengeBased && module.practicalChallenges) {
+          for (const challenge of module.practicalChallenges) {
+            if (!challenge.isCompleted && !challenge.isSubmitted) {
+              return {
+                content: challenge,
+                trailId: trail.id,
+                subTrackId: subTrack.id,
+                subTrackTitle: subTrack.title,
+                moduleId: module.id,
+                moduleTitle: module.title,
+                isChallengeBased: true,
+              };
+            }
+          }
+        } else {
+          for (const content of module.learningContent) {
+            if (!user.completedChallenges.includes(content.id)) {
+              return {
+                content,
+                trailId: trail.id,
+                subTrackId: subTrack.id,
+                subTrackTitle: subTrack.title,
+                moduleId: module.id,
+                moduleTitle: module.title,
+                isChallengeBased: false,
+              };
+            }
           }
         }
       }
