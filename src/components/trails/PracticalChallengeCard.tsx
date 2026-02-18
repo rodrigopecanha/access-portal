@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { PracticalChallenge, getLocalizedText, SupportedLocale } from '@/types/learning';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, CheckCircle2, Lock, Upload, Trophy, Swords, ChevronDown, ChevronUp, Sparkles, Award, BookOpen } from 'lucide-react';
+import { Zap, CheckCircle2, Lock, Upload, Trophy, Swords, ChevronDown, ChevronUp, Sparkles, Award, BookOpen, XCircle, AlertTriangle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -14,6 +14,7 @@ import {
 import { InstructionSection } from './InstructionSection';
 import { useTranslation } from '@/i18n';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { validatePracEsig1, type ValidationResult } from '@/lib/challengeValidation';
 
 interface PracticalChallengeCardProps {
   challenge: PracticalChallenge;
@@ -68,6 +69,7 @@ export function PracticalChallengeCard({
   const [isSubmitted, setIsSubmitted] = useState(isCompleted);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [earnedMedals, setEarnedMedals] = useState<typeof challenge.medals>([]);
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -81,26 +83,73 @@ export function PracticalChallengeCard({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (selectedFile && onSubmit) {
       setIsSubmitting(true);
-      // Simulate validation with loading state
-      setTimeout(() => {
-        // Simulate earning all medals (mock success)
-        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
-        setEarnedMedals(allMedals);
-        setIsSubmitting(false);
-        setShowSuccessModal(true);
-      }, 1800);
+
+      // For prac-esig-1, run real JSON validation
+      if (challenge.id === 'prac-esig-1') {
+        try {
+          const text = await selectedFile.text();
+          const json = JSON.parse(text);
+          const result = validatePracEsig1(json);
+          setValidationResult(result);
+
+          const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+          setEarnedMedals(allMedals);
+          setIsSubmitting(false);
+          setShowSuccessModal(true);
+        } catch {
+          // Invalid JSON — all requirements fail
+          const result: ValidationResult = {
+            challengeId: 'prac-esig-1',
+            sections: [
+              { title: 'Delivery Configuration', requirements: [
+                { label: 'Multi-channel delivery (SMS, WhatsApp, or deliveryMethod)', passed: false },
+                { label: 'Reminders enabled', passed: false },
+              ]},
+              { title: 'Security', requirements: [
+                { label: 'At least 2 authentication layers (0/2 detected)', passed: false },
+              ]},
+              { title: 'Interactive Fields', requirements: [
+                { label: 'Text tabs present', passed: false },
+                { label: 'Checkbox or radio group tabs present', passed: false },
+                { label: 'Required fields configured', passed: false },
+              ]},
+            ],
+            totalPassed: 0,
+            totalRequirements: 6,
+            isFullyValidated: false,
+          };
+          setValidationResult(result);
+          setEarnedMedals([]);
+          setIsSubmitting(false);
+          setShowSuccessModal(true);
+        }
+      } else {
+        // Default mock behavior for all other challenges
+        setTimeout(() => {
+          const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
+          setEarnedMedals(allMedals);
+          setValidationResult(null);
+          setIsSubmitting(false);
+          setShowSuccessModal(true);
+        }, 1800);
+      }
     }
   };
 
   const handleCloseSuccess = () => {
     setShowSuccessModal(false);
-    setIsSubmitted(true);
-    if (selectedFile && onSubmit) {
-      onSubmit(selectedFile);
+    // Only mark as completed if no validation or fully validated
+    const shouldComplete = !validationResult || validationResult.isFullyValidated;
+    if (shouldComplete) {
+      setIsSubmitted(true);
+      if (selectedFile && onSubmit) {
+        onSubmit(selectedFile);
+      }
     }
+    setSelectedFile(null);
   };
 
   const isFinal = challenge.isFinalChallenge;
@@ -285,27 +334,102 @@ export function PracticalChallengeCard({
 
       {/* Success Modal */}
       <Dialog open={showSuccessModal} onOpenChange={handleCloseSuccess}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-center flex items-center justify-center gap-2">
-              <Sparkles className="w-6 h-6 text-xp-gold" />
-              <span>{t.challenges.templateValidated}</span>
+              {validationResult ? (
+                validationResult.isFullyValidated ? (
+                  <>
+                    <Sparkles className="w-6 h-6 text-xp-gold" />
+                    <span>Challenge Completed</span>
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="w-6 h-6 text-warning" />
+                    <span>Partially Completed</span>
+                  </>
+                )
+              ) : (
+                <>
+                  <Sparkles className="w-6 h-6 text-xp-gold" />
+                  <span>{t.challenges.templateValidated}</span>
+                </>
+              )}
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-6 py-4">
-            {/* Success Message */}
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-success/20 flex items-center justify-center animate-scale-in">
-                <CheckCircle2 className="w-10 h-10 text-success" />
+          <div className="space-y-5 py-4">
+            {/* Validation Results for prac-esig-1 */}
+            {validationResult && (
+              <div className="space-y-4">
+                {/* Status Banner */}
+                <div className={cn(
+                  'p-4 rounded-lg text-center',
+                  validationResult.isFullyValidated
+                    ? 'bg-success/10 border border-success/20'
+                    : 'bg-warning/10 border border-warning/20'
+                )}>
+                  {validationResult.isFullyValidated ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-success" />
+                      <span className="font-semibold text-success">All requirements validated!</span>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex items-center justify-center gap-2 mb-1">
+                        <AlertTriangle className="w-5 h-5 text-warning" />
+                        <span className="font-semibold text-warning">
+                          {validationResult.totalPassed}/{validationResult.totalRequirements} requirements passed
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Review the results below and resubmit with the missing elements.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Sections */}
+                {validationResult.sections.map((section) => (
+                  <div key={section.title} className="space-y-2">
+                    <h4 className="text-sm font-semibold text-foreground">{section.title}</h4>
+                    <div className="space-y-1.5">
+                      {section.requirements.map((req) => (
+                        <div
+                          key={req.label}
+                          className={cn(
+                            'flex items-start gap-2.5 px-3 py-2 rounded-md text-sm',
+                            req.passed ? 'bg-success/5' : 'bg-destructive/5'
+                          )}
+                        >
+                          {req.passed ? (
+                            <CheckCircle2 className="w-4 h-4 text-success shrink-0 mt-0.5" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+                          )}
+                          <span className={req.passed ? 'text-foreground' : 'text-muted-foreground'}>
+                            {req.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <p className="text-lg font-medium text-foreground">
-                🎉 {t.challenges.solutionSubmittedSuccess}
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {isFinal ? t.challenges.completedFinalChallenge : t.challenges.continueNextChallenge}
-              </p>
-            </div>
+            )}
+
+            {/* Default success (non-validated challenges) */}
+            {!validationResult && (
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-success/20 flex items-center justify-center animate-scale-in">
+                  <CheckCircle2 className="w-10 h-10 text-success" />
+                </div>
+                <p className="text-lg font-medium text-foreground">
+                  🎉 {t.challenges.solutionSubmittedSuccess}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {isFinal ? t.challenges.completedFinalChallenge : t.challenges.continueNextChallenge}
+                </p>
+              </div>
+            )}
 
             {/* XP Earned */}
             <div className="bg-gradient-to-br from-xp-gold/10 to-xp-gold/5 rounded-xl p-5 border border-xp-gold/20">
@@ -315,13 +439,20 @@ export function PracticalChallengeCard({
                   <span className="text-sm font-medium uppercase tracking-wider">{t.challenges.xpGained}</span>
                 </div>
                 <div className="text-4xl font-bold text-xp-gold">
-                  +<AnimatedXP value={challenge.xpReward} />
+                  {validationResult && !validationResult.isFullyValidated ? (
+                    <span className="text-2xl text-muted-foreground">—</span>
+                  ) : (
+                    <>+<AnimatedXP value={challenge.xpReward} /></>
+                  )}
                 </div>
+                {validationResult && !validationResult.isFullyValidated && (
+                  <p className="text-xs text-muted-foreground mt-1">XP awarded upon full completion</p>
+                )}
               </div>
             </div>
 
-            {/* Medals Earned */}
-            {earnedMedals.length > 0 && (
+            {/* Medals Earned — only show when fully validated or non-validated */}
+            {earnedMedals.length > 0 && (!validationResult || validationResult.isFullyValidated) && (
               <div className="space-y-3">
                 <div className="flex items-center justify-center gap-2 text-muted-foreground">
                   <Award className="w-5 h-5" />
@@ -348,13 +479,13 @@ export function PracticalChallengeCard({
               </div>
             )}
 
-            {/* Continue Button */}
+            {/* Continue / Retry Button */}
             <Button 
               onClick={handleCloseSuccess}
               className="w-full"
               size="lg"
             >
-              {t.common.continue}
+              {validationResult && !validationResult.isFullyValidated ? 'Close & Retry' : t.common.continue}
             </Button>
           </div>
         </DialogContent>
