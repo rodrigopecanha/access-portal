@@ -3,7 +3,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { trails, currentUser } from '@/data/mockData';
-import { ArrowLeft, Zap, CheckCircle2, ChevronRight, Play, Video, BookOpen } from 'lucide-react';
+import { ArrowLeft, Zap, CheckCircle2, ChevronRight, Play, Video, BookOpen, GraduationCap, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { PracticalChallengeCard } from '@/components/trails/PracticalChallengeCard';
@@ -107,7 +107,7 @@ export default function ChallengeBasedModule() {
           </div>
         </div>
 
-        {/* Optional Learning Section */}
+        {/* Support Content Section */}
         {optionalLearning.length > 0 && (
           <Card className="animate-fade-in border-dashed">
             <CardContent className="p-5">
@@ -124,18 +124,45 @@ export default function ChallengeBasedModule() {
                     {t.challenges.watchVideos}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {optionalLearning.map((item) => (
-                      <Button
-                        key={item.id}
-                        variant="secondary"
-                        size="sm"
-                        className="gap-2"
-                      >
-                        <Play className="w-3.5 h-3.5" />
-                        {getLocalizedText(item.title, language)}
-                        <span className="text-xs text-muted-foreground">({item.duration}min)</span>
-                      </Button>
-                    ))}
+                    {optionalLearning.map((item) => {
+                      const isCourse = item.type === 'course';
+                      const hasUrl = !!item.url;
+                      const ItemIcon = isCourse ? GraduationCap : Play;
+                      
+                      const buttonContent = (
+                        <>
+                          <ItemIcon className="w-3.5 h-3.5" />
+                          {getLocalizedText(item.title, language)}
+                          {isCourse && hasUrl && <ExternalLink className="w-3 h-3" />}
+                          {!isCourse && <span className="text-xs text-muted-foreground">({item.duration}min)</span>}
+                        </>
+                      );
+
+                      if (hasUrl) {
+                        return (
+                          <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="gap-2"
+                            >
+                              {buttonContent}
+                            </Button>
+                          </a>
+                        );
+                      }
+
+                      return (
+                        <Button
+                          key={item.id}
+                          variant="secondary"
+                          size="sm"
+                          className="gap-2"
+                        >
+                          {buttonContent}
+                        </Button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

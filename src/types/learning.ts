@@ -127,10 +127,11 @@ export interface OptionalLearning {
   id: string;
   title: LocalizedText;
   description: LocalizedText;
-  type: 'video' | 'article' | 'slides';
+  type: 'video' | 'article' | 'slides' | 'course';
   duration: number;
   xpReward: number;
   videoUrl?: string;
+  url?: string;
 }
 
 export interface Lesson {
