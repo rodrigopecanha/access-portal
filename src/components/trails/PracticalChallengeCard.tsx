@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { PracticalChallenge, getLocalizedText, SupportedLocale } from '@/types/learning';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, CheckCircle2, Lock, Upload, Trophy, Swords, ChevronDown, ChevronUp, Sparkles, Award, BookOpen, XCircle, AlertTriangle } from 'lucide-react';
+import { Zap, CheckCircle2, Lock, Upload, Trophy, Swords, ChevronDown, ChevronUp, Sparkles, Award, BookOpen, XCircle, AlertTriangle, Download } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -424,6 +424,20 @@ export function PracticalChallengeCard({
                     <h4 className="font-semibold text-base">{t.challenges.instructions}</h4>
                   </div>
                   <InstructionSection instructions={getLocalizedText(challenge.instructions, locale)} />
+                </div>
+              )}
+
+              {/* Download Contract Template — Final Challenge only */}
+              {!isSubmitted && challenge.id === 'prac-esig-final' && (
+                <div className="mb-1">
+                  <a
+                    href="/hr_employment_contract.pdf"
+                    download="hr_employment_contract.pdf"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 transition-colors text-sm font-medium"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download Contract Template
+                  </a>
                 </div>
               )}
 
