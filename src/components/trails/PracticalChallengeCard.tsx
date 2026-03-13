@@ -384,30 +384,58 @@ export function PracticalChallengeCard({
                     <span>{t.challenges.acceptedFormats}: {challenge.acceptedFormats.map(f => f.toUpperCase()).join(', ')}</span>
                   </div>
                   
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <label className="flex-1">
-                      <input
-                        type="file"
-                        accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
-                        onChange={handleFileSelect}
-                        className="hidden"
-                      />
-                      <div className={cn(
-                        'flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer transition-colors',
-                        selectedFile 
-                          ? 'border-primary bg-primary/5 text-primary' 
-                          : 'border-muted hover:border-primary/50'
-                      )}>
-                        <Upload className="w-5 h-5" />
-                        <span className="text-sm font-medium">
-                          {selectedFile ? selectedFile.name : t.challenges.selectFile}
-                        </span>
-                      </div>
-                    </label>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <label className="flex-1">
+                        <input
+                          type="file"
+                          accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
+                          onChange={handleFileSelect}
+                          className="hidden"
+                        />
+                        <div className={cn(
+                          'flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer transition-colors',
+                          selectedFile 
+                            ? 'border-primary bg-primary/5 text-primary' 
+                            : 'border-muted hover:border-primary/50'
+                        )}>
+                          <Upload className="w-5 h-5" />
+                          <span className="text-sm font-medium">
+                            {selectedFile 
+                              ? selectedFile.name 
+                              : needsTwoFiles 
+                                ? (locale === 'pt-BR' ? '📄 Template JSON' : '📄 Template JSON')
+                                : t.challenges.selectFile}
+                          </span>
+                        </div>
+                      </label>
+
+                      {needsTwoFiles && (
+                        <label className="flex-1">
+                          <input
+                            type="file"
+                            accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
+                            onChange={handleFile2Select}
+                            className="hidden"
+                          />
+                          <div className={cn(
+                            'flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer transition-colors',
+                            selectedFile2 
+                              ? 'border-primary bg-primary/5 text-primary' 
+                              : 'border-muted hover:border-primary/50'
+                          )}>
+                            <Upload className="w-5 h-5" />
+                            <span className="text-sm font-medium">
+                              {selectedFile2 ? selectedFile2.name : '📋 Webform JSON'}
+                            </span>
+                          </div>
+                        </label>
+                      )}
+                    </div>
                     
                     <Button
                       onClick={handleSubmit}
-                      disabled={!selectedFile || isSubmitting}
+                      disabled={!selectedFile || (needsTwoFiles && !selectedFile2) || isSubmitting}
                       className={cn(
                         'min-w-[140px]',
                         isFinal && 'bg-destructive hover:bg-destructive/90'
