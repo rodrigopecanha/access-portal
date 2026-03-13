@@ -217,3 +217,99 @@ export function validateTemplateChallenges(templateJson: unknown): TemplateValid
     return { success: false, error: 'Invalid JSON or unexpected structure' };
   }
 }
+
+// ── Webform + Template Challenge ──────────────────────────────────
+
+export interface WebformValidationResult {
+  success: boolean;
+  score?: number;
+  validations?: {
+    webformConfigured: boolean;
+    multipleRecipients: boolean;
+    dynamicSubject: boolean;
+  };
+  error?: string;
+}
+
+export function validateWebformTemplateChallenge(
+  templateJson: unknown,
+  webformJson: unknown,
+): WebformValidationResult {
+  try {
+    if (
+      !templateJson || typeof templateJson !== 'object' ||
+      !webformJson || typeof webformJson !== 'object'
+    ) {
+      return { success: false, error: 'Invalid JSON input' };
+    }
+
+    const template = templateJson as Record<string, unknown>;
+    const webform = webformJson as Record<string, unknown>;
+
+    // ── 1. Webform Configured ──
+    // Check that webform references a template and maps name/email fields
+    let webformConfigured = false;
+
+    const hasTemplateRef = !!(
+      webform['templateId'] ||
+      webform['templateGuid'] ||
+      webform['template'] ||
+      webform['sourceTemplateId']
+    );
+
+    // Deep-search webform for name/email field mappings
+    const webformStr = JSON.stringify(webform).toLowerCase();
+    const hasNameField =
+      webformStr.includes('name') &&
+      (webformStr.includes('recipient') || webformStr.includes('signer'));
+    const hasEmailField =
+      webformStr.includes('email') &&
+      (webformStr.includes('recipient') || webformStr.includes('signer'));
+
+    // Also accept explicit field component arrays
+    const hasFieldMappings = webformStr.includes('fieldmapping') ||
+      webformStr.includes('components') ||
+      webformStr.includes('fields');
+
+    webformConfigured = hasTemplateRef && (hasNameField || hasEmailField || hasFieldMappings);
+
+    // ── 2. Multiple Recipients ──
+    let multipleRecipients = false;
+
+    const recipients = template['recipients'];
+    if (recipients && typeof recipients === 'object') {
+      const signers = (recipients as Record<string, unknown>)['signers'];
+      if (Array.isArray(signers) && signers.length >= 2) {
+        multipleRecipients = true;
+      }
+    }
+
+    // ── 3. Dynamic Subject ──
+    let dynamicSubject = false;
+
+    const emailSubject = template['emailSubject'];
+    if (typeof emailSubject === 'string') {
+      // Detect common placeholder patterns: {{...}}, [[...]], <<...>>, {!...!}, /s\d/
+      const placeholderPatterns = [
+        /\{\{.*?(signer|name|recipient).*?\}\}/i,
+        /\[\[.*?(signer|name|recipient).*?\]\]/i,
+        /<<.*?(signer|name|recipient).*?>>/i,
+        /\{!.*?(signer|name|recipient).*?!\}/i,
+        /\/(s|signer)\d/i,
+        /<.*?(signer|name|recipient).*?>/i,
+      ];
+      dynamicSubject = placeholderPatterns.some((rx) => rx.test(emailSubject));
+    }
+
+    const validations = { webformConfigured, multipleRecipients, dynamicSubject };
+
+    const score =
+      (webformConfigured ? 75 : 0) +
+      (multipleRecipients ? 50 : 0) +
+      (dynamicSubject ? 50 : 0);
+
+    return { success: true, score, validations };
+  } catch {
+    return { success: false, error: 'Invalid JSON input' };
+  }
+}
