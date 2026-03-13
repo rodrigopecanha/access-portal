@@ -14,7 +14,7 @@ import {
 import { InstructionSection } from './InstructionSection';
 import { useTranslation } from '@/i18n';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { validatePracEsig1, type ValidationResult } from '@/lib/challengeValidation';
+import { validatePracEsig1, validateTemplateChallenges, validateWebformTemplateChallenge, type ValidationResult } from '@/lib/challengeValidation';
 
 interface PracticalChallengeCardProps {
   challenge: PracticalChallenge;
@@ -65,11 +65,14 @@ export function PracticalChallengeCard({
   const locale = language as SupportedLocale;
   const [isExpanded, setIsExpanded] = useState(!isLocked && !isCompleted);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile2, setSelectedFile2] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(isCompleted);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [earnedMedals, setEarnedMedals] = useState<typeof challenge.medals>([]);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+
+  const needsTwoFiles = challenge.id === 'prac-esig-3';
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -78,65 +81,171 @@ export function PracticalChallengeCard({
       if (challenge.acceptedFormats.includes(ext || '')) {
         setSelectedFile(file);
       } else {
-        alert(`${t.challenges.invalidFormat}: ${challenge.acceptedFormats.join(', ').toUpperCase()}`);
+        alert(`${t.challenges.invalidFormat}: ${challenge.acceptedFormats.map(f => f.toUpperCase()).join(', ')}`);
       }
     }
   };
 
-  const handleSubmit = async () => {
-    if (selectedFile && onSubmit) {
-      setIsSubmitting(true);
-
-      // For prac-esig-1, run real JSON validation
-      if (challenge.id === 'prac-esig-1') {
-        try {
-          const text = await selectedFile.text();
-          const json = JSON.parse(text);
-          const result = validatePracEsig1(json);
-          setValidationResult(result);
-
-          const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
-          setEarnedMedals(allMedals);
-          setIsSubmitting(false);
-          setShowSuccessModal(true);
-        } catch {
-          // Invalid JSON — all requirements fail
-          const result: ValidationResult = {
-            challengeId: 'prac-esig-1',
-            sections: [
-              { title: 'Delivery Configuration', requirements: [
-                { label: 'Multi-channel delivery (SMS, WhatsApp, or deliveryMethod)', passed: false },
-                { label: 'Reminders enabled', passed: false },
-              ]},
-              { title: 'Security', requirements: [
-                { label: 'At least 2 authentication layers (0/2 detected)', passed: false },
-              ]},
-              { title: 'Interactive Fields', requirements: [
-                { label: 'Text tabs present', passed: false },
-                { label: 'Checkbox or radio group tabs present', passed: false },
-                { label: 'Required fields configured', passed: false },
-              ]},
-            ],
-            totalPassed: 0,
-            totalRequirements: 6,
-            isFullyValidated: false,
-          };
-          setValidationResult(result);
-          setEarnedMedals([]);
-          setIsSubmitting(false);
-          setShowSuccessModal(true);
-        }
+  const handleFile2Select = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (challenge.acceptedFormats.includes(ext || '')) {
+        setSelectedFile2(file);
       } else {
-        // Default mock behavior for all other challenges
-        setTimeout(() => {
-          const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
-          setEarnedMedals(allMedals);
-          setValidationResult(null);
-          setIsSubmitting(false);
-          setShowSuccessModal(true);
-        }, 1800);
+        alert(`${t.challenges.invalidFormat}: ${challenge.acceptedFormats.map(f => f.toUpperCase()).join(', ')}`);
       }
     }
+  };
+
+  const buildValidationResult = (
+    challengeId: string,
+    sections: ValidationResult['sections'],
+  ): ValidationResult => {
+    const totalRequirements = sections.reduce((sum, s) => sum + s.requirements.length, 0);
+    const totalPassed = sections.reduce((sum, s) => sum + s.requirements.filter(r => r.passed).length, 0);
+    return {
+      challengeId,
+      sections,
+      totalPassed,
+      totalRequirements,
+      isFullyValidated: totalPassed === totalRequirements,
+    };
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedFile || !onSubmit) return;
+    if (needsTwoFiles && !selectedFile2) return;
+
+    setIsSubmitting(true);
+
+    try {
+      if (challenge.id === 'prac-esig-1') {
+        const text = await selectedFile.text();
+        const json = JSON.parse(text);
+        const result = validatePracEsig1(json);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
+      } else if (challenge.id === 'prac-esig-2') {
+        const text = await selectedFile.text();
+        const json = JSON.parse(text);
+        const tmplResult = validateTemplateChallenges(json);
+
+        if (!tmplResult.success || !tmplResult.validations) {
+          throw new Error('Invalid JSON');
+        }
+
+        const v = tmplResult.validations;
+        const result = buildValidationResult('prac-esig-2', [
+          {
+            title: 'Regex Validations',
+            requirements: [
+              { label: 'CPF regex pattern (XXX.XXX.XXX-XX)', passed: v.cpfRegex },
+              { label: 'CNPJ regex pattern (XX.XXX.XXX/XXXX-XX)', passed: v.cnpjRegex },
+              { label: 'Birth date regex pattern (DD/MM/YYYY)', passed: v.birthDateRegex },
+            ],
+          },
+          {
+            title: 'Branding',
+            requirements: [
+              { label: 'Brand applied to template', passed: v.brandApplied },
+            ],
+          },
+        ]);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
+      } else if (challenge.id === 'prac-esig-3') {
+        const templateText = await selectedFile.text();
+        const webformText = await selectedFile2!.text();
+        const templateJson = JSON.parse(templateText);
+        const webformJson = JSON.parse(webformText);
+        const wfResult = validateWebformTemplateChallenge(templateJson, webformJson);
+
+        if (!wfResult.success || !wfResult.validations) {
+          throw new Error('Invalid JSON');
+        }
+
+        const v = wfResult.validations;
+        const result = buildValidationResult('prac-esig-3', [
+          {
+            title: 'Webform Configuration',
+            requirements: [
+              { label: 'Webform configured to populate first recipient', passed: v.webformConfigured },
+            ],
+          },
+          {
+            title: 'Recipients',
+            requirements: [
+              { label: 'At least 2 recipients configured', passed: v.multipleRecipients },
+            ],
+          },
+          {
+            title: 'Dynamic Subject',
+            requirements: [
+              { label: 'Envelope subject references signer name', passed: v.dynamicSubject },
+            ],
+          },
+        ]);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 1800));
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
+        setEarnedMedals(allMedals);
+        setValidationResult(null);
+      }
+    } catch {
+      const sections = challenge.id === 'prac-esig-1'
+        ? [
+            { title: 'Delivery Configuration', requirements: [
+              { label: 'Multi-channel delivery (SMS, WhatsApp, or deliveryMethod)', passed: false },
+              { label: 'Reminders enabled', passed: false },
+            ]},
+            { title: 'Security', requirements: [
+              { label: 'At least 2 authentication layers (0/2 detected)', passed: false },
+            ]},
+            { title: 'Interactive Fields', requirements: [
+              { label: 'Text tabs present', passed: false },
+              { label: 'Checkbox or radio group tabs present', passed: false },
+              { label: 'Required fields configured', passed: false },
+            ]},
+          ]
+        : challenge.id === 'prac-esig-2'
+        ? [
+            { title: 'Regex Validations', requirements: [
+              { label: 'CPF regex pattern (XXX.XXX.XXX-XX)', passed: false },
+              { label: 'CNPJ regex pattern (XX.XXX.XXX/XXXX-XX)', passed: false },
+              { label: 'Birth date regex pattern (DD/MM/YYYY)', passed: false },
+            ]},
+            { title: 'Branding', requirements: [
+              { label: 'Brand applied to template', passed: false },
+            ]},
+          ]
+        : [
+            { title: 'Webform Configuration', requirements: [
+              { label: 'Webform configured to populate first recipient', passed: false },
+            ]},
+            { title: 'Recipients', requirements: [
+              { label: 'At least 2 recipients configured', passed: false },
+            ]},
+            { title: 'Dynamic Subject', requirements: [
+              { label: 'Envelope subject references signer name', passed: false },
+            ]},
+          ];
+
+      const result = buildValidationResult(challenge.id, sections);
+      setValidationResult(result);
+      setEarnedMedals([]);
+    }
+
+    setIsSubmitting(false);
+    setShowSuccessModal(true);
   };
 
   const handleCloseSuccess = () => {
@@ -150,6 +259,7 @@ export function PracticalChallengeCard({
       }
     }
     setSelectedFile(null);
+    setSelectedFile2(null);
   };
 
   const isFinal = challenge.isFinalChallenge;
@@ -275,30 +385,58 @@ export function PracticalChallengeCard({
                     <span>{t.challenges.acceptedFormats}: {challenge.acceptedFormats.map(f => f.toUpperCase()).join(', ')}</span>
                   </div>
                   
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <label className="flex-1">
-                      <input
-                        type="file"
-                        accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
-                        onChange={handleFileSelect}
-                        className="hidden"
-                      />
-                      <div className={cn(
-                        'flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer transition-colors',
-                        selectedFile 
-                          ? 'border-primary bg-primary/5 text-primary' 
-                          : 'border-muted hover:border-primary/50'
-                      )}>
-                        <Upload className="w-5 h-5" />
-                        <span className="text-sm font-medium">
-                          {selectedFile ? selectedFile.name : t.challenges.selectFile}
-                        </span>
-                      </div>
-                    </label>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <label className="flex-1">
+                        <input
+                          type="file"
+                          accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
+                          onChange={handleFileSelect}
+                          className="hidden"
+                        />
+                        <div className={cn(
+                          'flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer transition-colors',
+                          selectedFile 
+                            ? 'border-primary bg-primary/5 text-primary' 
+                            : 'border-muted hover:border-primary/50'
+                        )}>
+                          <Upload className="w-5 h-5" />
+                          <span className="text-sm font-medium">
+                            {selectedFile 
+                              ? selectedFile.name 
+                              : needsTwoFiles 
+                                ? (locale === 'pt-BR' ? '📄 Template JSON' : '📄 Template JSON')
+                                : t.challenges.selectFile}
+                          </span>
+                        </div>
+                      </label>
+
+                      {needsTwoFiles && (
+                        <label className="flex-1">
+                          <input
+                            type="file"
+                            accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
+                            onChange={handleFile2Select}
+                            className="hidden"
+                          />
+                          <div className={cn(
+                            'flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer transition-colors',
+                            selectedFile2 
+                              ? 'border-primary bg-primary/5 text-primary' 
+                              : 'border-muted hover:border-primary/50'
+                          )}>
+                            <Upload className="w-5 h-5" />
+                            <span className="text-sm font-medium">
+                              {selectedFile2 ? selectedFile2.name : '📋 Webform JSON'}
+                            </span>
+                          </div>
+                        </label>
+                      )}
+                    </div>
                     
                     <Button
                       onClick={handleSubmit}
-                      disabled={!selectedFile || isSubmitting}
+                      disabled={!selectedFile || (needsTwoFiles && !selectedFile2) || isSubmitting}
                       className={cn(
                         'min-w-[140px]',
                         isFinal && 'bg-destructive hover:bg-destructive/90'
