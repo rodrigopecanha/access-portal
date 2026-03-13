@@ -314,6 +314,21 @@ export function PracticalChallengeCard({
           ]
         : challenge.id === 'prac-esig-final'
         ? finalSections
+        : challenge.id === 'prac-esig-adv-1'
+        ? [
+            { title: 'Bulk Configuration', requirements: [
+              { label: 'At least 3 variable fields besides Name and Email', passed: false },
+            ]},
+            { title: 'CSV Validation', requirements: [
+              { label: 'CSV with header (name + email) and 3+ recipients', passed: false },
+            ]},
+            { title: 'Dynamic Subject', requirements: [
+              { label: 'Envelope subject references recipient name', passed: false },
+            ]},
+            { title: '🌟 Bonus', requirements: [
+              { label: 'DocGen for eSign detected', passed: false },
+            ]},
+          ]
         : [
             { title: 'Webform Configuration', requirements: [
               { label: 'Webform configured to populate first recipient', passed: false },
