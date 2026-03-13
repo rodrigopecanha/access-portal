@@ -534,6 +534,11 @@ export function validateBulkSendChallenge(
       (validations.validCSV ? 100 : 0);
 
     return { success: true, score, validations };
+  } catch {
+    return { success: false, score: 0, validations };
+  }
+}
+
 // ── Advanced Workflows Challenge ─────────────────────────────────
 
 export interface AdvancedWorkflowValidationResult {
