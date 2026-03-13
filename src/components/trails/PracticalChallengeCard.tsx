@@ -259,6 +259,7 @@ export function PracticalChallengeCard({
       }
     }
     setSelectedFile(null);
+    setSelectedFile2(null);
   };
 
   const isFinal = challenge.isFinalChallenge;
