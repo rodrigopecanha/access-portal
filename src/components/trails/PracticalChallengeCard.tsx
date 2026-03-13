@@ -14,7 +14,7 @@ import {
 import { InstructionSection } from './InstructionSection';
 import { useTranslation } from '@/i18n';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { validatePracEsig1, validateTemplateChallenges, validateWebformTemplateChallenge, validateFinalChallenge, validateBulkSendChallenge, type ValidationResult } from '@/lib/challengeValidation';
+import { validatePracEsig1, validateTemplateChallenges, validateWebformTemplateChallenge, validateFinalChallenge, validateBulkSendChallenge, validateAdvancedWorkflowChallenge, type ValidationResult } from '@/lib/challengeValidation';
 
 interface PracticalChallengeCardProps {
   challenge: PracticalChallenge;
@@ -264,6 +264,36 @@ export function PracticalChallengeCard({
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
         setEarnedMedals(allMedals);
 
+      } else if (challenge.id === 'prac-esig-adv-2') {
+        const text = await selectedFile.text();
+        const json = JSON.parse(text);
+        const wfResult = validateAdvancedWorkflowChallenge(json);
+
+        const v = wfResult.validations;
+        const result = buildValidationResult('prac-esig-adv-2', [
+          {
+            title: 'Workflow Architecture',
+            requirements: [
+              { label: 'Legal team configured as Signing Group', passed: v.workflowArchitect },
+            ],
+          },
+          {
+            title: 'Recipient Configuration',
+            requirements: [
+              { label: 'Commercial contact configured as Agent', passed: v.commercialIntermediary },
+            ],
+          },
+          {
+            title: 'Dynamic Signer',
+            requirements: [
+              { label: 'Director signer with empty name/email (defined by agent)', passed: v.dynamicDirector },
+            ],
+          },
+        ]);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
       } else {
         await new Promise(resolve => setTimeout(resolve, 1800));
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
@@ -327,6 +357,18 @@ export function PracticalChallengeCard({
             ]},
             { title: '🌟 Bonus', requirements: [
               { label: 'DocGen for eSign detected', passed: false },
+            ]},
+          ]
+        : challenge.id === 'prac-esig-adv-2'
+        ? [
+            { title: 'Workflow Architecture', requirements: [
+              { label: 'Legal team configured as Signing Group', passed: false },
+            ]},
+            { title: 'Recipient Configuration', requirements: [
+              { label: 'Commercial contact configured as Agent', passed: false },
+            ]},
+            { title: 'Dynamic Signer', requirements: [
+              { label: 'Director signer with empty name/email (defined by agent)', passed: false },
             ]},
           ]
         : [

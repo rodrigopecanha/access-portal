@@ -538,3 +538,98 @@ export function validateBulkSendChallenge(
     return { success: false, score: 0, validations };
   }
 }
+
+// ── Advanced Workflows Challenge ─────────────────────────────────
+
+export interface AdvancedWorkflowValidationResult {
+  success: boolean;
+  score: number;
+  validations: {
+    workflowArchitect: boolean;
+    commercialIntermediary: boolean;
+    dynamicDirector: boolean;
+  };
+  error?: string;
+}
+
+export function validateAdvancedWorkflowChallenge(
+  templateJson: unknown,
+): AdvancedWorkflowValidationResult {
+  const validations = {
+    workflowArchitect: false,
+    commercialIntermediary: false,
+    dynamicDirector: false,
+  };
+
+  try {
+    if (!templateJson || typeof templateJson !== 'object') {
+      return { success: false, score: 0, validations };
+    }
+
+    const root = templateJson as Record<string, unknown>;
+    const recipients = root['recipients'];
+
+    if (!recipients || typeof recipients !== 'object') {
+      return { success: false, score: 0, validations };
+    }
+
+    // ── 1. Workflow Architect: Signing Group configured ──
+    const signers = (recipients as Record<string, unknown>)['signers'];
+    if (Array.isArray(signers)) {
+      for (const signer of signers) {
+        const s = signer as Record<string, unknown>;
+        if (s['signingGroupId'] || s['signingGroupName']) {
+          validations.workflowArchitect = true;
+          break;
+        }
+      }
+    }
+
+    // ── 2. Commercial Intermediary: Agent recipient ──
+    // Check in recipients.agents array
+    const agents = (recipients as Record<string, unknown>)['agents'];
+    if (Array.isArray(agents)) {
+      for (const agent of agents) {
+        const a = agent as Record<string, unknown>;
+        if (a['recipientType'] === 'agent') {
+          validations.commercialIntermediary = true;
+          break;
+        }
+      }
+    }
+
+    // Also check in signers
+    if (Array.isArray(signers) && !validations.commercialIntermediary) {
+      for (const signer of signers) {
+        const s = signer as Record<string, unknown>;
+        if (s['recipientType'] === 'agent') {
+          validations.commercialIntermediary = true;
+          break;
+        }
+      }
+    }
+
+    // ── 3. Dynamic Director: Signer with empty name/email ──
+    if (Array.isArray(signers)) {
+      for (const signer of signers) {
+        const s = signer as Record<string, unknown>;
+        const name = s['name'];
+        const email = s['email'];
+        const hasEmptyName = !name || (typeof name === 'string' && name.trim() === '');
+        const hasEmptyEmail = !email || (typeof email === 'string' && email.trim() === '');
+        if (hasEmptyName && hasEmptyEmail) {
+          validations.dynamicDirector = true;
+          break;
+        }
+      }
+    }
+
+    const score =
+      (validations.workflowArchitect ? 125 : 0) +
+      (validations.dynamicDirector ? 100 : 0);
+
+    return { success: true, score, validations };
+  } catch {
+    return { success: false, score: 0, validations };
+  }
+}
