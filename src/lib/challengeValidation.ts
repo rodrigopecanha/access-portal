@@ -116,3 +116,104 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     isFullyValidated: totalPassed === totalRequirements,
   };
 }
+
+// ── Template Field Validation Challenge ──────────────────────────
+
+export interface TemplateValidationResult {
+  success: boolean;
+  score?: number;
+  validations?: {
+    cpfRegex: boolean;
+    cnpjRegex: boolean;
+    birthDateRegex: boolean;
+    brandApplied: boolean;
+  };
+  error?: string;
+}
+
+const EXPECTED_PATTERNS: Record<string, keyof TemplateValidationResult['validations'] & string> = {};
+
+const PATTERN_MAP: { key: 'cpfRegex' | 'cnpjRegex' | 'birthDateRegex'; pattern: string }[] = [
+  { key: 'cpfRegex', pattern: String.raw`^\d{3}\.\d{3}\.\d{3}\-\d{2}$` },
+  { key: 'cnpjRegex', pattern: String.raw`^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$` },
+  { key: 'birthDateRegex', pattern: String.raw`^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d\d$` },
+];
+
+function normalizePattern(p: string): string {
+  return p.replace(/\s+/g, '');
+}
+
+export function validateTemplateChallenges(templateJson: unknown): TemplateValidationResult {
+  try {
+    if (templateJson === null || templateJson === undefined || typeof templateJson !== 'object') {
+      return { success: false, error: 'Invalid JSON or unexpected structure' };
+    }
+
+    const root = templateJson as Record<string, unknown>;
+
+    // ── Brand detection ──
+    const brandApplied =
+      !!root['brandId'] ||
+      String(root['brandLock']).toLowerCase() === 'true';
+
+    // ── Collect all validationPattern values from all signers / textTabs ──
+    const patterns: string[] = [];
+
+    const collectPatterns = (obj: unknown) => {
+      if (Array.isArray(obj)) {
+        obj.forEach(collectPatterns);
+        return;
+      }
+      if (obj && typeof obj === 'object') {
+        const rec = obj as Record<string, unknown>;
+        if (typeof rec['validationPattern'] === 'string') {
+          patterns.push(rec['validationPattern']);
+        }
+        Object.values(rec).forEach(collectPatterns);
+      }
+    };
+
+    const recipients = root['recipients'];
+    if (recipients && typeof recipients === 'object') {
+      const signers = (recipients as Record<string, unknown>)['signers'];
+      if (Array.isArray(signers)) {
+        for (const signer of signers) {
+          const tabs = (signer as Record<string, unknown>)?.['tabs'];
+          if (tabs && typeof tabs === 'object') {
+            const textTabs = (tabs as Record<string, unknown>)['textTabs'];
+            if (Array.isArray(textTabs)) {
+              collectPatterns(textTabs);
+            }
+          }
+        }
+      }
+    }
+
+    // ── Match patterns ──
+    const validations = {
+      cpfRegex: false,
+      cnpjRegex: false,
+      birthDateRegex: false,
+      brandApplied,
+    };
+
+    for (const p of patterns) {
+      const norm = normalizePattern(p);
+      for (const { key, pattern } of PATTERN_MAP) {
+        if (norm === normalizePattern(pattern)) {
+          validations[key] = true;
+        }
+      }
+    }
+
+    const score =
+      (validations.cpfRegex ? 50 : 0) +
+      (validations.cnpjRegex ? 50 : 0) +
+      (validations.birthDateRegex ? 50 : 0) +
+      (validations.brandApplied ? 50 : 0);
+
+    return { success: true, score, validations };
+  } catch {
+    return { success: false, error: 'Invalid JSON or unexpected structure' };
+  }
+}
