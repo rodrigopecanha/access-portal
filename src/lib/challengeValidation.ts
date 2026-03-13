@@ -237,7 +237,7 @@ export function validateWebformTemplateChallenge(
   templateJson: unknown,
   webformJson: unknown,
 ): WebformValidationResult {
-  // Initialize all validations as false
+  // All validations initialize as false
   const validations = {
     webformConfigured: false,
     multipleRecipients: false,
@@ -255,34 +255,20 @@ export function validateWebformTemplateChallenge(
     const template = templateJson as Record<string, unknown>;
     const webform = webformJson as Record<string, unknown>;
 
-    // ── 1. Webform Configured ──
-    // Check that webform references a template and maps name/email fields
-    const hasTemplateRef = !!(
-      webform['templateId'] ||
-      webform['templateGuid'] ||
-      webform['template'] ||
-      webform['sourceTemplateId']
-    );
+    // ── 1. Webform Configured (strict) ──
+    // Must have templateId or templateRole
+    const hasTemplateRef = !!(webform['templateId'] || webform['templateRole']);
 
-    // Deep-search webform for name/email field mappings
+    // Must reference both name and email for a recipient
     const webformStr = JSON.stringify(webform).toLowerCase();
-    const hasNameField =
-      webformStr.includes('name') &&
-      (webformStr.includes('recipient') || webformStr.includes('signer'));
-    const hasEmailField =
-      webformStr.includes('email') &&
-      (webformStr.includes('recipient') || webformStr.includes('signer'));
+    const hasNameRef = webformStr.includes('name');
+    const hasEmailRef = webformStr.includes('email');
 
-    // Also accept explicit field component arrays
-    const hasFieldMappings = webformStr.includes('fieldmapping') ||
-      webformStr.includes('components') ||
-      webformStr.includes('fields');
-
-    if (hasTemplateRef && (hasNameField || hasEmailField || hasFieldMappings)) {
+    if (hasTemplateRef && hasNameRef && hasEmailRef) {
       validations.webformConfigured = true;
     }
 
-    // ── 2. Multiple Recipients ──
+    // ── 2. Multiple Recipients (strict) ──
     const recipients = template['recipients'];
     if (recipients && typeof recipients === 'object') {
       const signers = (recipients as Record<string, unknown>)['signers'];
@@ -291,19 +277,13 @@ export function validateWebformTemplateChallenge(
       }
     }
 
-    // ── 3. Dynamic Subject ──
+    // ── 3. Dynamic Subject (strict) ──
     const emailSubject = template['emailSubject'];
     if (typeof emailSubject === 'string') {
-      // Detect common placeholder patterns: {{...}}, [[...]], <<...>>, {!...!}, /s\d/
-      const placeholderPatterns = [
-        /\{\{.*?(signer|name|recipient).*?\}\}/i,
-        /\[\[.*?(signer|name|recipient).*?\]\]/i,
-        /<<.*?(signer|name|recipient).*?>>/i,
-        /\{!.*?(signer|name|recipient).*?!\}/i,
-        /\/(s|signer)\d/i,
-        /<.*?(signer|name|recipient).*?>/i,
-      ];
-      if (placeholderPatterns.some((rx) => rx.test(emailSubject))) {
+      const lower = emailSubject.toLowerCase();
+      const hasSigner = lower.includes('signer') || lower.includes('recipient');
+      const hasName = lower.includes('name');
+      if (hasSigner && hasName) {
         validations.dynamicSubject = true;
       }
     }
