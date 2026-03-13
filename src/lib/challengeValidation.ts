@@ -194,8 +194,10 @@ export function validateTemplateChallenges(templateJson: unknown): TemplateValid
       cpfRegex: false,
       cnpjRegex: false,
       birthDateRegex: false,
-      brandApplied,
+      brandApplied: false,
     };
+
+    validations.brandApplied = brandApplied;
 
     for (const p of patterns) {
       const norm = normalizePattern(p);
