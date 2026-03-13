@@ -401,6 +401,18 @@ export function PracticalChallengeCard({
               { label: 'Director signer with empty name/email (defined by agent)', passed: false },
             ]},
           ]
+        : challenge.id === 'prac-esig-adv-3'
+        ? [
+            { title: 'Recipient Configuration', requirements: [
+              { label: 'At least 2 recipients configured', passed: false },
+            ]},
+            { title: 'Document Visibility', requirements: [
+              { label: 'Cover Page visible only to specific recipient', passed: false },
+            ]},
+            { title: 'Supplemental Documents', requirements: [
+              { label: 'NDA configured as supplemental document', passed: false },
+            ]},
+          ]
         : [
             { title: 'Webform Configuration', requirements: [
               { label: 'Webform configured to populate first recipient', passed: false },
