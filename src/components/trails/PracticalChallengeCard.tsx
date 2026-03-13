@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { PracticalChallenge, getLocalizedText, SupportedLocale } from '@/types/learning';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, CheckCircle2, Lock, Upload, Trophy, Swords, ChevronDown, ChevronUp, Sparkles, Award, BookOpen, XCircle, AlertTriangle } from 'lucide-react';
+import { Zap, CheckCircle2, Lock, Upload, Trophy, Swords, ChevronDown, ChevronUp, Sparkles, Award, BookOpen, XCircle, AlertTriangle, Download } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
