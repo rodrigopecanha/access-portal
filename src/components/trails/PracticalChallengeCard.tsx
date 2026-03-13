@@ -14,7 +14,7 @@ import {
 import { InstructionSection } from './InstructionSection';
 import { useTranslation } from '@/i18n';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { validatePracEsig1, validateTemplateChallenges, validateWebformTemplateChallenge, validateFinalChallenge, type ValidationResult } from '@/lib/challengeValidation';
+import { validatePracEsig1, validateTemplateChallenges, validateWebformTemplateChallenge, validateFinalChallenge, validateBulkSendChallenge, type ValidationResult } from '@/lib/challengeValidation';
 
 interface PracticalChallengeCardProps {
   challenge: PracticalChallenge;
