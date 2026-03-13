@@ -310,7 +310,7 @@ const createPracticalChallenge = (
   description,
   instructions,
   medals,
-  acceptedFormats: ["json"],
+  acceptedFormats: id.includes('adv-1') ? ["json", "csv"] : ["json"],
   xpReward,
   isFinalChallenge: isFinal,
   isSubmitted,
