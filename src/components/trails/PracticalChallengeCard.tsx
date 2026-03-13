@@ -227,6 +227,43 @@ export function PracticalChallengeCard({
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
         setEarnedMedals(allMedals);
 
+      } else if (challenge.id === 'prac-esig-adv-1') {
+        const templateText = await selectedFile.text();
+        const csvText = await selectedFile2!.text();
+        const templateJson = JSON.parse(templateText);
+        const bulkResult = validateBulkSendChallenge(templateJson, csvText);
+
+        const v = bulkResult.validations;
+        const result = buildValidationResult('prac-esig-adv-1', [
+          {
+            title: 'Bulk Configuration',
+            requirements: [
+              { label: 'At least 3 variable fields besides Name and Email', passed: v.bulkConfigured },
+            ],
+          },
+          {
+            title: 'CSV Validation',
+            requirements: [
+              { label: 'CSV with header (name + email) and 3+ recipients', passed: v.validCSV },
+            ],
+          },
+          {
+            title: 'Dynamic Subject',
+            requirements: [
+              { label: 'Envelope subject references recipient name', passed: v.dynamicSubject },
+            ],
+          },
+          {
+            title: '🌟 Bonus',
+            requirements: [
+              { label: 'DocGen for eSign detected', passed: v.docGenMaster },
+            ],
+          },
+        ]);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
       } else {
         await new Promise(resolve => setTimeout(resolve, 1800));
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
