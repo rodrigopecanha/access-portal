@@ -298,3 +298,137 @@ export function validateWebformTemplateChallenge(
     return { success: false, error: 'Invalid JSON input' };
   }
 }
+
+// ── Final Challenge: HR Template ─────────────────────────────────
+
+export interface FinalChallengeValidationResult {
+  success: boolean;
+  score: number;
+  validations: {
+    attachmentField: boolean;
+    initialField: boolean;
+    radioButtonField: boolean;
+    conditionalField: boolean;
+    approveField: boolean;
+    positionDropdown: boolean;
+  };
+  error?: string;
+}
+
+const POSITION_KEYWORDS = ['jr', 'junior', 'mid', 'pleno', 'sr', 'senior', 'coordinator', 'coordenador', 'manager', 'gerente', 'analyst', 'analista'];
+
+export function validateFinalChallenge(templateJson: unknown): FinalChallengeValidationResult {
+  const validations = {
+    attachmentField: false,
+    initialField: false,
+    radioButtonField: false,
+    conditionalField: false,
+    approveField: false,
+    positionDropdown: false,
+  };
+
+  try {
+    if (!templateJson || typeof templateJson !== 'object') {
+      return { success: false, score: 0, validations };
+    }
+
+    const root = templateJson as Record<string, unknown>;
+
+    // Collect all tabs from all signers
+    const allTabs: Record<string, unknown>[] = [];
+    const recipients = root['recipients'];
+    if (recipients && typeof recipients === 'object') {
+      const signers = (recipients as Record<string, unknown>)['signers'];
+      if (Array.isArray(signers)) {
+        for (const signer of signers) {
+          const tabs = (signer as Record<string, unknown>)?.['tabs'];
+          if (tabs && typeof tabs === 'object') {
+            allTabs.push(tabs as Record<string, unknown>);
+          }
+        }
+      }
+    }
+
+    // 1. Attachment Field — tabs.attachmentTabs
+    for (const tabs of allTabs) {
+      const attachmentTabs = tabs['attachmentTabs'];
+      if (Array.isArray(attachmentTabs) && attachmentTabs.length > 0) {
+        validations.attachmentField = true;
+        break;
+      }
+    }
+
+    // 2. Initial Field — tabs.initialHereTabs
+    for (const tabs of allTabs) {
+      const initialHereTabs = tabs['initialHereTabs'];
+      if (Array.isArray(initialHereTabs) && initialHereTabs.length > 0) {
+        validations.initialField = true;
+        break;
+      }
+    }
+
+    // 3. Radio Button Field — tabs.radioGroupTabs
+    for (const tabs of allTabs) {
+      const radioGroupTabs = tabs['radioGroupTabs'];
+      if (Array.isArray(radioGroupTabs) && radioGroupTabs.length > 0) {
+        validations.radioButtonField = true;
+        break;
+      }
+    }
+
+    // 4. Conditional Field Logic — conditionalParentLabel / conditionalParentValue / conditionalRules
+    const jsonStr = JSON.stringify(templateJson).toLowerCase();
+    const hasConditionalParentLabel = jsonStr.includes('conditionalparentlabel');
+    const hasConditionalParentValue = jsonStr.includes('conditionalparentvalue');
+    const hasConditionalRules = jsonStr.includes('conditionalrules');
+    if (hasConditionalParentLabel || hasConditionalParentValue || hasConditionalRules) {
+      validations.conditionalField = true;
+    }
+
+    // 5. Approve Field — tabs.approveTabs
+    for (const tabs of allTabs) {
+      const approveTabs = tabs['approveTabs'];
+      if (Array.isArray(approveTabs) && approveTabs.length > 0) {
+        validations.approveField = true;
+        break;
+      }
+    }
+
+    // 6. Position Dropdown — tabs.listTabs with position-related options
+    for (const tabs of allTabs) {
+      const listTabs = tabs['listTabs'];
+      if (Array.isArray(listTabs)) {
+        for (const listTab of listTabs) {
+          const items = (listTab as Record<string, unknown>)['listItems'];
+          if (Array.isArray(items)) {
+            const values = items
+              .map((item) => {
+                const rec = item as Record<string, unknown>;
+                return String(rec['text'] || rec['value'] || '').toLowerCase();
+              });
+            const matchCount = values.filter(v =>
+              POSITION_KEYWORDS.some(kw => v.includes(kw))
+            ).length;
+            if (matchCount >= 2) {
+              validations.positionDropdown = true;
+              break;
+            }
+          }
+        }
+        if (validations.positionDropdown) break;
+      }
+    }
+
+    const score =
+      (validations.attachmentField ? 50 : 0) +
+      (validations.initialField ? 50 : 0) +
+      (validations.radioButtonField ? 50 : 0) +
+      (validations.conditionalField ? 100 : 0) +
+      (validations.approveField ? 100 : 0) +
+      (validations.positionDropdown ? 50 : 0);
+
+    return { success: true, score, validations };
+  } catch {
+    return { success: false, score: 0, validations };
+  }
+}
