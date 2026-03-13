@@ -194,8 +194,10 @@ export function validateTemplateChallenges(templateJson: unknown): TemplateValid
       cpfRegex: false,
       cnpjRegex: false,
       birthDateRegex: false,
-      brandApplied,
+      brandApplied: false,
     };
+
+    validations.brandApplied = brandApplied;
 
     for (const p of patterns) {
       const norm = normalizePattern(p);
@@ -235,6 +237,13 @@ export function validateWebformTemplateChallenge(
   templateJson: unknown,
   webformJson: unknown,
 ): WebformValidationResult {
+  // Initialize all validations as false
+  const validations = {
+    webformConfigured: false,
+    multipleRecipients: false,
+    dynamicSubject: false,
+  };
+
   try {
     if (
       !templateJson || typeof templateJson !== 'object' ||
@@ -248,8 +257,6 @@ export function validateWebformTemplateChallenge(
 
     // ── 1. Webform Configured ──
     // Check that webform references a template and maps name/email fields
-    let webformConfigured = false;
-
     const hasTemplateRef = !!(
       webform['templateId'] ||
       webform['templateGuid'] ||
@@ -271,22 +278,20 @@ export function validateWebformTemplateChallenge(
       webformStr.includes('components') ||
       webformStr.includes('fields');
 
-    webformConfigured = hasTemplateRef && (hasNameField || hasEmailField || hasFieldMappings);
+    if (hasTemplateRef && (hasNameField || hasEmailField || hasFieldMappings)) {
+      validations.webformConfigured = true;
+    }
 
     // ── 2. Multiple Recipients ──
-    let multipleRecipients = false;
-
     const recipients = template['recipients'];
     if (recipients && typeof recipients === 'object') {
       const signers = (recipients as Record<string, unknown>)['signers'];
       if (Array.isArray(signers) && signers.length >= 2) {
-        multipleRecipients = true;
+        validations.multipleRecipients = true;
       }
     }
 
     // ── 3. Dynamic Subject ──
-    let dynamicSubject = false;
-
     const emailSubject = template['emailSubject'];
     if (typeof emailSubject === 'string') {
       // Detect common placeholder patterns: {{...}}, [[...]], <<...>>, {!...!}, /s\d/
@@ -298,15 +303,15 @@ export function validateWebformTemplateChallenge(
         /\/(s|signer)\d/i,
         /<.*?(signer|name|recipient).*?>/i,
       ];
-      dynamicSubject = placeholderPatterns.some((rx) => rx.test(emailSubject));
+      if (placeholderPatterns.some((rx) => rx.test(emailSubject))) {
+        validations.dynamicSubject = true;
+      }
     }
 
-    const validations = { webformConfigured, multipleRecipients, dynamicSubject };
-
     const score =
-      (webformConfigured ? 75 : 0) +
-      (multipleRecipients ? 50 : 0) +
-      (dynamicSubject ? 50 : 0);
+      (validations.webformConfigured ? 75 : 0) +
+      (validations.multipleRecipients ? 50 : 0) +
+      (validations.dynamicSubject ? 50 : 0);
 
     return { success: true, score, validations };
   } catch {
