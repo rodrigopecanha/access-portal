@@ -294,6 +294,36 @@ export function PracticalChallengeCard({
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
         setEarnedMedals(allMedals);
 
+      } else if (challenge.id === 'prac-esig-adv-3') {
+        const text = await selectedFile.text();
+        const json = JSON.parse(text);
+        const daResult = validateDocumentActionsChallenge(json);
+
+        const v = daResult.validations;
+        const result = buildValidationResult('prac-esig-adv-3', [
+          {
+            title: 'Recipient Configuration',
+            requirements: [
+              { label: 'At least 2 recipients configured', passed: v.multipleRecipients },
+            ],
+          },
+          {
+            title: 'Document Visibility',
+            requirements: [
+              { label: 'Cover Page visible only to specific recipient', passed: v.documentVisibility },
+            ],
+          },
+          {
+            title: 'Supplemental Documents',
+            requirements: [
+              { label: 'NDA configured as supplemental document', passed: v.attachmentMaster },
+            ],
+          },
+        ]);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
       } else {
         await new Promise(resolve => setTimeout(resolve, 1800));
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
