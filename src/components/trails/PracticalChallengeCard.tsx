@@ -469,7 +469,7 @@ export function PracticalChallengeCard({
                             {selectedFile 
                               ? selectedFile.name 
                               : needsTwoFiles 
-                                ? (locale === 'pt-BR' ? '📄 Template JSON' : '📄 Template JSON')
+                                ? '📄 Template JSON'
                                 : t.challenges.selectFile}
                           </span>
                         </div>
