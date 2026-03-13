@@ -479,7 +479,7 @@ export function PracticalChallengeCard({
                         <label className="flex-1">
                           <input
                             type="file"
-                            accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
+                            accept={challenge.id === 'prac-esig-adv-1' ? '.csv' : challenge.acceptedFormats.map(f => `.${f}`).join(',')}
                             onChange={handleFile2Select}
                             className="hidden"
                           />
