@@ -491,7 +491,7 @@ export function PracticalChallengeCard({
                           )}>
                             <Upload className="w-5 h-5" />
                             <span className="text-sm font-medium">
-                              {selectedFile2 ? selectedFile2.name : '📋 Webform JSON'}
+                              {selectedFile2 ? selectedFile2.name : challenge.id === 'prac-esig-adv-1' ? '📋 CSV File' : '📋 Webform JSON'}
                             </span>
                           </div>
                         </label>
