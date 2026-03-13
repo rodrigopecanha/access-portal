@@ -72,7 +72,7 @@ export function PracticalChallengeCard({
   const [earnedMedals, setEarnedMedals] = useState<typeof challenge.medals>([]);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
 
-  const needsTwoFiles = challenge.id === 'prac-esig-3';
+  const needsTwoFiles = challenge.id === 'prac-esig-3' || challenge.id === 'prac-esig-adv-1';
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
