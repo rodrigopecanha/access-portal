@@ -432,3 +432,109 @@ export function validateFinalChallenge(templateJson: unknown): FinalChallengeVal
     return { success: false, score: 0, validations };
   }
 }
+
+// ── Bulk Send Challenge ──────────────────────────────────────────
+
+export interface BulkSendValidationResult {
+  success: boolean;
+  score: number;
+  validations: {
+    bulkConfigured: boolean;
+    validCSV: boolean;
+    dynamicSubject: boolean;
+    docGenMaster: boolean;
+  };
+  error?: string;
+}
+
+export function validateBulkSendChallenge(
+  templateJson: unknown,
+  csvContent: string,
+): BulkSendValidationResult {
+  const validations = {
+    bulkConfigured: false,
+    validCSV: false,
+    dynamicSubject: false,
+    docGenMaster: false,
+  };
+
+  try {
+    if (!templateJson || typeof templateJson !== 'object') {
+      return { success: false, score: 0, validations };
+    }
+
+    const root = templateJson as Record<string, unknown>;
+
+    // ── 1. Bulk Configured: at least 3 textTabs besides name/email ──
+    const recipients = root['recipients'];
+    if (recipients && typeof recipients === 'object') {
+      const signers = (recipients as Record<string, unknown>)['signers'];
+      if (Array.isArray(signers)) {
+        let variableCount = 0;
+        for (const signer of signers) {
+          const tabs = (signer as Record<string, unknown>)?.['tabs'];
+          if (tabs && typeof tabs === 'object') {
+            const textTabs = (tabs as Record<string, unknown>)['textTabs'];
+            if (Array.isArray(textTabs)) {
+              for (const tab of textTabs) {
+                const rec = tab as Record<string, unknown>;
+                const label = String(rec['tabLabel'] || rec['name'] || '').toLowerCase().trim();
+                if (label !== 'name' && label !== 'email') {
+                  variableCount++;
+                }
+              }
+            }
+          }
+        }
+        if (variableCount >= 3) {
+          validations.bulkConfigured = true;
+        }
+      }
+    }
+
+    // ── 2. Valid CSV: header + at least 3 data rows ──
+    if (typeof csvContent === 'string' && csvContent.trim().length > 0) {
+      const rows = csvContent.trim().split('\n').filter(r => r.trim().length > 0);
+      if (rows.length >= 4) {
+        const header = rows[0].toLowerCase();
+        const hasName = header.includes('name');
+        const hasEmail = header.includes('email');
+        if (hasName && hasEmail) {
+          validations.validCSV = true;
+        }
+      }
+    }
+
+    // ── 3. Dynamic Subject ──
+    const emailSubject = root['emailSubject'];
+    if (typeof emailSubject === 'string') {
+      const lower = emailSubject.toLowerCase();
+      if (
+        lower.includes('{{name}}') ||
+        lower.includes('{{signer1_name}}') ||
+        lower.includes('[[signer name]]')
+      ) {
+        validations.dynamicSubject = true;
+      }
+    }
+
+    // ── 4. DocGen Master (bonus badge) ──
+    const jsonStr = JSON.stringify(templateJson).toLowerCase();
+    if (
+      jsonStr.includes('docgen') ||
+      jsonStr.includes('docgenformfields') ||
+      jsonStr.includes('mergefields') ||
+      jsonStr.includes('documentgeneration')
+    ) {
+      validations.docGenMaster = true;
+    }
+
+    const score =
+      (validations.bulkConfigured ? 100 : 0) +
+      (validations.validCSV ? 100 : 0);
+
+    return { success: true, score, validations };
+  } catch {
+    return { success: false, score: 0, validations };
+  }
+}

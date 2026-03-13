@@ -14,7 +14,7 @@ import {
 import { InstructionSection } from './InstructionSection';
 import { useTranslation } from '@/i18n';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { validatePracEsig1, validateTemplateChallenges, validateWebformTemplateChallenge, validateFinalChallenge, type ValidationResult } from '@/lib/challengeValidation';
+import { validatePracEsig1, validateTemplateChallenges, validateWebformTemplateChallenge, validateFinalChallenge, validateBulkSendChallenge, type ValidationResult } from '@/lib/challengeValidation';
 
 interface PracticalChallengeCardProps {
   challenge: PracticalChallenge;
@@ -72,7 +72,7 @@ export function PracticalChallengeCard({
   const [earnedMedals, setEarnedMedals] = useState<typeof challenge.medals>([]);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
 
-  const needsTwoFiles = challenge.id === 'prac-esig-3';
+  const needsTwoFiles = challenge.id === 'prac-esig-3' || challenge.id === 'prac-esig-adv-1';
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -227,6 +227,43 @@ export function PracticalChallengeCard({
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
         setEarnedMedals(allMedals);
 
+      } else if (challenge.id === 'prac-esig-adv-1') {
+        const templateText = await selectedFile.text();
+        const csvText = await selectedFile2!.text();
+        const templateJson = JSON.parse(templateText);
+        const bulkResult = validateBulkSendChallenge(templateJson, csvText);
+
+        const v = bulkResult.validations;
+        const result = buildValidationResult('prac-esig-adv-1', [
+          {
+            title: 'Bulk Configuration',
+            requirements: [
+              { label: 'At least 3 variable fields besides Name and Email', passed: v.bulkConfigured },
+            ],
+          },
+          {
+            title: 'CSV Validation',
+            requirements: [
+              { label: 'CSV with header (name + email) and 3+ recipients', passed: v.validCSV },
+            ],
+          },
+          {
+            title: 'Dynamic Subject',
+            requirements: [
+              { label: 'Envelope subject references recipient name', passed: v.dynamicSubject },
+            ],
+          },
+          {
+            title: '🌟 Bonus',
+            requirements: [
+              { label: 'DocGen for eSign detected', passed: v.docGenMaster },
+            ],
+          },
+        ]);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
       } else {
         await new Promise(resolve => setTimeout(resolve, 1800));
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
@@ -277,6 +314,21 @@ export function PracticalChallengeCard({
           ]
         : challenge.id === 'prac-esig-final'
         ? finalSections
+        : challenge.id === 'prac-esig-adv-1'
+        ? [
+            { title: 'Bulk Configuration', requirements: [
+              { label: 'At least 3 variable fields besides Name and Email', passed: false },
+            ]},
+            { title: 'CSV Validation', requirements: [
+              { label: 'CSV with header (name + email) and 3+ recipients', passed: false },
+            ]},
+            { title: 'Dynamic Subject', requirements: [
+              { label: 'Envelope subject references recipient name', passed: false },
+            ]},
+            { title: '🌟 Bonus', requirements: [
+              { label: 'DocGen for eSign detected', passed: false },
+            ]},
+          ]
         : [
             { title: 'Webform Configuration', requirements: [
               { label: 'Webform configured to populate first recipient', passed: false },
@@ -454,7 +506,7 @@ export function PracticalChallengeCard({
                       <label className="flex-1">
                         <input
                           type="file"
-                          accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
+                          accept={challenge.id === 'prac-esig-adv-1' ? '.json' : challenge.acceptedFormats.map(f => `.${f}`).join(',')}
                           onChange={handleFileSelect}
                           className="hidden"
                         />
@@ -469,7 +521,7 @@ export function PracticalChallengeCard({
                             {selectedFile 
                               ? selectedFile.name 
                               : needsTwoFiles 
-                                ? (locale === 'pt-BR' ? '📄 Template JSON' : '📄 Template JSON')
+                                ? '📄 Template JSON'
                                 : t.challenges.selectFile}
                           </span>
                         </div>
@@ -479,7 +531,7 @@ export function PracticalChallengeCard({
                         <label className="flex-1">
                           <input
                             type="file"
-                            accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
+                            accept={challenge.id === 'prac-esig-adv-1' ? '.csv' : challenge.acceptedFormats.map(f => `.${f}`).join(',')}
                             onChange={handleFile2Select}
                             className="hidden"
                           />
@@ -491,7 +543,7 @@ export function PracticalChallengeCard({
                           )}>
                             <Upload className="w-5 h-5" />
                             <span className="text-sm font-medium">
-                              {selectedFile2 ? selectedFile2.name : '📋 Webform JSON'}
+                              {selectedFile2 ? selectedFile2.name : challenge.id === 'prac-esig-adv-1' ? '📋 CSV File' : '📋 Webform JSON'}
                             </span>
                           </div>
                         </label>
