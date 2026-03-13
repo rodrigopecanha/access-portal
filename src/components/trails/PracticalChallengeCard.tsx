@@ -359,6 +359,18 @@ export function PracticalChallengeCard({
               { label: 'DocGen for eSign detected', passed: false },
             ]},
           ]
+        : challenge.id === 'prac-esig-adv-2'
+        ? [
+            { title: 'Workflow Architecture', requirements: [
+              { label: 'Legal team configured as Signing Group', passed: false },
+            ]},
+            { title: 'Recipient Configuration', requirements: [
+              { label: 'Commercial contact configured as Agent', passed: false },
+            ]},
+            { title: 'Dynamic Signer', requirements: [
+              { label: 'Director signer with empty name/email (defined by agent)', passed: false },
+            ]},
+          ]
         : [
             { title: 'Webform Configuration', requirements: [
               { label: 'Webform configured to populate first recipient', passed: false },
