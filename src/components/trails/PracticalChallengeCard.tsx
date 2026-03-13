@@ -264,6 +264,36 @@ export function PracticalChallengeCard({
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
         setEarnedMedals(allMedals);
 
+      } else if (challenge.id === 'prac-esig-adv-2') {
+        const text = await selectedFile.text();
+        const json = JSON.parse(text);
+        const wfResult = validateAdvancedWorkflowChallenge(json);
+
+        const v = wfResult.validations;
+        const result = buildValidationResult('prac-esig-adv-2', [
+          {
+            title: 'Workflow Architecture',
+            requirements: [
+              { label: 'Legal team configured as Signing Group', passed: v.workflowArchitect },
+            ],
+          },
+          {
+            title: 'Recipient Configuration',
+            requirements: [
+              { label: 'Commercial contact configured as Agent', passed: v.commercialIntermediary },
+            ],
+          },
+          {
+            title: 'Dynamic Signer',
+            requirements: [
+              { label: 'Director signer with empty name/email (defined by agent)', passed: v.dynamicDirector },
+            ],
+          },
+        ]);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
       } else {
         await new Promise(resolve => setTimeout(resolve, 1800));
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
