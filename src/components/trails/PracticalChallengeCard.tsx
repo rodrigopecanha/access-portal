@@ -65,11 +65,14 @@ export function PracticalChallengeCard({
   const locale = language as SupportedLocale;
   const [isExpanded, setIsExpanded] = useState(!isLocked && !isCompleted);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile2, setSelectedFile2] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(isCompleted);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [earnedMedals, setEarnedMedals] = useState<typeof challenge.medals>([]);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+
+  const needsTwoFiles = challenge.id === 'prac-esig-3';
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
