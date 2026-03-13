@@ -194,6 +194,39 @@ export function PracticalChallengeCard({
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
         setEarnedMedals(allMedals);
 
+      } else if (challenge.id === 'prac-esig-final') {
+        const text = await selectedFile.text();
+        const json = JSON.parse(text);
+        const finalResult = validateFinalChallenge(json);
+
+        const v = finalResult.validations;
+        const result = buildValidationResult('prac-esig-final', [
+          {
+            title: 'Document Fields',
+            requirements: [
+              { label: 'Attachment field (attachmentTabs)', passed: v.attachmentField },
+              { label: 'Initial field (initialHereTabs)', passed: v.initialField },
+              { label: 'Radio button field (radioGroupTabs)', passed: v.radioButtonField },
+            ],
+          },
+          {
+            title: 'Logic & Approval',
+            requirements: [
+              { label: 'Conditional field logic (salary changes by position)', passed: v.conditionalField },
+              { label: 'Approve field (approveTabs)', passed: v.approveField },
+            ],
+          },
+          {
+            title: 'Position Selection',
+            requirements: [
+              { label: 'Position dropdown with role options (listTabs)', passed: v.positionDropdown },
+            ],
+          },
+        ]);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
       } else {
         await new Promise(resolve => setTimeout(resolve, 1800));
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
@@ -201,6 +234,21 @@ export function PracticalChallengeCard({
         setValidationResult(null);
       }
     } catch {
+      const finalSections = [
+        { title: 'Document Fields', requirements: [
+          { label: 'Attachment field (attachmentTabs)', passed: false },
+          { label: 'Initial field (initialHereTabs)', passed: false },
+          { label: 'Radio button field (radioGroupTabs)', passed: false },
+        ]},
+        { title: 'Logic & Approval', requirements: [
+          { label: 'Conditional field logic (salary changes by position)', passed: false },
+          { label: 'Approve field (approveTabs)', passed: false },
+        ]},
+        { title: 'Position Selection', requirements: [
+          { label: 'Position dropdown with role options (listTabs)', passed: false },
+        ]},
+      ];
+
       const sections = challenge.id === 'prac-esig-1'
         ? [
             { title: 'Delivery Configuration', requirements: [
@@ -227,6 +275,8 @@ export function PracticalChallengeCard({
               { label: 'Brand applied to template', passed: false },
             ]},
           ]
+        : challenge.id === 'prac-esig-final'
+        ? finalSections
         : [
             { title: 'Webform Configuration', requirements: [
               { label: 'Webform configured to populate first recipient', passed: false },
