@@ -427,6 +427,20 @@ export function PracticalChallengeCard({
                 </div>
               )}
 
+              {/* Download Contract Template — Final Challenge only */}
+              {!isSubmitted && challenge.id === 'prac-esig-final' && (
+                <div className="mb-1">
+                  <a
+                    href="/hr_employment_contract.pdf"
+                    download="hr_employment_contract.pdf"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 transition-colors text-sm font-medium"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download Contract Template
+                  </a>
+                </div>
+              )}
+
               {/* Upload Section */}
               {!isSubmitted && (
                 <div className="space-y-3">
