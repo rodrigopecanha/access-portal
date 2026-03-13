@@ -506,7 +506,7 @@ export function PracticalChallengeCard({
                       <label className="flex-1">
                         <input
                           type="file"
-                          accept={challenge.acceptedFormats.map(f => `.${f}`).join(',')}
+                          accept={challenge.id === 'prac-esig-adv-1' ? '.json' : challenge.acceptedFormats.map(f => `.${f}`).join(',')}
                           onChange={handleFileSelect}
                           className="hidden"
                         />
