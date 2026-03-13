@@ -633,3 +633,111 @@ export function validateAdvancedWorkflowChallenge(
     return { success: false, score: 0, validations };
   }
 }
+
+// ── Document Actions Challenge ───────────────────────────────────
+
+export interface DocumentActionsValidationResult {
+  success: boolean;
+  score: number;
+  validations: {
+    multipleRecipients: boolean;
+    documentVisibility: boolean;
+    attachmentMaster: boolean;
+  };
+  error?: string;
+}
+
+export function validateDocumentActionsChallenge(
+  templateJson: unknown,
+): DocumentActionsValidationResult {
+  const validations = {
+    multipleRecipients: false,
+    documentVisibility: false,
+    attachmentMaster: false,
+  };
+
+  try {
+    if (!templateJson || typeof templateJson !== 'object') {
+      return { success: false, score: 0, validations };
+    }
+
+    const root = templateJson as Record<string, unknown>;
+
+    // ── 1. Multiple Recipients: at least 2 signers ──
+    const recipients = root['recipients'];
+    if (recipients && typeof recipients === 'object') {
+      const signers = (recipients as Record<string, unknown>)['signers'];
+      if (Array.isArray(signers) && signers.length >= 2) {
+        validations.multipleRecipients = true;
+      }
+    }
+
+    // ── 2. Document Visibility: documentVisibility enabled and restricted ──
+    const envelope = root['envelope'] as Record<string, unknown> | undefined;
+    const documentVisibilityEnabled = !!(
+      root['documentVisibilityEnabled'] ||
+      envelope?.['documentVisibilityEnabled']
+    );
+
+    // Check for document-level visibility restrictions
+    const documents = root['documents'] as unknown[] | undefined;
+    let hasDocumentRecipientRestriction = false;
+
+    if (Array.isArray(documents)) {
+      for (const doc of documents) {
+        const d = doc as Record<string, unknown>;
+        if (
+          d['visibleToSigners'] ||
+          d['visibleSigners'] ||
+          d['restrictedRecipients'] ||
+          d['documentVisibility']
+        ) {
+          hasDocumentRecipientRestriction = true;
+          break;
+        }
+      }
+    }
+
+    // Also check for documentVisibility in the JSON structure
+    const jsonStr = JSON.stringify(templateJson).toLowerCase();
+    const hasDocumentVisibilityConfig =
+      jsonStr.includes('documentvisibility') ||
+      jsonStr.includes('visibletosigner');
+
+    if (documentVisibilityEnabled || (hasDocumentRecipientRestriction && hasDocumentVisibilityConfig)) {
+      validations.documentVisibility = true;
+    }
+
+    // ── 3. Supplemental Document (Attachment Master) ──
+    let hasSupplementalDoc = false;
+
+    if (Array.isArray(documents)) {
+      for (const doc of documents) {
+        const d = doc as Record<string, unknown>;
+        const docStr = JSON.stringify(d).toLowerCase();
+        if (
+          docStr.includes('supplemental') ||
+          d['supplementalDocumentId'] ||
+          d['supplementalOptions'] ||
+          d['display'] === 'supplement' ||
+          d['display'] === 'supplemental'
+        ) {
+          hasSupplementalDoc = true;
+          break;
+        }
+      }
+    }
+
+    if (hasSupplementalDoc) {
+      validations.attachmentMaster = true;
+    }
+
+    const score =
+      (validations.documentVisibility ? 100 : 0) +
+      (validations.attachmentMaster ? 100 : 0);
+
+    return { success: true, score, validations };
+  } catch {
+    return { success: false, score: 0, validations };
+  }
+}
