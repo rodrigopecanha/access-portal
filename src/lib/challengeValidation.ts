@@ -8,12 +8,19 @@ export interface ValidationSection {
   requirements: ValidationRequirement[];
 }
 
+export interface OptionalMedal {
+  id: string;
+  label: string;
+  icon: string;
+}
+
 export interface ValidationResult {
   challengeId: string;
   sections: ValidationSection[];
   totalPassed: number;
   totalRequirements: number;
   isFullyValidated: boolean;
+  optionalMedals?: OptionalMedal[];
 }
 
 function deepSearchKeys(obj: unknown, targetKeys: string[]): Record<string, boolean> {
