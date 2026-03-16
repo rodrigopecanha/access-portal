@@ -56,51 +56,82 @@ function deepSearchKeys(obj: unknown, targetKeys: string[]): Record<string, bool
 }
 
 export function validatePracEsig1(jsonContent: unknown): ValidationResult {
-  const allKeys = [
-    'sms', 'whatsapp', 'deliveryMethod',
-    'reminderEnabled', 'reminders',
-    'accessCode', 'idCheck', 'identityVerification', 'authentication',
-    'textTabs',
-    'checkboxTabs', 'radioGroupTabs',
-    'required',
-  ];
+  const validations = {
+    reminderEnabled: false,
+    whatsappDelivery: false,
+    identityVerification: false,
+  };
 
-  const found = deepSearchKeys(jsonContent, allKeys);
+  if (!jsonContent || typeof jsonContent !== 'object') {
+    return buildFailedResult('prac-esig-1', validations);
+  }
 
-  // Delivery Configuration
-  const hasMultiChannel = found['sms'] || found['whatsapp'] || found['deliveryMethod'];
-  const hasReminders = found['reminderEnabled'] || found['reminders'];
+  const tmpl = jsonContent as Record<string, unknown>;
 
-  // Security — need at least 2 of 4
-  const securityItems = ['accessCode', 'idCheck', 'identityVerification', 'authentication'];
-  const securityCount = securityItems.filter(k => found[k]).length;
-  const hasTwoSecurityLayers = securityCount >= 2;
+  // Validation 1 — Reminder Enabled
+  if (tmpl['reminderEnabled'] === 'true' || tmpl['reminderEnabled'] === true) {
+    validations.reminderEnabled = true;
+  }
+  // Also check nested notification object
+  const notification = tmpl['notification'] as Record<string, unknown> | undefined;
+  if (notification && (notification['reminderEnabled'] === 'true' || notification['reminderEnabled'] === true)) {
+    validations.reminderEnabled = true;
+  }
 
-  // Interactive Fields
-  const hasTextTabs = found['textTabs'];
-  const hasCheckboxOrRadio = found['checkboxTabs'] || found['radioGroupTabs'];
-  const hasRequiredField = found['required'];
+  // Validation 2 — WhatsApp Secondary Delivery
+  const recipients = tmpl['recipients'] as Record<string, unknown> | undefined;
+  if (recipients && typeof recipients === 'object') {
+    const signers = recipients['signers'] as Array<Record<string, unknown>> | undefined;
+    if (Array.isArray(signers)) {
+      for (const signer of signers) {
+        if (signer['secondaryDeliveryMethod'] === 'WhatsApp') {
+          validations.whatsappDelivery = true;
+          break;
+        }
+        // Also check additionalNotifications array
+        const addNotif = signer['additionalNotifications'] as Array<Record<string, unknown>> | undefined;
+        if (Array.isArray(addNotif)) {
+          for (const n of addNotif) {
+            if (n['secondaryDeliveryMethod'] === 'WhatsApp') {
+              validations.whatsappDelivery = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Validation 3 — Identity Verification
+  if (recipients && typeof recipients === 'object') {
+    const signers = recipients['signers'] as Array<Record<string, unknown>> | undefined;
+    if (Array.isArray(signers)) {
+      for (const signer of signers) {
+        if (signer['identityVerification'] || signer['idCheckConfigurationName']) {
+          validations.identityVerification = true;
+          break;
+        }
+      }
+    }
+  }
 
   const sections: ValidationSection[] = [
     {
-      title: 'Delivery Configuration',
+      title: 'Reminder Configuration',
       requirements: [
-        { label: 'Multi-channel delivery (SMS, WhatsApp, or deliveryMethod)', passed: hasMultiChannel },
-        { label: 'Reminders enabled', passed: hasReminders },
+        { label: 'Reminders enabled (reminderEnabled)', passed: validations.reminderEnabled },
       ],
     },
     {
-      title: 'Security',
+      title: 'Multi-channel Delivery',
       requirements: [
-        { label: `At least 2 authentication layers (${securityCount}/2 detected)`, passed: hasTwoSecurityLayers },
+        { label: 'WhatsApp as secondary delivery method', passed: validations.whatsappDelivery },
       ],
     },
     {
-      title: 'Interactive Fields',
+      title: 'Identity Verification',
       requirements: [
-        { label: 'Text tabs present', passed: hasTextTabs },
-        { label: 'Checkbox or radio group tabs present', passed: hasCheckboxOrRadio },
-        { label: 'Required fields configured', passed: hasRequiredField },
+        { label: 'Identity verification configured for signer', passed: validations.identityVerification },
       ],
     },
   ];
@@ -115,6 +146,15 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     totalRequirements,
     isFullyValidated: totalPassed === totalRequirements,
   };
+}
+
+function buildFailedResult(challengeId: string, validations: Record<string, boolean>): ValidationResult {
+  const sections: ValidationSection[] = Object.entries(validations).map(([key, _]) => ({
+    title: key,
+    requirements: [{ label: key, passed: false }],
+  }));
+  const totalRequirements = sections.length;
+  return { challengeId, sections, totalPassed: 0, totalRequirements, isFullyValidated: false };
 }
 
 // ── Template Field Validation Challenge ──────────────────────────

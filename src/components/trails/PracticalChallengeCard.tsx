@@ -378,17 +378,14 @@ export function PracticalChallengeCard({
 
       const sections = challenge.id === 'prac-esig-1'
         ? [
-            { title: 'Delivery Configuration', requirements: [
-              { label: 'Multi-channel delivery (SMS, WhatsApp, or deliveryMethod)', passed: false },
-              { label: 'Reminders enabled', passed: false },
+            { title: 'Reminder Configuration', requirements: [
+              { label: 'Reminders enabled (reminderEnabled)', passed: false },
             ]},
-            { title: 'Security', requirements: [
-              { label: 'At least 2 authentication layers (0/2 detected)', passed: false },
+            { title: 'Multi-channel Delivery', requirements: [
+              { label: 'WhatsApp as secondary delivery method', passed: false },
             ]},
-            { title: 'Interactive Fields', requirements: [
-              { label: 'Text tabs present', passed: false },
-              { label: 'Checkbox or radio group tabs present', passed: false },
-              { label: 'Required fields configured', passed: false },
+            { title: 'Identity Verification', requirements: [
+              { label: 'Identity verification configured for signer', passed: false },
             ]},
           ]
         : challenge.id === 'prac-esig-2'
