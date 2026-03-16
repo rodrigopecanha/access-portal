@@ -125,7 +125,16 @@ export function PracticalChallengeCard({
         const json = JSON.parse(text);
         const result = validatePracEsig1(json);
         setValidationResult(result);
-        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        // For prac-esig-1, medals are based on optional detection, not on pass/fail
+        const medalMap: Record<string, boolean> = {};
+        if (result.optionalMedals) {
+          for (const om of result.optionalMedals) {
+            medalMap[om.id] = true;
+          }
+        }
+        const allMedals = challenge.medals
+          .map(m => ({ ...m, isEarned: !!medalMap[m.id] }))
+          .filter(m => m.isEarned);
         setEarnedMedals(allMedals);
 
       } else if (challenge.id === 'prac-esig-2') {
