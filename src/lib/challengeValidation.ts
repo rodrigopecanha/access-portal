@@ -153,21 +153,21 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     }
   }
 
-  // Validation 5 — Access Code
+  // Optional Medal — Access Code (does not affect pass/fail)
   if (recipients && typeof recipients === 'object') {
     const signers = recipients['signers'] as Array<Record<string, unknown>> | undefined;
     if (Array.isArray(signers)) {
       for (const signer of signers) {
         const ac = signer['accessCode'];
         if (ac !== undefined && ac !== null && ac !== '') {
-          validations.accessCode = true;
+          accessCodeDetected = true;
           break;
         }
       }
     }
   }
 
-  // Validation 6 — Liveness
+  // Optional Medal — Liveness (does not affect pass/fail)
   if (recipients && typeof recipients === 'object') {
     const signers = recipients['signers'] as Array<Record<string, unknown>> | undefined;
     if (Array.isArray(signers)) {
@@ -175,7 +175,7 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
         const iv = signer['identityVerification'];
         if (iv !== undefined && iv !== null) {
           if (JSON.stringify(iv).toLowerCase().includes('liveness')) {
-            validations.liveness = true;
+            livenessDetected = true;
             break;
           }
         }
