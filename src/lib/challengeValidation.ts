@@ -334,6 +334,10 @@ export function validateTemplateChallenges(templateJson: unknown): TemplateValid
             if (Array.isArray(textTabs)) {
               collectPatterns(textTabs);
             }
+            const dateTabs = (tabs as Record<string, unknown>)['dateTabs'];
+            if (Array.isArray(dateTabs)) {
+              collectPatterns(dateTabs);
+            }
           }
         }
       }
