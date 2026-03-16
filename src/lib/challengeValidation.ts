@@ -68,14 +68,15 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
 
   const tmpl = jsonContent as Record<string, unknown>;
 
-  // Validation 1 — Reminder Enabled
-  if (tmpl['reminderEnabled'] === 'true' || tmpl['reminderEnabled'] === true) {
-    validations.reminderEnabled = true;
-  }
-  // Also check nested notification object
+  // Validation 1 — Reminder Enabled (notification → reminders → reminderEnabled)
   const notification = tmpl['notification'] as Record<string, unknown> | undefined;
-  if (notification && (notification['reminderEnabled'] === 'true' || notification['reminderEnabled'] === true)) {
-    validations.reminderEnabled = true;
+  if (notification && typeof notification === 'object') {
+    const reminders = notification['reminders'] as Record<string, unknown> | undefined;
+    if (reminders && typeof reminders === 'object') {
+      if (reminders['reminderEnabled'] === 'true' || reminders['reminderEnabled'] === true) {
+        validations.reminderEnabled = true;
+      }
+    }
   }
 
   // Validation 2 — WhatsApp Secondary Delivery
