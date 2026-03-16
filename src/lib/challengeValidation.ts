@@ -741,3 +741,114 @@ export function validateDocumentActionsChallenge(
     return { success: false, score: 0, validations };
   }
 }
+
+// ── Formula & Flags Final Challenge ──────────────────────────────
+
+export interface FormulaFlagsValidationResult {
+  success: boolean;
+  score: number;
+  validations: {
+    formulaMaster: boolean;
+    conditionalLogic: boolean;
+    requiredFieldLogic: boolean;
+  };
+  error?: string;
+}
+
+export function validateFormulaFlagsChallenge(
+  templateJson: unknown,
+): FormulaFlagsValidationResult {
+  const validations = {
+    formulaMaster: false,
+    conditionalLogic: false,
+    requiredFieldLogic: false,
+  };
+
+  try {
+    if (!templateJson || typeof templateJson !== 'object') {
+      return { success: false, score: 0, validations };
+    }
+
+    const root = templateJson as Record<string, unknown>;
+    const recipients = root['recipients'];
+
+    if (!recipients || typeof recipients !== 'object') {
+      return { success: false, score: 0, validations };
+    }
+
+    const signers = (recipients as Record<string, unknown>)['signers'];
+    if (!Array.isArray(signers)) {
+      return { success: false, score: 0, validations };
+    }
+
+    // Collect all formula tab labels and all text tabs
+    const formulaLabels: string[] = [];
+    interface TextTabInfo {
+      conditionalParentLabel?: string;
+      conditionalParentValue?: string;
+      required?: string | boolean;
+    }
+    const textTabsInfo: TextTabInfo[] = [];
+
+    for (const signer of signers) {
+      const tabs = (signer as Record<string, unknown>)?.['tabs'];
+      if (!tabs || typeof tabs !== 'object') continue;
+      const tabsRec = tabs as Record<string, unknown>;
+
+      // 1. Formula Master — formulaTabs exists with at least one entry
+      const formulaTabs = tabsRec['formulaTabs'];
+      if (Array.isArray(formulaTabs)) {
+        for (const ft of formulaTabs) {
+          const rec = ft as Record<string, unknown>;
+          const label = String(rec['tabLabel'] || rec['name'] || '').trim();
+          if (label) formulaLabels.push(label.toLowerCase());
+        }
+      }
+
+      // Collect text tabs for conditional checks
+      const textTabs = tabsRec['textTabs'];
+      if (Array.isArray(textTabs)) {
+        for (const tt of textTabs) {
+          const rec = tt as Record<string, unknown>;
+          textTabsInfo.push({
+            conditionalParentLabel: rec['conditionalParentLabel'] as string | undefined,
+            conditionalParentValue: rec['conditionalParentValue'] as string | undefined,
+            required: rec['required'] as string | boolean | undefined,
+          });
+        }
+      }
+    }
+
+    // Validation 1 — Formula Master
+    if (formulaLabels.length > 0) {
+      validations.formulaMaster = true;
+    }
+
+    // Validation 2 & 3 — Conditional Logic & Required Field Logic
+    for (const tab of textTabsInfo) {
+      if (!tab.conditionalParentLabel) continue;
+      const parentLabel = tab.conditionalParentLabel.toLowerCase().trim();
+
+      // Check if the conditional parent references a formula tab
+      const referencesFormula = formulaLabels.some(fl => fl === parentLabel);
+      if (referencesFormula) {
+        validations.conditionalLogic = true;
+
+        // Validation 3 — required AND conditional referencing formula
+        const isRequired = tab.required === 'true' || tab.required === true;
+        if (isRequired) {
+          validations.requiredFieldLogic = true;
+        }
+      }
+    }
+
+    const score =
+      (validations.formulaMaster ? 150 : 0) +
+      (validations.conditionalLogic ? 150 : 0) +
+      (validations.requiredFieldLogic ? 100 : 0);
+
+    return { success: true, score, validations };
+  } catch {
+    return { success: false, score: 0, validations };
+  }
+}

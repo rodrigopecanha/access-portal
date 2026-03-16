@@ -14,7 +14,7 @@ import {
 import { InstructionSection } from './InstructionSection';
 import { useTranslation } from '@/i18n';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { validatePracEsig1, validateTemplateChallenges, validateWebformTemplateChallenge, validateFinalChallenge, validateBulkSendChallenge, validateAdvancedWorkflowChallenge, validateDocumentActionsChallenge, type ValidationResult } from '@/lib/challengeValidation';
+import { validatePracEsig1, validateTemplateChallenges, validateWebformTemplateChallenge, validateFinalChallenge, validateBulkSendChallenge, validateAdvancedWorkflowChallenge, validateDocumentActionsChallenge, validateFormulaFlagsChallenge, type ValidationResult } from '@/lib/challengeValidation';
 
 interface PracticalChallengeCardProps {
   challenge: PracticalChallenge;
@@ -324,6 +324,36 @@ export function PracticalChallengeCard({
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
         setEarnedMedals(allMedals);
 
+      } else if (challenge.id === 'prac-esig-adv-final') {
+        const text = await selectedFile.text();
+        const json = JSON.parse(text);
+        const ffResult = validateFormulaFlagsChallenge(json);
+
+        const v = ffResult.validations;
+        const result = buildValidationResult('prac-esig-adv-final', [
+          {
+            title: 'Formula Tabs',
+            requirements: [
+              { label: 'At least one Formula tab configured', passed: v.formulaMaster },
+            ],
+          },
+          {
+            title: 'Conditional Logic',
+            requirements: [
+              { label: 'Text field conditionally shown based on Formula tab', passed: v.conditionalLogic },
+            ],
+          },
+          {
+            title: 'Required Field Logic',
+            requirements: [
+              { label: 'Conditional text field is marked as required', passed: v.requiredFieldLogic },
+            ],
+          },
+        ]);
+        setValidationResult(result);
+        const allMedals = challenge.medals.map(m => ({ ...m, isEarned: result.isFullyValidated }));
+        setEarnedMedals(allMedals);
+
       } else {
         await new Promise(resolve => setTimeout(resolve, 1800));
         const allMedals = challenge.medals.map(m => ({ ...m, isEarned: true }));
@@ -411,6 +441,18 @@ export function PracticalChallengeCard({
             ]},
             { title: 'Supplemental Documents', requirements: [
               { label: 'NDA configured as supplemental document', passed: false },
+            ]},
+          ]
+        : challenge.id === 'prac-esig-adv-final'
+        ? [
+            { title: 'Formula Tabs', requirements: [
+              { label: 'At least one Formula tab configured', passed: false },
+            ]},
+            { title: 'Conditional Logic', requirements: [
+              { label: 'Text field conditionally shown based on Formula tab', passed: false },
+            ]},
+            { title: 'Required Field Logic', requirements: [
+              { label: 'Conditional text field is marked as required', passed: false },
             ]},
           ]
         : [
