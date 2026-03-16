@@ -8,12 +8,19 @@ export interface ValidationSection {
   requirements: ValidationRequirement[];
 }
 
+export interface OptionalMedal {
+  id: string;
+  label: string;
+  icon: string;
+}
+
 export interface ValidationResult {
   challengeId: string;
   sections: ValidationSection[];
   totalPassed: number;
   totalRequirements: number;
   isFullyValidated: boolean;
+  optionalMedals?: OptionalMedal[];
 }
 
 function deepSearchKeys(obj: unknown, targetKeys: string[]): Record<string, boolean> {
@@ -61,9 +68,11 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     whatsappDelivery: false,
     identityVerification: false,
     formFieldsConfigured: false,
-    accessCode: false,
-    liveness: false,
   };
+
+  // Optional medal flags (not part of main validation)
+  let accessCodeDetected = false;
+  let livenessDetected = false;
 
   if (!jsonContent || typeof jsonContent !== 'object') {
     return buildFailedResult('prac-esig-1', validations);
@@ -144,21 +153,21 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     }
   }
 
-  // Validation 5 — Access Code
+  // Optional Medal — Access Code (does not affect pass/fail)
   if (recipients && typeof recipients === 'object') {
     const signers = recipients['signers'] as Array<Record<string, unknown>> | undefined;
     if (Array.isArray(signers)) {
       for (const signer of signers) {
         const ac = signer['accessCode'];
         if (ac !== undefined && ac !== null && ac !== '') {
-          validations.accessCode = true;
+          accessCodeDetected = true;
           break;
         }
       }
     }
   }
 
-  // Validation 6 — Liveness
+  // Optional Medal — Liveness (does not affect pass/fail)
   if (recipients && typeof recipients === 'object') {
     const signers = recipients['signers'] as Array<Record<string, unknown>> | undefined;
     if (Array.isArray(signers)) {
@@ -166,7 +175,7 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
         const iv = signer['identityVerification'];
         if (iv !== undefined && iv !== null) {
           if (JSON.stringify(iv).toLowerCase().includes('liveness')) {
-            validations.liveness = true;
+            livenessDetected = true;
             break;
           }
         }
@@ -225,14 +234,16 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
         { label: 'Text fields configured', passed: hasTextForDisplay },
       ],
     },
-    {
-      title: 'Authentication Medals',
-      requirements: [
-        { label: 'Access Code configured', passed: validations.accessCode },
-        { label: 'Liveness verification configured', passed: validations.liveness },
-      ],
-    },
   ];
+
+  // Build optional medals array (only include detected ones)
+  const optionalMedals: OptionalMedal[] = [];
+  if (accessCodeDetected) {
+    optionalMedals.push({ id: 'medal-1', label: 'Access Code', icon: '🎖️' });
+  }
+  if (livenessDetected) {
+    optionalMedals.push({ id: 'medal-2', label: 'Liveness', icon: '🎖️' });
+  }
 
   const totalRequirements = sections.reduce((sum, s) => sum + s.requirements.length, 0);
   const totalPassed = sections.reduce((sum, s) => sum + s.requirements.filter(r => r.passed).length, 0);
@@ -243,6 +254,7 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     totalPassed,
     totalRequirements,
     isFullyValidated: totalPassed === totalRequirements,
+    optionalMedals: optionalMedals.length > 0 ? optionalMedals : undefined,
   };
 }
 
