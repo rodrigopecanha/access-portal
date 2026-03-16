@@ -61,6 +61,8 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     whatsappDelivery: false,
     identityVerification: false,
     formFieldsConfigured: false,
+    accessCode: false,
+    liveness: false,
   };
 
   if (!jsonContent || typeof jsonContent !== 'object') {
