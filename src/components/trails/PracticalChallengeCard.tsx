@@ -443,6 +443,18 @@ export function PracticalChallengeCard({
               { label: 'NDA configured as supplemental document', passed: false },
             ]},
           ]
+        : challenge.id === 'prac-esig-adv-final'
+        ? [
+            { title: 'Formula Tabs', requirements: [
+              { label: 'At least one Formula tab configured', passed: false },
+            ]},
+            { title: 'Conditional Logic', requirements: [
+              { label: 'Text field conditionally shown based on Formula tab', passed: false },
+            ]},
+            { title: 'Required Field Logic', requirements: [
+              { label: 'Conditional text field is marked as required', passed: false },
+            ]},
+          ]
         : [
             { title: 'Webform Configuration', requirements: [
               { label: 'Webform configured to populate first recipient', passed: false },
