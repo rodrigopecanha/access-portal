@@ -144,6 +144,36 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     }
   }
 
+  // Validation 5 — Access Code
+  if (recipients && typeof recipients === 'object') {
+    const signers = recipients['signers'] as Array<Record<string, unknown>> | undefined;
+    if (Array.isArray(signers)) {
+      for (const signer of signers) {
+        const ac = signer['accessCode'];
+        if (ac !== undefined && ac !== null && ac !== '') {
+          validations.accessCode = true;
+          break;
+        }
+      }
+    }
+  }
+
+  // Validation 6 — Liveness
+  if (recipients && typeof recipients === 'object') {
+    const signers = recipients['signers'] as Array<Record<string, unknown>> | undefined;
+    if (Array.isArray(signers)) {
+      for (const signer of signers) {
+        const iv = signer['identityVerification'];
+        if (iv !== undefined && iv !== null) {
+          if (JSON.stringify(iv).toLowerCase().includes('liveness')) {
+            validations.liveness = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+
   const hasCheckboxOrRadioForDisplay = (() => {
     const r = tmpl['recipients'] as Record<string, unknown> | undefined;
     if (!r) return false;
@@ -193,6 +223,13 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
       requirements: [
         { label: 'Checkbox or radio group fields configured', passed: hasCheckboxOrRadioForDisplay },
         { label: 'Text fields configured', passed: hasTextForDisplay },
+      ],
+    },
+    {
+      title: 'Authentication Medals',
+      requirements: [
+        { label: 'Access Code configured', passed: validations.accessCode },
+        { label: 'Liveness verification configured', passed: validations.liveness },
       ],
     },
   ];
