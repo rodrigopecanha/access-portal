@@ -334,6 +334,10 @@ export function validateTemplateChallenges(templateJson: unknown): TemplateValid
             if (Array.isArray(textTabs)) {
               collectPatterns(textTabs);
             }
+            const dateTabs = (tabs as Record<string, unknown>)['dateTabs'];
+            if (Array.isArray(dateTabs)) {
+              collectPatterns(dateTabs);
+            }
           }
         }
       }
@@ -374,11 +378,11 @@ export function validateTemplateChallenges(templateJson: unknown): TemplateValid
         if (isCnpjStructure) validations.cnpjRegex = true;
       }
 
-      // Birth date detection (kept as exact or structural)
-      for (const { key, pattern } of PATTERN_MAP) {
-        if (key === 'birthDateRegex' && norm === normalizePattern(pattern)) {
-          validations[key] = true;
-        }
+      // Structural birth date detection: DD/MM/YYYY pattern
+      const isBirthDateStructure =
+        /3\[0-?1\]/.test(norm) && /1\[0-?2\]/.test(norm) && /\{4\}/.test(norm);
+      if (isBirthDateStructure) {
+        validations.birthDateRegex = true;
       }
     }
 
