@@ -68,9 +68,11 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     whatsappDelivery: false,
     identityVerification: false,
     formFieldsConfigured: false,
-    accessCode: false,
-    liveness: false,
   };
+
+  // Optional medal flags (not part of main validation)
+  let accessCodeDetected = false;
+  let livenessDetected = false;
 
   if (!jsonContent || typeof jsonContent !== 'object') {
     return buildFailedResult('prac-esig-1', validations);
