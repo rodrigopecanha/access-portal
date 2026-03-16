@@ -234,14 +234,16 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
         { label: 'Text fields configured', passed: hasTextForDisplay },
       ],
     },
-    {
-      title: 'Authentication Medals',
-      requirements: [
-        { label: 'Access Code configured', passed: validations.accessCode },
-        { label: 'Liveness verification configured', passed: validations.liveness },
-      ],
-    },
   ];
+
+  // Build optional medals array (only include detected ones)
+  const optionalMedals: OptionalMedal[] = [];
+  if (accessCodeDetected) {
+    optionalMedals.push({ id: 'medal-1', label: 'Access Code', icon: '🎖️' });
+  }
+  if (livenessDetected) {
+    optionalMedals.push({ id: 'medal-2', label: 'Liveness', icon: '🎖️' });
+  }
 
   const totalRequirements = sections.reduce((sum, s) => sum + s.requirements.length, 0);
   const totalPassed = sections.reduce((sum, s) => sum + s.requirements.filter(r => r.passed).length, 0);
@@ -252,6 +254,7 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     totalPassed,
     totalRequirements,
     isFullyValidated: totalPassed === totalRequirements,
+    optionalMedals: optionalMedals.length > 0 ? optionalMedals : undefined,
   };
 }
 
