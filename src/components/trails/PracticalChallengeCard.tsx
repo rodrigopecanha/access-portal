@@ -387,6 +387,10 @@ export function PracticalChallengeCard({
             { title: 'Identity Verification', requirements: [
               { label: 'Identity verification configured for signer', passed: false },
             ]},
+            { title: 'Form Fields', requirements: [
+              { label: 'Checkbox or radio group fields configured', passed: false },
+              { label: 'Text fields configured', passed: false },
+            ]},
           ]
         : challenge.id === 'prac-esig-2'
         ? [

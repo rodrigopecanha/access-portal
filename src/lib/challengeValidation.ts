@@ -60,6 +60,7 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     reminderEnabled: false,
     whatsappDelivery: false,
     identityVerification: false,
+    formFieldsConfigured: false,
   };
 
   if (!jsonContent || typeof jsonContent !== 'object') {
@@ -89,7 +90,6 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
           validations.whatsappDelivery = true;
           break;
         }
-        // Also check additionalNotifications array
         const addNotif = signer['additionalNotifications'] as Array<Record<string, unknown>> | undefined;
         if (Array.isArray(addNotif)) {
           for (const n of addNotif) {
@@ -116,6 +116,57 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
     }
   }
 
+  // Validation 4 — Form Fields Configured (checkboxTabs/radioGroupTabs AND textTabs)
+  if (recipients && typeof recipients === 'object') {
+    const signers = recipients['signers'] as Array<Record<string, unknown>> | undefined;
+    if (Array.isArray(signers)) {
+      let hasCheckboxOrRadio = false;
+      let hasText = false;
+      for (const signer of signers) {
+        const tabs = signer['tabs'] as Record<string, unknown> | undefined;
+        if (tabs && typeof tabs === 'object') {
+          if (Array.isArray(tabs['checkboxTabs']) && tabs['checkboxTabs'].length > 0) {
+            hasCheckboxOrRadio = true;
+          }
+          if (Array.isArray(tabs['radioGroupTabs']) && tabs['radioGroupTabs'].length > 0) {
+            hasCheckboxOrRadio = true;
+          }
+          if (Array.isArray(tabs['textTabs']) && tabs['textTabs'].length > 0) {
+            hasText = true;
+          }
+        }
+      }
+      if (hasCheckboxOrRadio && hasText) {
+        validations.formFieldsConfigured = true;
+      }
+    }
+  }
+
+  const hasCheckboxOrRadioForDisplay = (() => {
+    const r = tmpl['recipients'] as Record<string, unknown> | undefined;
+    if (!r) return false;
+    const s = r['signers'] as Array<Record<string, unknown>> | undefined;
+    if (!Array.isArray(s)) return false;
+    return s.some(signer => {
+      const tabs = signer['tabs'] as Record<string, unknown> | undefined;
+      if (!tabs) return false;
+      return (Array.isArray(tabs['checkboxTabs']) && tabs['checkboxTabs'].length > 0) ||
+             (Array.isArray(tabs['radioGroupTabs']) && tabs['radioGroupTabs'].length > 0);
+    });
+  })();
+
+  const hasTextForDisplay = (() => {
+    const r = tmpl['recipients'] as Record<string, unknown> | undefined;
+    if (!r) return false;
+    const s = r['signers'] as Array<Record<string, unknown>> | undefined;
+    if (!Array.isArray(s)) return false;
+    return s.some(signer => {
+      const tabs = signer['tabs'] as Record<string, unknown> | undefined;
+      if (!tabs) return false;
+      return Array.isArray(tabs['textTabs']) && tabs['textTabs'].length > 0;
+    });
+  })();
+
   const sections: ValidationSection[] = [
     {
       title: 'Reminder Configuration',
@@ -133,6 +184,13 @@ export function validatePracEsig1(jsonContent: unknown): ValidationResult {
       title: 'Identity Verification',
       requirements: [
         { label: 'Identity verification configured for signer', passed: validations.identityVerification },
+      ],
+    },
+    {
+      title: 'Form Fields',
+      requirements: [
+        { label: 'Checkbox or radio group fields configured', passed: hasCheckboxOrRadioForDisplay },
+        { label: 'Text fields configured', passed: hasTextForDisplay },
       ],
     },
   ];
