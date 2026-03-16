@@ -351,8 +351,32 @@ export function validateTemplateChallenges(templateJson: unknown): TemplateValid
 
     for (const p of patterns) {
       const norm = normalizePattern(p);
+
+      // Structural CPF detection: pattern with {3}.{3}.{3}-{2} structure
+      const isCpfStructure =
+        /\{3\}/.test(norm) && /\{2\}/.test(norm) &&
+        (norm.match(/\{3\}/g) || []).length >= 3 &&
+        !(/\{4\}/.test(norm));
+
+      // Structural CNPJ detection: pattern with {2}.{3}.{3}/{4}-{2} structure
+      const isCnpjStructure =
+        /\{2\}/.test(norm) && /\{3\}/.test(norm) && /\{4\}/.test(norm);
+
+      // Combined CPF/CNPJ pattern (e.g. alternation with |)
+      const isCombinedCpfCnpj =
+        /\{3\}/.test(norm) && /\{4\}/.test(norm) && /\{2\}/.test(norm) && /\|/.test(norm);
+
+      if (isCombinedCpfCnpj) {
+        validations.cpfRegex = true;
+        validations.cnpjRegex = true;
+      } else {
+        if (isCpfStructure) validations.cpfRegex = true;
+        if (isCnpjStructure) validations.cnpjRegex = true;
+      }
+
+      // Birth date detection (kept as exact or structural)
       for (const { key, pattern } of PATTERN_MAP) {
-        if (norm === normalizePattern(pattern)) {
+        if (key === 'birthDateRegex' && norm === normalizePattern(pattern)) {
           validations[key] = true;
         }
       }
